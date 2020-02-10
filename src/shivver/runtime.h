@@ -1,6 +1,7 @@
 #pragma once
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdio.h>
 
 typedef uint32_t uint24_t;
 
@@ -16,7 +17,7 @@ typedef struct {
 
 
 // ----------------------------------------------------------------------------
-// Generic heap object representation.
+// Generic heap object represen tation.
 typedef struct {
         uint64_t header;
         uint64_t payload[];
@@ -39,8 +40,20 @@ heap_t shivver_heap;
 
 
 // ----------------------------------------------------------------------------
-#define TAG_SYMT        0x01
-#define TAG_VART        0x05
+// Objects
+//
+//         7  6  5  4  3  2  1  0
+//  aMmm   count .  .  0  0  0  F       0 0 0 0 0 0 0 1  = 0x01
+//  symt   0  0  0  0  bump  .  F       0 0 0 0 1 0 0 1  = 0x09
+//  vart   0  0  0  0  bump  .  F       0 0 0 0 1 1 0 1  = 0x0d
+//  apps   count .  .  0  0  0  F       0 0 0 0 1 1 1 1  = 0x0f
+//  appv   0  0  0  0  0  0  0  F       0 0 0 1 1 1 1 1  = 0x1f
+
+#define TAG_MMM         0x01
+#define TAG_SYMT        0x09
+#define TAG_VART        0x0d
+#define TAG_APPS        0x0f
+#define TAG_APPV        0x1f
 
 // ----------------------------------------------------------------------------
 // inlines
@@ -48,3 +61,11 @@ heap_t shivver_heap;
 #include "shivver/runtime/alloc.h"
 
 void    shivver_heapInit(size_t nWords);
+
+
+// from printl.c
+void    shivver_printl(obj_t* obj);
+
+// from printp.c
+void    shivver_printp(obj_t* obj);
+
