@@ -10,10 +10,10 @@ int main(int argc, char** argv)
 {
         shivver_heapInit(1024);
         obj_t* obj
-         = aAppV( aAbsM ( 2
+         = aApvH( aAbsH ( 2
                         , (obj_t*[]){aSymT("x"), aSymT("y")}
-                        , aMmm (2, (obj_t*[]){aVarT("y", 0), aVarT("y", 0)}))
-                , aMmm (2, (obj_t*[]){aSymT("fresh"), aSymT("fish")}));
+                        , aMmmH (2, (obj_t*[]){aVarT("y", 0), aVarT("y", 0)}))
+                , aMmmH (2, (obj_t*[]){aSymT("fresh"), aSymT("fish")}));
 
 
         shivver_printp(obj);

@@ -23,11 +23,11 @@ void    shivver_printl_sym(obj_t* obj)
 void    shivver_printl(obj_t* obj)
 {
         switch (xObj_tag(obj))
-        { case TAG_MMM:
+        { case TAG_MMMH:
           {     printf("[");
-                size_t len = xMmm_len(obj);
+                size_t len = xMmmH_len(obj);
                 for(size_t i = 0; i < len; i++)
-                {       shivver_printl(xMmm_arg(obj, i));
+                {       shivver_printl(xMmmH_arg(obj, i));
                         if (len - i > 1) printf(", ");
                 }
                 printf("]");
@@ -44,27 +44,27 @@ void    shivver_printl(obj_t* obj)
                 break;
           }
 
-          case TAG_ABSM:
+          case TAG_ABSH:
           {     printf("({");
-                size_t len = xAbsM_len(obj);
+                size_t len = xAbsH_len(obj);
                 for(size_t i = 0; i < len; i++)
-                {       shivver_printl_sym(xAbsM_parm(obj, i));
+                {       shivver_printl_sym(xAbsH_parm(obj, i));
                         if (len - i > 1) printf(" ");
                 }
                 printf("} ");
-                shivver_printl(xAbsM_body(obj));
+                shivver_printl(xAbsH_body(obj));
                 printf(")");
                 break;
           }
 
-          case TAG_APPS:
+          case TAG_APSH:
           {     printf("(");
-                shivver_printl(xAppS_fun(obj));
+                shivver_printl(xApsH_fun(obj));
 
                 printf(" [");
-                size_t len = xAppS_len(obj);
+                size_t len = xApsH_len(obj);
                 for(size_t i = 0; i < len; i++)
-                {       shivver_printl(xAppS_arg(obj, i));
+                {       shivver_printl(xApsH_arg(obj, i));
                         if (len - i > 1) printf(", ");
                 }
                 printf("]");
@@ -72,11 +72,11 @@ void    shivver_printl(obj_t* obj)
                 break;
           }
 
-          case TAG_APPV:
+          case TAG_APVH:
           {     printf("(");
-                shivver_printl(xAppV_fun(obj));
+                shivver_printl(xApvH_fun(obj));
                 printf(" ");
-                shivver_printl(xAppV_arg(obj));
+                shivver_printl(xApvH_arg(obj));
                 printf(")");
                 break;
           }
