@@ -1,4 +1,5 @@
 #pragma once
+#include <stdlib.h>
 #include <stdint.h>
 
 typedef uint32_t uint24_t;
@@ -8,8 +9,9 @@ typedef uint32_t uint24_t;
 // Runtime heap space.
 typedef struct {
         uint64_t  size;
-        uint64_t  top;
-        uint64_t* data;
+        uint64_t* base;
+        uint64_t* next;
+        uint64_t* last;
 } heap_t;
 
 
@@ -32,21 +34,17 @@ typedef struct {
 
 
 // ----------------------------------------------------------------------------
+// heap
+heap_t shivver_heap;
+
+
+// ----------------------------------------------------------------------------
 #define TAG_SYMT        0x01
-#define TAG_VART        0x05;
-
-
-// ----------------------------------------------------------------------------
-// from heap.h
-static inline uint64_t*
-hAlloc (size_t nWords);
-
+#define TAG_VART        0x05
 
 // ----------------------------------------------------------------------------
-// from alloc.h
-static inline obj_t*
-aSymT (const char* name);
+// inlines
+#include "shivver/runtime/heap.h"
+#include "shivver/runtime/alloc.h"
 
-static inline obj_t*
-aVarT (const char* name, uint24_t nBump);
-
+void    shivver_heapInit(size_t nWords);

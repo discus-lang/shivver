@@ -1,11 +1,13 @@
+#pragma once
+#include "shivver/runtime.h"
 
-#include ""
 
 static inline uint64_t*
 halloc (size_t nWords)
 {
-        uint64_t* obj   = heap.top;
-        heap.top += nWords;
+        if (shivver_heap.last - shivver_heap.next < nWords) abort();
+        uint64_t* obj     = shivver_heap.next;
+        shivver_heap.next += nWords;
         return (void*)obj;
 }
 
