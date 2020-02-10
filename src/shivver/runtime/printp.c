@@ -1,14 +1,13 @@
+
 #include "shivver/runtime.h"
 
-void
-shivver_printp(obj_t* obj)
+// Print the physical structure of the graph.
+void    shivver_printp(obj_t* obj)
 {
-        uint8_t tag = (uint64_t) (obj->header & 0x0ff);
-
-        switch (tag)
+        switch (xObj_tag(obj))
         { case TAG_MMM:
-          {     printf("(&mmm %d", xMmm_size(obj));
-                size_t len = xMmm_size(obj);
+          {     uint32_t len = xMmm_len(obj);
+                printf("(&mmm %u", len);
                 for(size_t i = 0; i < len; i++)
                 {       printf(" ");
                         shivver_printp(xMmm_arg(obj, i));
@@ -23,7 +22,22 @@ shivver_printp(obj_t* obj)
           }
 
           case TAG_VART:
-          {     printf("(&vart %zu \"%s\")", xVarT_size(obj), xVarT_name(obj));
+          {     printf  ("(&vart %zu \"%s\" %d)"
+                        , xVarT_size(obj), xVarT_name(obj)
+                        , xVarT_bump(obj));
+                break;
+          }
+
+          case TAG_ABSM:
+          {     printf("(&absm %u", xAbsM_len(obj));
+                size_t len = xAbsM_len(obj);
+                for(size_t i = 0; i < len; i++)
+                {       printf(" ");
+                        shivver_printp(xAbsM_parm(obj, i));
+                }
+                printf(" ");
+                shivver_printp(xAbsM_body(obj));
+                printf(")");
                 break;
           }
 

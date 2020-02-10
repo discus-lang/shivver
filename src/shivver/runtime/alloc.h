@@ -2,6 +2,11 @@
 #include <string.h>
 #include "shivver/runtime.h"
 
+static inline uint8_t
+xObj_tag (obj_t* obj)
+{       return (uint8_t)((uint64_t) (obj->header & 0x0ff));
+}
+
 
 // ----------------------------------------------------------------------------
 // A vector of terms.
@@ -22,7 +27,7 @@ aMmm (size_t len, obj_t** arg)
 
 
 static inline uint32_t
-xMmm_size(obj_t* obj)
+xMmm_len(obj_t* obj)
 {       uint64_t* buf = (uint64_t*)obj;
         return (uint32_t)(buf[0] >> 32);
 }
@@ -32,6 +37,13 @@ xMmm_arg(obj_t* obj, size_t i)
 {       uint64_t* buf = (uint64_t*)obj;
         return (obj_t*)buf[1 + i];
 }
+
+static inline obj_t**
+xMmm_args(obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (obj_t**)(buf + 1);
+}
+
 
 // ----------------------------------------------------------------------------
 // A symbol with a statically allocated name string.
@@ -122,9 +134,9 @@ xAppS_fun (obj_t* obj)
 }
 
 static inline obj_t*
-xAppS_arg (obj_t* obj, size_t n)
+xAppS_arg (obj_t* obj, size_t i)
 {       uint64_t* buf = (uint64_t*)obj;
-        return (obj_t*)buf[2 + n];
+        return (obj_t*)buf[2 + i];
 }
 
 
@@ -156,3 +168,112 @@ xAppV_arg (obj_t* obj)
 {       uint64_t* buf = (uint64_t*)obj;
         return (obj_t*)buf[2];
 }
+
+
+// ----------------------------------------------------------------------------
+// An abstraction, with parameters represented as symbols in the heap.
+//
+//    7 6 5 4 3 2 1 0
+// 0  count . 0 0 0 F
+// 1  body pointer
+// 2  symbol pointer
+// 3  symbol pointer..
+//
+static inline obj_t*
+aAbsM (uint32_t count, obj_t* oParm[], obj_t* oBody)
+{       uint64_t* buf = halloc(2 + count);
+        buf[0] = (uint64_t)count << 32 | TAG_ABSM;
+        buf[1] = (uint64_t)oBody;
+        for (size_t i = 0; i < count; i++)
+                buf[2 + i] = (uint64_t)oParm[i];
+        return (obj_t*)buf;
+}
+
+static inline uint32_t
+xAbsM_len (obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (uint32_t)(buf[0] >> 32);
+}
+
+static inline obj_t*
+xAbsM_parm (obj_t* obj, size_t i)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (obj_t*)buf[2 + i];
+}
+
+static inline obj_t**
+xAbsM_parms (obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (obj_t**)(buf + 2);
+}
+
+static inline obj_t*
+xAbsM_body (obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (obj_t*)buf[1];
+}
+
+
+// ----------------------------------------------------------------------------
+// A closure, with parameters represented as symbols in the heap.
+//
+//    7 6 5 4 3 2 1 0
+// 0  count . 0 0 0 F
+// 1  env pointer       obj_t*
+// 2  symbols pointer   obj_t**  always points into an xAbsM.
+// 3  body pointer      obj_t*
+//
+static inline obj_t*
+aCloM (uint32_t len, obj_t* oEnv, obj_t** oParm, obj_t* oBody)
+{       uint64_t* buf = halloc(3);
+        buf[0] = (uint64_t)len << 32 | TAG_CLOM;
+        buf[1] = (uint64_t)oEnv;
+        buf[2] = (uint64_t)oParm;
+        buf[2] = (uint64_t)oBody;
+        return (obj_t*)buf;
+}
+
+static inline uint32_t
+xCloM_len (obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (uint32_t)(buf[0] >> 32);
+}
+
+static inline obj_t*
+xCloM_env (obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (obj_t*)buf[1];
+}
+
+static inline obj_t**
+xCloM_parms (obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (obj_t**)buf[2];
+}
+
+static inline obj_t*
+xCloM_body (obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (obj_t*)buf[2];
+}
+
+
+// ----------------------------------------------------------------------------
+// An environment frame, with parameters represented as symbols in the heap.
+//
+//    7 6 5 4 3 2 1 0
+// 0  count . 0 0 0 F
+// 1  parent pointer   obj_t*
+// 2  symbols pointer  obj_t**  always points into an xAbsM.
+// 3  values  pointer  obj_t**  always points into an xMmm.
+//
+static inline obj_t*
+aEnvM (uint32_t count, obj_t* oEnv, obj_t** oParms, obj_t** oArgs)
+{       uint64_t* buf = halloc(4);
+        buf[0] = (uint64_t)count << 32 | TAG_ENVM;
+        buf[1] = (uint64_t)oEnv;
+        buf[2] = (uint64_t)oParms;
+        buf[3] = (uint64_t)oArgs;
+        return (obj_t*)buf;
+}
+

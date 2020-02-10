@@ -46,14 +46,21 @@ heap_t shivver_heap;
 //  aMmm   count .  .  0  0  0  F       0 0 0 0 0 0 0 1  = 0x01
 //  symt   0  0  0  0  bump  .  F       0 0 0 0 1 0 0 1  = 0x09
 //  vart   0  0  0  0  bump  .  F       0 0 0 0 1 1 0 1  = 0x0d
+//  absm   count .  .  0  0  0  F       0 0 0 0 1 0 1 1  = 0x0b
+//  clom   count .  .  0  0  0  F       0 0 0 1 1 0 1 1  = 0x1b
 //  apps   count .  .  0  0  0  F       0 0 0 0 1 1 1 1  = 0x0f
 //  appv   0  0  0  0  0  0  0  F       0 0 0 1 1 1 1 1  = 0x1f
+//  envm   count .  .  0  0  0  F       0 0 1 1 1 1 1 1  = 0x3f
 
 #define TAG_MMM         0x01
 #define TAG_SYMT        0x09
 #define TAG_VART        0x0d
+#define TAG_ABSM        0x0b
+#define TAG_CLOM        0x1b
 #define TAG_APPS        0x0f
 #define TAG_APPV        0x1f
+#define TAG_ENVM        0x3f
+
 
 // ----------------------------------------------------------------------------
 // inlines
@@ -69,3 +76,5 @@ void    shivver_printl(obj_t* obj);
 // from printp.c
 void    shivver_printp(obj_t* obj);
 
+// from eval.c
+obj_t*  shivver_eval(obj_t* env, obj_t* obj);
