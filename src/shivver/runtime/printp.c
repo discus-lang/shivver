@@ -17,7 +17,9 @@ void    shivver_printp(obj_t* obj)
           }
 
           case TAG_SYMT:
-          {     printf("(&symt \"%s\")", xSymT_name(obj));
+          {     printf  ("(&symt %u \"%s\")"
+                        , xSymT_size(obj)
+                        , xSymT_name(obj));
                 break;
           }
 

@@ -60,8 +60,8 @@ obj_t*  shivver_eval (obj_t* oEnv, obj_t* obj)
                   {     // Ariry of function must match number of values in the vector.
                         size_t nArity = xCloH_len(oClo);
                         if (xMmmH_len(oRes) != nArity)
-                        {   printf("* arity mismatch\n");
-                            abort();
+                        {       printf("* arity mismatch\n");
+                                abort();
                         }
 
                         // Extend the closure environment with the function arguments.
