@@ -23,37 +23,41 @@ obj_t*  shivver_eval (obj_t* oEnv, obj_t* obj)
           }
 
           case TAG_APVH:
-          {     obj_t* oFun  = xApvH_fun(obj);
+          {     // Evaluate the function part of the application to a closure.
+                obj_t* oFun  = xApvH_fun(obj);
                 obj_t* oClo  = shivver_eval(oEnv, oFun);
-
                 if (xObj_tag(oClo) != TAG_CLOH)
                 {       printf("* not a closure\n");
                         shivver_printp(oClo);
                         printf("\n");
                         abort();
                 }
-                obj_t* oEnv  = xCloH_env(oClo);
-                obj_t* oBody = xCloH_body(oClo);
 
+                // Evaluate the argument part of the application to a result.
                 obj_t* oArg  = xApvH_arg(obj);
                 obj_t* oRes  = shivver_eval(oEnv, oArg);
 
                 switch (xObj_tag(oRes))
-                { case TAG_MMMH:
-                  {     size_t nArity = xCloH_len(oClo);
+                { // Result is a vector.
+                  case TAG_MMMH:
+                  {     // Ariry of function must match number of values in the vector.
+                        size_t nArity = xCloH_len(oClo);
                         if (xMmmH_len(oRes) != nArity)
                         {   printf("* arity mismatch\n");
                             abort();
                         }
+
+                        // Extend the closure environment with the function arguments.
                         obj_t** osArgs  = xMmmH_args(oRes);
                         obj_t** osParms = xCloH_parms(oClo);
                         obj_t*  oEnvClo = xCloH_env(oClo);
                         obj_t*  oEnvExt = aEnvH(nArity, oEnvClo, osParms, osArgs);
 
-                        // Tail call ourselves, which is equivalent to:
-                        //   return shivver_eval (oEnvExt, oBody);
+                        // Evalute the body of the closure.
+                        //   We tail-call the evaluation function,
+                        //   which is equivalent to shivver_eval (oEnvExt, oBody);
                         oEnv = oEnvExt;
-                        obj  = oBody;
+                        obj  = xCloH_body(oClo);
                         goto again;
                   }
                   default:
