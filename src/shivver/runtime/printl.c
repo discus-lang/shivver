@@ -46,7 +46,7 @@ void    shivver_printl(obj_t* obj)
 
           case TAG_ABSH:
           {     printf("({");
-                size_t len = xAbsH_len(obj);
+                size_t len = xAbsH_count(obj);
                 for(size_t i = 0; i < len; i++)
                 {       shivver_printl_sym(xAbsH_parm(obj, i));
                         if (len - i > 1) printf(" ");

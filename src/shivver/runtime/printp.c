@@ -29,8 +29,8 @@ void    shivver_printp(obj_t* obj)
           }
 
           case TAG_ABSH:
-          {     printf("(&absh %u", xAbsH_len(obj));
-                size_t len = xAbsH_len(obj);
+          {     printf("(&absh %u", xAbsH_count(obj));
+                size_t len = xAbsH_count(obj);
                 for(size_t i = 0; i < len; i++)
                 {       printf(" ");
                         shivver_printp(xAbsH_parm(obj, i));

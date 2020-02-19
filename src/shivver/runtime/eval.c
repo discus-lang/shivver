@@ -12,14 +12,31 @@ obj_t*  shivver_eval (obj_t* oEnv, obj_t* obj)
                 return aMmmH(len, buf);
           }
 
-          case TAG_SYMT: return obj;
+          case TAG_SYMT:
+                return obj;
+
+          case TAG_VART:
+          {     obj_t*  oVal = 0;
+                if (shivver_resolveT
+                        ( oEnv
+                        , xVarT_name(obj)
+                        , xVarT_bump(obj)
+                        , &oVal))
+                        return oVal;
+                printf("* variable out of scope\n");
+                shivver_printp(obj);
+                abort();
+          }
 
           case TAG_ABSH:
-          {     return aCloH
-                        ( xAbsH_len(obj)
+          {     obj_t* oClo
+                 = aCloH
+                        ( xAbsH_count(obj)
                         , oEnv
-                        , xAbsH_parms(obj)
+                        , xAbsH_parmp(obj)
                         , xAbsH_body(obj));
+
+                return oClo;
           }
 
           case TAG_APVH:
@@ -49,7 +66,7 @@ obj_t*  shivver_eval (obj_t* oEnv, obj_t* obj)
 
                         // Extend the closure environment with the function arguments.
                         obj_t** osArgs  = xMmmH_args(oRes);
-                        obj_t** osParms = xCloH_parms(oClo);
+                        obj_t** osParms = xCloH_parmp(oClo);
                         obj_t*  oEnvClo = xCloH_env(oClo);
                         obj_t*  oEnvExt = aEnvH(nArity, oEnvClo, osParms, osArgs);
 
@@ -69,3 +86,50 @@ obj_t*  shivver_eval (obj_t* oEnv, obj_t* obj)
                 return obj;
         }
 }
+
+
+// TODO: handle bump counter.
+// Lookup a variable from the given environment.
+//  If we find it set the outResult to the value and return true,
+//  otherwise return false.
+//
+//  We treat an environemnt pointer of NULL as an empty environment,
+//  and will always return false if given one.
+
+bool    shivver_resolveT
+        ( obj_t* oEnv, char* name, size_t bump
+        , obj_t** outResult)
+{ again:
+        if (oEnv == 0) return false;
+
+        size_t nCount = xEnvH_count(oEnv);
+        for (size_t i = 0; i < nCount; i++)
+        {       obj_t* oParm = xEnvH_var(oEnv, i);
+                if (shivver_eqSym (oParm, name))
+                {       *outResult = xEnvH_val(oEnv, i);
+                        return true;
+                }
+        }
+
+        oEnv = xEnvH_parent(oEnv);
+        goto again;
+}
+
+
+// Check if a symbol has the given name.
+bool    shivver_eqSym
+        (obj_t* oSym, char* name)
+{
+        switch(xObj_tag(oSym))
+        { case TAG_SYMT:
+                if (strcmp(xSymT_name(oSym), name) == 0)
+                        return true;
+                return false;
+
+          default:
+                printf("* eqSym: object is not a symbol");
+                shivver_printp(oSym);
+                abort();
+        }
+}
+

@@ -12,7 +12,7 @@ int main(int argc, char** argv)
         obj_t* obj
          = aApvH( aAbsH ( 2
                         , (obj_t*[]){aSymT("x"), aSymT("y")}
-                        , aMmmH (2, (obj_t*[]){aVarT("y", 0), aVarT("y", 0)}))
+                        , aMmmH (2, (obj_t*[]){aVarT("y", 0), aVarT("x", 0)}))
                 , aMmmH (2, (obj_t*[]){aSymT("fresh"), aSymT("fish")}));
 
 

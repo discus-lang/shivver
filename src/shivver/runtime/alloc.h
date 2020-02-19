@@ -65,6 +65,12 @@ aSymT (const char* name)
         return (obj_t*)buf;
 }
 
+static inline uint32_t
+xSymT_size(obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return buf[0] >> 32;
+}
+
 static inline char*
 xSymT_name(obj_t* obj)
 {       uint64_t* buf = (uint64_t*)obj;
@@ -195,9 +201,15 @@ aAbsH (uint32_t count, obj_t* oParm[], obj_t* oBody)
 }
 
 static inline uint32_t
-xAbsH_len (obj_t* obj)
+xAbsH_count (obj_t* obj)
 {       uint64_t* buf = (uint64_t*)obj;
         return (uint32_t)(buf[0] >> 32);
+}
+
+static inline obj_t**
+xAbsH_parmp (obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (obj_t**)(buf + 2);
 }
 
 static inline obj_t*
@@ -206,11 +218,6 @@ xAbsH_parm (obj_t* obj, size_t i)
         return (obj_t*)buf[2 + i];
 }
 
-static inline obj_t**
-xAbsH_parms (obj_t* obj)
-{       uint64_t* buf = (uint64_t*)obj;
-        return (obj_t**)(buf + 2);
-}
 
 static inline obj_t*
 xAbsH_body (obj_t* obj)
@@ -225,16 +232,16 @@ xAbsH_body (obj_t* obj)
 //    7 6 5 4 3 2 1 0
 // 0  count . 0 0 0 F
 // 1  env pointer       obj_t*
-// 2  symbols pointer   obj_t**  always points into an xAbsM.
+// 2  symbols pointer   obj_t**  always points into an xAbsH.
 // 3  body pointer      obj_t*
 //
 static inline obj_t*
 aCloH (uint32_t len, obj_t* oEnv, obj_t** oParm, obj_t* oBody)
-{       uint64_t* buf = halloc(3);
+{       uint64_t* buf = halloc(4);
         buf[0] = (uint64_t)len << 32 | TAG_CLOH;
         buf[1] = (uint64_t)oEnv;
         buf[2] = (uint64_t)oParm;
-        buf[2] = (uint64_t)oBody;
+        buf[3] = (uint64_t)oBody;
         return (obj_t*)buf;
 }
 
@@ -251,7 +258,7 @@ xCloH_env (obj_t* obj)
 }
 
 static inline obj_t**
-xCloH_parms (obj_t* obj)
+xCloH_parmp (obj_t* obj)
 {       uint64_t* buf = (uint64_t*)obj;
         return (obj_t**)buf[2];
 }
@@ -259,7 +266,7 @@ xCloH_parms (obj_t* obj)
 static inline obj_t*
 xCloH_body (obj_t* obj)
 {       uint64_t* buf = (uint64_t*)obj;
-        return (obj_t*)buf[2];
+        return (obj_t*)buf[3];
 }
 
 
@@ -269,12 +276,13 @@ xCloH_body (obj_t* obj)
 //    7 6 5 4 3 2 1 0
 // 0  count . 0 0 0 F
 // 1  parent pointer   obj_t*
-// 2  symbols pointer  obj_t**  always points into an xAbsM.
-// 3  values  pointer  obj_t**  always points into an xMmm.
+// 2  variables pointer  obj_t**  always points into an xAbsH.
+// 3  values    pointer  obj_t**  always points into an xMmmH.
 //
 static inline obj_t*
 aEnvH (uint32_t count, obj_t* oEnv, obj_t** oParms, obj_t** oArgs)
-{       uint64_t* buf = halloc(4);
+{
+        uint64_t* buf = halloc(4);
         buf[0] = (uint64_t)count << 32 | TAG_ENVH;
         buf[1] = (uint64_t)oEnv;
         buf[2] = (uint64_t)oParms;
@@ -282,3 +290,39 @@ aEnvH (uint32_t count, obj_t* oEnv, obj_t** oParms, obj_t** oArgs)
         return (obj_t*)buf;
 }
 
+static inline uint32_t
+xEnvH_count (obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (uint32_t)(buf[0] >> 32);
+}
+
+static inline obj_t*
+xEnvH_parent (obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (obj_t*)buf[1];
+}
+
+static inline obj_t**
+xEnvH_varp (obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (obj_t**)buf[2];
+}
+
+static inline obj_t*
+xEnvH_var (obj_t* obj, uint32_t i)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (obj_t*)((obj_t**)buf[2])[i];
+}
+
+
+static inline obj_t*
+xEnvH_val (obj_t* obj, uint32_t i)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (obj_t*)((obj_t**)buf[3])[i];
+}
+
+static inline obj_t**
+xEnvH_valp (obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (obj_t**)buf[3];
+}

@@ -1,5 +1,6 @@
 #pragma once
 #include <stdlib.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -76,5 +77,14 @@ void    shivver_printl(obj_t* obj);
 // from printp.c
 void    shivver_printp(obj_t* obj);
 
+// from printm.c
+void    shivver_printm(obj_t* obj);
+
 // from eval.c
 obj_t*  shivver_eval(obj_t* env, obj_t* obj);
+
+bool    shivver_resolveT
+        (obj_t* oEnv, char* name, size_t nBump, obj_t** outResult);
+
+bool    shivver_eqSym
+        (obj_t* oSym, char* name);
