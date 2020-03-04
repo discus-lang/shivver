@@ -31,7 +31,7 @@ obj_t*  shivver_eval (obj_t* oEnv, obj_t* obj)
           case TAG_ABSH:
           {     obj_t* oClo
                  = aCloH
-                        ( xAbsH_count(obj)
+                        ( xAbsH_len(obj)
                         , oEnv
                         , xAbsH_parmp(obj)
                         , xAbsH_body(obj));
@@ -102,7 +102,7 @@ bool    shivver_resolveT
 { again:
         if (oEnv == 0) return false;
 
-        size_t nCount = xEnvH_count(oEnv);
+        size_t nCount = xEnvH_len(oEnv);
         for (size_t i = 0; i < nCount; i++)
         {       obj_t* oParm = xEnvH_var(oEnv, i);
                 if (shivver_eqSym (oParm, name))

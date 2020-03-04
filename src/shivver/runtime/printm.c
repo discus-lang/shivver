@@ -34,10 +34,10 @@ void    shivver_printm(obj_t* obj)
 
           case TAG_ABSH:
           {     printf(" .tag    = absh\n");
-                printf(" .count  = %u\n",       xAbsH_count(obj));
+                printf(" .count  = %u\n",       xAbsH_len(obj));
                 printf(" .body   = %p\n",       xAbsH_body(obj));
 
-                uint32_t n = xAbsH_count(obj);
+                uint32_t n = xAbsH_len(obj);
                 for(uint32_t i = 0; i < n; i++)
                         printf("  prm[%d] = %p\n", i, xAbsH_parm(obj, i));
                 break;
@@ -54,11 +54,11 @@ void    shivver_printm(obj_t* obj)
 
           case TAG_ENVH:
           {     printf(" .tag    = envh\n");
-                printf(" .count  = %u\n",       xEnvH_count(obj));
+                printf(" .count  = %u\n",       xEnvH_len(obj));
                 printf(" .varp   = %p\n",       xEnvH_varp(obj));
                 printf(" .valp   = %p\n",       xEnvH_valp(obj));
 
-                uint32_t n = xEnvH_count(obj);
+                uint32_t n = xEnvH_len(obj);
                 for(uint32_t i = 0; i < n; i++)
                 {       printf("  var[%i] = %p\n", i, xEnvH_var(obj, i));
                         printf("  val[%i] = %p\n", i, xEnvH_val(obj, i));
