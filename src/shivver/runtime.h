@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 
 typedef uint32_t uint24_t;
 
@@ -66,7 +67,10 @@ heap_t shivver_heap;
 // ----------------------------------------------------------------------------
 // inlines
 #include "shivver/runtime/heap.h"
-#include "shivver/runtime/alloc.h"
+#include "shivver/runtime/object/base.h"
+#include "shivver/runtime/object/hot.h"
+#include "shivver/runtime/object/static.h"
+
 
 void    shivver_heapInit(size_t nWords);
 

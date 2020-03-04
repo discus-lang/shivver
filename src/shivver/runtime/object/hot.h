@@ -1,16 +1,8 @@
 #pragma once
-#include <string.h>
+
+// Hot objects that live in the dynamic heap and whose payloads
+// are stored directly in the object.
 #include "shivver/runtime.h"
-
-static inline uint8_t
-xObj_tag (obj_t* obj)
-{       return (uint8_t)((uint64_t) (obj->header & 0x0ff));
-}
-
-// --
-// For cold storage
-//  running program will be "hot" and use real pointers.
-//  cold storage must always use handles.
 
 
 // ----------------------------------------------------------------------------
@@ -47,69 +39,6 @@ static inline obj_t**
 xMmmH_args(obj_t* obj)
 {       uint64_t* buf = (uint64_t*)obj;
         return (obj_t**)(buf + 1);
-}
-
-
-// ----------------------------------------------------------------------------
-// A symbol with a statically allocated name string.
-//
-//     7 6 5 4 3 2 1 0
-// 0   len . . 0 0 0 F
-// 1   ptr to c-string
-static inline obj_t*
-aSymT (const char* name)
-{       size_t   len  = strlen(name);
-        uint64_t* buf = halloc(2);
-        buf[0] = len << 32 | TAG_SYMT;
-        buf[1] = (uint64_t)name;
-        return (obj_t*)buf;
-}
-
-static inline uint32_t
-xSymT_size(obj_t* obj)
-{       uint64_t* buf = (uint64_t*)obj;
-        return buf[0] >> 32;
-}
-
-static inline char*
-xSymT_name(obj_t* obj)
-{       uint64_t* buf = (uint64_t*)obj;
-        return (char*)buf[1];
-}
-
-
-// ----------------------------------------------------------------------------
-// A variable with a statically allocated name string.
-//
-//     7 6 5 4 3 2 1 0
-// 0   len . . bump  F
-// 1   ptr to c-string
-//
-static inline obj_t*
-aVarT (const char* name, uint24_t nBump)
-{       size_t    len = strlen(name);
-        uint64_t* buf = halloc(2);
-        buf[0] = len << 32 | nBump << 8 | TAG_VART;
-        buf[1] = (uint64_t)name;
-        return (obj_t*)buf;
-}
-
-static inline size_t
-xVarT_size(obj_t* obj)
-{       uint64_t* buf = (uint64_t*)obj;
-        return (size_t)buf[0] >> 32;
-}
-
-static inline char*
-xVarT_name(obj_t* obj)
-{       uint64_t* buf = (uint64_t*)obj;
-        return (char*)buf[1];
-}
-
-static inline uint24_t
-xVarT_bump(obj_t* obj)
-{       uint64_t* buf = (uint64_t*)obj;
-        return (uint24_t)(buf[0] >> 8) & 0x0ffffff;
 }
 
 
@@ -275,7 +204,7 @@ xCloH_body (obj_t* obj)
 //
 //    7 6 5 4 3 2 1 0
 // 0  count . 0 0 0 F
-// 1  parent pointer   obj_t*
+// 1  parent    pointer  obj_t*
 // 2  variables pointer  obj_t**  always points into an xAbsH.
 // 3  values    pointer  obj_t**  always points into an xMmmH.
 //
