@@ -43,25 +43,50 @@ heap_t shivver_heap;
 
 // ----------------------------------------------------------------------------
 // Objects
-//
-//         7  6  5  4  3  2  1  0
-//  aMmm   count .  .  0  0  0  F       0 0 0 0 0 0 0 1  = 0x01
-//  symt   0  0  0  0  bump  .  F       0 0 0 0 1 0 0 1  = 0x09
-//  vart   0  0  0  0  bump  .  F       0 0 0 0 1 1 0 1  = 0x0d
-//  absm   count .  .  0  0  0  F       0 0 0 0 1 0 1 1  = 0x0b
-//  clom   count .  .  0  0  0  F       0 0 0 1 1 0 1 1  = 0x1b
-//  apsh   count .  .  0  0  0  F       0 0 0 0 1 1 1 1  = 0x0f
-//  apvs   0  0  0  0  0  0  0  F       0 0 0 1 1 1 1 1  = 0x1f
-//  envm   count .  .  0  0  0  F       0 0 1 1 1 1 1 1  = 0x3f
+//                                      sort    mode
+//         7  6  5  4  3  2  1  0       ------- ---
+//  mmmh   len.ptrs... 0  0  0  F       0 0 0 0 1 1 0 1  = 0x0d
+//  varh   len.chars.. 0  0  0  F       0 0 0 1 1 1 0 1  = 0x1d
+//  symh   len.chars.. 0  0  0  F       0 0 1 0 1 1 0 1  = 0x2d
+//  prmh   len.chars.. 0  0  0  F       0 0 1 1 1 1 0 1  = 0x3d
+//  absh   len.ptrs... 0  0  0  F       0 1 0 0 1 1 0 1  = 0x4d
+//  apvh   0  0  0  0  0  0  0  F       0 1 0 1 1 1 0 1  = 0x5d
+//  apsh   len.ptrs... 0  0  0  F       0 1 1 0 1 1 0 1  = 0x6d
+//  cloh   len.ptrs... 0  0  0  F       1 0 0 0 1 1 0 1  = 0x8d
+//  envh   len.ptrs... 0  0  0  F       1 0 0 1 1 1 0 1  = 0x9d
 
-#define TAG_MMMH        0x01
-#define TAG_SYMT        0x09
-#define TAG_VART        0x0d
-#define TAG_ABSH        0x0b
-#define TAG_CLOH        0x1b
-#define TAG_APSH        0x0f
-#define TAG_APVH        0x1f
-#define TAG_ENVH        0x3f
+//  symt   0  0  0  0  bump  .  F       0 0 0 1 0 0 0 1  = 0x11
+//  vart   0  0  0  0  bump  .  F       0 0 1 0 0 0 0 1  = 0x21
+//  prmt   0  0  0  0  bump  .  F       0 0 1 1 0 0 0 1  = 0x31
+//
+//  mode: 00 static
+//        01 cold
+//        11 hot
+//
+//  sort: 0000 mmm
+//        0001 var
+//        0010 sym
+//        0011 prm
+//        0100 abs
+//        0101 apv
+//        0110 aps
+//        1000 clo
+//        1001 env
+//
+
+#define TAG_MMMH        0x0d
+#define TAG_VARH        0x1d
+#define TAG_SYMH        0x2d
+#define TAG_PRMH        0x3d
+#define TAG_ABSH        0x4d
+#define TAG_APVH        0x5d
+#define TAG_APSH        0x6d
+#define TAG_CLOH        0x8d
+#define TAG_ENVH        0x9d
+
+#define TAG_VART        0x11
+#define TAG_SYMT        0x21
+#define TAG_PRMT        0x31
 
 
 // ----------------------------------------------------------------------------

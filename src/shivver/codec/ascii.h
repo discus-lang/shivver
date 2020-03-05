@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-
+#include "shivver/runtime.h"
 
 #define TOKEN_NONE      0
 #define TOKEN_END       1
@@ -34,6 +34,7 @@ shivver_token_name
         (size_t tag);
 
 
+// ------------------------------------------------------------------------------------------------
 void    shivver_lexer_next
         ( lexer_t* state
         , size_t* outToken
@@ -51,3 +52,10 @@ size_t  shivver_lexer_scan_symprm
 void    shivver_lexer_load_symprm
         (lexer_t* state, char* buf);
 
+
+// ------------------------------------------------------------------------------------------------
+obj_t*  shivver_parse_term
+        (lexer_t* state);
+
+void    shivver_parse_tok
+        (lexer_t* state, size_t tok);

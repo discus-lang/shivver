@@ -34,13 +34,13 @@ void    shivver_printl(obj_t* obj)
                 break;
           }
 
-          case TAG_SYMT:
-          {     printf("%%%s", xSymT_name(obj));
+          case TAG_VARH:
+          {     printf("%s", xVarH_name(obj));
                 break;
           }
 
-          case TAG_VART:
-          {     printf("%s", xVarT_name(obj));
+          case TAG_SYMH:
+          {     printf("%%%s", xSymH_name(obj));
                 break;
           }
 
@@ -80,6 +80,19 @@ void    shivver_printl(obj_t* obj)
                 printf(")");
                 break;
           }
+
+
+          case TAG_VART:
+          {     printf("%s", xVarT_name(obj));
+                break;
+          }
+
+          case TAG_SYMT:
+          {     printf("%%%s", xSymT_name(obj));
+                break;
+          }
+
+
 
           default:
                 printf("&invalid");

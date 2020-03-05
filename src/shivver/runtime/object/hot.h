@@ -45,6 +45,126 @@ xMmmH_args(obj_t* obj)
 
 
 // ----------------------------------------------------------------------------
+// A variable name with the characters stored in the object.
+//
+//      7  6  5  4  3  2  1  0
+//  0   len.......  0  0  0  F
+//  1   chars ...
+//
+//  len: records the length of the payload in bytes.
+
+// Allocate a new variable object in the heap and copy the
+// name string into it.
+static inline obj_t*
+aVarH (size_t len, char* str)
+{
+        // Length of the string including the null byte.
+        size_t lenn  = len + 1;
+
+        // Size of the whole object in 64-bit words.
+        size_t len64 = (lenn + 7) << 3;
+
+        // Allocate the object and write the header.
+        uint64_t* buf64 = halloc(1 + len64);
+        buf64[0] = (len << 32) | TAG_VARH;
+
+        // Copy in the character and null byte.
+        uint8_t*  buf8  = (uint8_t*)buf64;
+        for (size_t i = 0; i < len; i++)
+        {       buf8[8 + i] = str[i];
+        }
+        buf8[8 + len] = 0;
+        return (obj_t*)buf8;
+}
+
+static inline char*
+xVarH_name (obj_t* obj)
+{       uint8_t* buf = (uint8_t*)obj;
+        return (char*)(buf + 8);
+}
+
+
+// ----------------------------------------------------------------------------
+// A symbol name with the characters stored in the object.
+//
+//      7  6  5  4  3  2  1  0
+//  0   len.......  0  0  0  F
+//  1   chars ...
+//
+//  len: records the length of the payload in bytes.
+
+// Allocate a new symbol object in the heap and copy the
+// name string into it.
+static inline obj_t*
+aSymH (size_t len, char* str)
+{
+        // Length of the string including the null byte.
+        size_t lenn  = len + 1;
+
+        // Size of the whole object in 64-bit words.
+        size_t len64 = (lenn + 7) << 3;
+
+        // Allocate the object and write the header.
+        uint64_t* buf64 = halloc(1 + len64);
+        buf64[0] = (len << 32) | TAG_SYMH;
+
+        // Copy in the character and null byte.
+        uint8_t*  buf8  = (uint8_t*)buf64;
+        for (size_t i = 0; i < len; i++)
+        {       buf8[8 + i] = str[i];
+        }
+        buf8[8 + len] = 0;
+        return (obj_t*)buf8;
+}
+
+static inline char*
+xSymH_name (obj_t* obj)
+{       uint8_t* buf = (uint8_t*)obj;
+        return (char*)(buf + 8);
+}
+
+
+// ----------------------------------------------------------------------------
+// A primtiive name with the characters stored in the object.
+//
+//      7  6  5  4  3  2  1  0
+//  0   len.......  0  0  0  F
+//  1   chars ...
+//
+//  len: records the length of the payload in bytes.
+
+// Allocate a new primitive object in the heap and copy the
+// name string into it.
+static inline obj_t*
+aPrmH (size_t len, char* str)
+{
+        // Length of the string including the null byte.
+        size_t lenn  = len + 1;
+
+        // Size of the whole object in 64-bit words.
+        size_t len64 = (lenn + 7) << 3;
+
+        // Allocate the object and write the header.
+        uint64_t* buf64 = halloc(1 + len64);
+        buf64[0] = (len << 32) | TAG_PRMH;
+
+        // Copy in the character and null byte.
+        uint8_t*  buf8  = (uint8_t*)buf64;
+        for (size_t i = 0; i < len; i++)
+        {       buf8[8 + i] = str[i];
+        }
+        buf8[8 + len] = 0;
+        return (obj_t*)buf8;
+}
+
+static inline char*
+xPrmH_name (obj_t* obj)
+{       uint8_t* buf = (uint8_t*)obj;
+        return (char*)(buf + 8);
+}
+
+
+// ----------------------------------------------------------------------------
 // An application to a high-arity term.
 //
 //      7  6  5  4  3  2  1  0

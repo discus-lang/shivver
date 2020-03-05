@@ -1,6 +1,10 @@
 
 #include "shivver/codec/ascii.h"
 
+// TODO: this needs to be wrapped as a primitive function
+// so we can also call it from the object language.
+
+
 // ------------------------------------------------------------------------------------------------
 // Get the name of a token.
 const char*
@@ -59,9 +63,9 @@ void    shivver_lexer_next
         // The first character determines what sort of token this is.
         c = state->buf[state->pos];
         switch (c)
-        { case ' ':  state->pos++; goto again;
-          case '\t': state->pos++; goto again;
-          case '\n': state->pos++; goto again;
+        { case ' ':  state->pos++;      goto again;
+          case '\t': state->pos++;      goto again;
+          case '\n': state->pos++;      goto again;
 
           case '(': *tok = TOKEN_RBRA;  goto single;
           case ')': *tok = TOKEN_RKET;  goto single;
