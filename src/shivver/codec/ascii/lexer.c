@@ -1,12 +1,9 @@
 
 #include "shivver/codec/ascii.h"
 
-// TODO: this needs to be wrapped as a primitive function
-// so we can also call it from the object language.
-
 
 // ------------------------------------------------------------------------------------------------
-// Get the name of a token.
+// Get the name of a token tag.
 const char*
 shivver_token_name
         (size_t tag)
@@ -29,83 +26,87 @@ shivver_token_name
 
 
 // ------------------------------------------------------------------------------------------------
-// Get the next token from the state.
+// Scan the input string to get the next token.
+//
 //  On lex success:
-//   The state is updated so the pos points to the character after the token.
-//   The 'tok' output is set to the token tag.
-//   The 'len' output is set to the length of the token.
-//   To read long tokens, jump backwards 'len' bytes from the current position,
-//   to get to the first character in that token.
+//   'outTag' is set to the token tag.
+//   'outStr' is set to the pointer to the start of the token.
+//   'outLen' is set to the length of the token.
+//   function returns true.
 //
-//  On lex failure, returns false.
-//   The current state should be inspected to get the source position of the failure.
+//  On lex failure,
+//   'outTag' is set to TOKEN_NONE.
+//   'outStr' is set to 0.
+//   'outLen' is set to 0.
+//   function returns false.
 //
-void    shivver_lexer_next
-        ( lexer_t* state        // current lexer state, which is updated.
-        , size_t* tok           // output for token tag.
-        , size_t* len)          // output for token length.
+bool    shivver_lexer_scan
+        ( char* str             // pointer to next character of input string.
+        , size_t  strLen        // length of input prefix to consider.
+        , size_t* outTag        // output for token tag.
+        , char**  outStr        // output for pointer to start of next token.
+        , size_t* outLen)       // output for token length.
 {
-        // Current character.
-        char c  = 0;
 
   // Try to lex a token from this point.
   again:
-        // Save the current position as the token start.
-        state->prev = state->pos;
-
-        // If we're a the end of the string produce the special END token.
-        if (state->pos >= state->len)
-        {       *tok = TOKEN_END;
-                *len = 0;
-                return;
+        if (strLen == 0)
+        {       *outTag = TOKEN_END;
+                *outLen = 0;
         }
 
         // The first character determines what sort of token this is.
-        c = state->buf[state->pos];
-        switch (c)
-        { case ' ':  state->pos++;      goto again;
-          case '\t': state->pos++;      goto again;
-          case '\n': state->pos++;      goto again;
+        switch (*str)
+        { // whitespace
+          case ' ':
+          case '\t':
+          case '\n':
+                str++; strLen--;
+                goto again;
 
-          case '(': *tok = TOKEN_RBRA;  goto single;
-          case ')': *tok = TOKEN_RKET;  goto single;
-          case '{': *tok = TOKEN_CBRA;  goto single;
-          case '}': *tok = TOKEN_CKET;  goto single;
-          case ',': *tok = TOKEN_COMMA; goto single;
+          // punctuation
+          case '(': *outTag = TOKEN_RBRA;  goto single;
+          case ')': *outTag = TOKEN_RKET;  goto single;
+          case '{': *outTag = TOKEN_CBRA;  goto single;
+          case '}': *outTag = TOKEN_CKET;  goto single;
+          case ',': *outTag = TOKEN_COMMA; goto single;
 
           // symbol
           case '%':
-          {     *tok    = TOKEN_SYM;
-                *len    = shivver_lexer_scan_symprm(state);
-                return;
+          {     *outTag = TOKEN_SYM;
+                *outStr = str;
+                *outLen = shivver_lexer_scan_symprm(str, strLen);
+                return true;
           }
 
           // primitive
           case '#':
-          {     *tok    = TOKEN_PRM;
-                *len    = shivver_lexer_scan_symprm(state);
-                return;
+          {     *outTag = TOKEN_PRM;
+                *outStr = str;
+                *outLen = shivver_lexer_scan_symprm(str, strLen);
+                return true;
           }
 
           default:
                 // variables
-                if (c >= 'a' && c <= 'z')
-                {       *tok    = TOKEN_VAR;
-                        *len    = shivver_lexer_scan_var(state);
-                        return;
+                if (*str >= 'a' && *str <= 'z')
+                {       *outTag = TOKEN_VAR;
+                        *outStr = str;
+                        *outLen = shivver_lexer_scan_var(str, strLen);
+                        return true;
                 }
 
                 // lex failure.
-                *tok    = TOKEN_NONE;
-                *len    = 0;
-                return;
+                *outTag = TOKEN_NONE;
+                *outStr = 0;
+                *outLen = 0;
+                return false;
         }
 
-  // Single character token.
   single:
-        *len = 1;
-        state->pos++;
-        return;
+        *outLen = 1;
+        *outStr = str;
+        return true;
 
 }
 
@@ -113,73 +114,54 @@ void    shivver_lexer_next
 // ------------------------------------------------------------------------------------------------
 // Scan a variable name, returning the raw length in the lex buffer.
 size_t  shivver_lexer_scan_var
-        (lexer_t* state)
+        (char* str, size_t strLen)
 {
-        size_t i        = 0;
-        char   c        = 0;
-
-  again:
-        c = state->buf[state->pos + i];
-        if (c >= 'a' && c <= 'z')
-        {       i++;
-                goto again;
+        size_t len = 0;
+        while(  strLen > 0
+         &&     *str >= 'a' && *str <= 'z')
+        {
+                str++; strLen--; len++;
         }
 
-        state->pos += i;
-        return i;
+        return len;
 }
 
 
 // Load a variable name from the lex buffer into the given string buffer.
 //   The state should be as it was just after scanning the token.
 void    shivver_lexer_load_var
-        ( lexer_t*      state
-        , char*         out)
+        (char* str, size_t strLen, char* out)
 {
-        size_t iOut     = 0;
-        size_t iBuf     = state->prev;
-
-        while (iBuf < state->pos)
-                out[iOut++] = state->buf[iBuf++];
-
-        out[iOut] = 0;
+        for(size_t i = 0; i < strLen; i++)
+                out[i] = str[i];
 }
 
 
 // ------------------------------------------------------------------------------------------------
 // Scan a symbol name, returning the raw length in the lex buffer.
 size_t  shivver_lexer_scan_symprm
-        (lexer_t* state)
+        (char* str, size_t strLen)
 {
-        size_t i        = 0;
-        char   c        = 0;
+        size_t len = 0;
 
-        // skip over the starting '%' sigil.
-        i++;
+        // skip across sigil.
+        str++; strLen--; len++;
 
-  again:
-        c = state->buf[state->pos + i];
-        if (c >= 'a' && c <= 'z')
-        {       i++;
-                goto again;
+        while ( strLen > 0
+         &&     *str >= 'a' && *str <= 'z')
+        {
+                str++; strLen--; len++;
         }
 
-        state->pos += i;
-        return i;
+        return len;
 }
 
 
 // Load a symbol name from the lex buffer into the given string buffer.
 //   The state should be as it was just after scanning the token.
 void    shivver_lexer_load_symprm
-        ( lexer_t*      state
-        , char*         out)
+        (char* str, size_t strLen, char* out)
 {
-        size_t iOut     = 0;
-        size_t iBuf     = state->prev + 1;
-
-        while (iBuf < state->pos)
-                out[iOut++] = state->buf[iBuf++];
-
-        out[iOut] = 0;
+        for (size_t i = 0; i < strLen; i++)
+                out[i] = str[i];
 }

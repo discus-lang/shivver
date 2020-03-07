@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "shivver/runtime.h"
 
+// ----------------------------------------------------------------------------
 #define TOKEN_NONE      0
 #define TOKEN_END       1
 
@@ -21,41 +22,42 @@
 #define TOKEN_PRM       32
 
 
-typedef struct {
-        char*   buf;
-        size_t  len;
-        size_t  pos;
-        size_t  prev;   // position of last token start.
-} lexer_t;
-
-
+// ----------------------------------------------------------------------------
 const char*
 shivver_token_name
         (size_t tag);
 
 
-// ------------------------------------------------------------------------------------------------
-void    shivver_lexer_next
-        ( lexer_t* state
-        , size_t* outToken
-        , size_t* outLen);
+// ----------------------------------------------------------------------------
+bool    shivver_lexer_scan
+        ( char* str             // pointer to next character of input string.
+        , size_t  strLen        // length of string prefix to consider.
+        , size_t* outTag        // output for token tag.
+        , char**  outStr        // output for start of symbol.
+        , size_t* outLen);      // output for token length.
 
 size_t  shivver_lexer_scan_var
-        (lexer_t* state);
+        (char* str, size_t strLen);
 
 void    shivver_lexer_load_var
-        (lexer_t* state, char* buf);
+        (char* str, size_t len, char* out);
 
 size_t  shivver_lexer_scan_symprm
-        (lexer_t* state);
+        (char* str, size_t strLen);
 
 void    shivver_lexer_load_symprm
-        (lexer_t* state, char* buf);
+        (char* str, size_t len, char* out);
 
 
-// ------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+/*
 obj_t*  shivver_parse_term
         (lexer_t* state);
 
+obj_t*  shivver_parse_term1
+        ( lexer_t* state
+        , size_t tok, size_t len);
+
 void    shivver_parse_tok
         (lexer_t* state, size_t tok);
+*/

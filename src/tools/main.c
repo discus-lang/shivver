@@ -29,38 +29,34 @@ int main(int argc, char** argv)
         main_tokens("( ){ %fresh fish #derp }, ((");
 
 
-        char* str       = "(%fish)";
-        lexer_t state;
-        state.buf       = str;
-        state.len       = strlen(str);
-        state.pos       = 0;
-        state.prev      = 0;
-        obj_t* objP     = shivver_parse_term(&state);
-        shivver_printl(objP);
-        printf("\n");
+//        char* str       = "(%fish)";
+//        lexer_t state;
+//        state.buf       = str;
+//        state.len       = strlen(str);
+//        state.pos       = 0;
+//        state.prev      = 0;
+//        obj_t* objP     = shivver_parse_term(&state);
+//        shivver_printl(objP);
+//        printf("\n");
 
 }
 
 
 void    main_tokens(char* str)
 {
-        lexer_t state;
-        state.buf       = str;
-        state.len       = strlen(str);
-        state.pos       = 0;
-        state.prev      = 0;
+        // Get a pointer to the last char in the buffer.
+        size_t strLen   = strlen(str);
 
         size_t tag      = TOKEN_NONE;
         size_t len      = 0;
 
-        do {    tag     = TOKEN_NONE;
-                len     = 0;
-                shivver_lexer_next(&state, &tag, &len);
+        do {    shivver_lexer_scan(str, strLen, &tag, &str, &len);
 
                 switch(tag)
                 { case TOKEN_VAR:
                   {     char *buf = malloc(len + 1);
-                        shivver_lexer_load_var(&state, buf);
+                        shivver_lexer_load_var(str, len, buf);
+                        buf[len] = 0;
                         printf("(%%var \"%s\")\n", buf);
                         free(buf);
                         break;
@@ -68,7 +64,8 @@ void    main_tokens(char* str)
 
                   case TOKEN_SYM:
                   {     char *buf = malloc(len + 1);
-                        shivver_lexer_load_symprm(&state, buf);
+                        shivver_lexer_load_symprm(str, len, buf);
+                        buf[len] = 0;
                         printf("(%%sym \"%s\")\n", buf);
                         free(buf);
                         break;
@@ -76,7 +73,8 @@ void    main_tokens(char* str)
 
                   case TOKEN_PRM:
                   {     char *buf = malloc(len + 1);
-                        shivver_lexer_load_symprm(&state, buf);
+                        shivver_lexer_load_symprm(str, len, buf);
+                        buf[len] = 0;
                         printf("(%%prm \"%s\")\n", buf);
                         free(buf);
                         break;
@@ -85,6 +83,9 @@ void    main_tokens(char* str)
                   default:
                         printf("%%%s\n", shivver_token_name(tag));
                 }
+
+                str += len;
+                strLen -= len;
 
         } while (  tag != TOKEN_NONE
                 && tag != TOKEN_END);
