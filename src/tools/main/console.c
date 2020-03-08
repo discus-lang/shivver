@@ -176,7 +176,12 @@ shivver_console_line (char* line)
 
         // treat line as a term to parse.
         else {  parser_t* state = shivver_parse_alloc(line);
+
                 obj_t* obj      = shivver_parse_term(state);
+                shivver_parse_peek(state);
+                if (state->peek_tok != TOKEN_END)
+                        shivver_fail("parse error at end of input");
+
                 shivver_parse_free(state);
 
                 obj_t* objEval  = shivver_eval(0, obj);

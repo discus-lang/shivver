@@ -58,11 +58,18 @@ bool    shivver_lexer_scan
         if (strLen == 0)
         {       *outTag = TOKEN_END;
                 *outLen = 0;
+                return true;
         }
 
         // The first character determines what sort of token this is.
         switch (*str)
-        { // whitespace
+        { // end of string
+          case '\0':
+                *outTag = TOKEN_END;
+                *outLen = 0;
+                return true;
+
+          // whitespace
           case ' ':
           case '\t':
           case '\n':
