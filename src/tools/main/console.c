@@ -175,13 +175,12 @@ shivver_console_line (char* line)
         }
 
         // treat line as a term to parse.
-        {
-                parser_t* state = shivver_parse_alloc(line);
+        else {  parser_t* state = shivver_parse_alloc(line);
                 obj_t* obj      = shivver_parse_term(state);
                 shivver_parse_free(state);
 
                 obj_t* objEval  = shivver_eval(0, obj);
-                shivver_printp(objEval);
+                shivver_printl(objEval);
                 printf("\n");
                 return;
         }

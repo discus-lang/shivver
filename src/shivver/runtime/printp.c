@@ -20,7 +20,8 @@ void    shivver_printp(obj_t* obj)
 
           case TAG_VARH:
           {     printf  ("(&varh %u \"%s\" %u)"
-                        , xVarH_len(obj), xVarH_name(obj), xVarH_bump(obj));
+                        , xVarH_len(obj)
+                        , xVarH_name(obj), xVarH_bump(obj));
                 break;
           }
 
@@ -66,6 +67,12 @@ void    shivver_printp(obj_t* obj)
                 {       printf(" ");
                         shivver_printp(xApsH_arg(obj, i));
                 }
+                printf(")");
+                break;
+          }
+
+          case TAG_CLOH:
+          {     printf("(&cloh %u ...", xCloH_len(obj));
                 printf(")");
                 break;
           }

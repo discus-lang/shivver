@@ -84,40 +84,38 @@ void    shivver_evalN
                 obj_t* oHead    = xAppH_fun(oApp);
                 obj_t* oArg     = xAppH_arg(oApp);
 
-                // Evaluate the head to a value.
+                // Evaluate the head.
                 obj_t* oHeadV   = 0;
                 shivver_evalN (1, &oHeadV, oEnv, oHead);
 
-                // Decide what to do based on the form of the head.
                 switch(xObj_tag(oHeadV))
                 { case TAG_SYMH:
-                  {     obj_t*  oArgV;
+                  {     // For applications of symbols,
+                        // evaluate all the arguments and rebuild the application.
+                        obj_t*  oArgV;
                         shivver_evalN(1, &oArgV, oEnv, oArg);
-                        osRes[0]        = aAppH(oHeadV, oArgV);
+                        osRes[0] = aAppH(oHeadV, oArgV);
                         return;
                   }
 
                   case TAG_CLOH:
-                  {     // Unpack the components of the closure.
+                  {     // For applications of closures,
+                        // evaluate the arguments, add them to environment and continue
+                        // with the body expresssion.
                         obj_t*  oClo    = oHeadV;
                         size_t  nParams = xCloH_len(oClo);
-                        obj_t** osParms = xCloH_parmp(oClo);
-                        obj_t*  oEnvClo = xCloH_env(oClo);
-                        obj_t*  oBody   = xCloH_body(oClo);
 
                         // Evaluate the arguments.
                         obj_t* osArgs[nParams];
                         shivver_evalN(nParams, osArgs, oEnv, oArg);
 
-                        // Extend the closure environment with the function arguments.
-                        //  This copies the argument pointers into the new environment
-                        //  frame, so it's ok to give up the osArgs array
-                        //  in the following tail call.
-                        obj_t*  oEnvExt = aEnvH(nParams, oEnvClo, osParms, osArgs);
+                        // Tail call ourselves with the extended environment
+                        // to evaluate the body.
+                        oEnv    = aEnvH (nParams
+                                        , xCloH_env(oClo)
+                                        , xCloH_parmp(oClo), osArgs);
 
-                        // Tailcall ourselves to evaluate the body.
-                        oEnv    = oEnvExt;
-                        oExp    = oBody;
+                        oExp    = xCloH_body(oClo);
                         goto again;
                   }
 
@@ -125,6 +123,62 @@ void    shivver_evalN
                         shivver_fail("cannot apply");
                 }
           }
+
+          case TAG_APSH:
+          {     obj_t* oAps     = oExp;
+                uint32_t nArgs  = xApsH_len(oAps);
+                obj_t* oHead    = xApsH_fun(oAps);
+
+                // Evaluate the head.
+                obj_t* oHeadV   = 0;
+                shivver_evalN (1, &oHeadV, oEnv, oHead);
+
+                switch(xObj_tag(oHeadV))
+                { case TAG_SYMH:
+                  {     // For applications of symbols,
+                        // evaluate all the arguments and rebuild the application.
+                        obj_t* osArgVs[nArgs];
+                        for(size_t i = 0; i < nArgs; i++)
+                        {       obj_t* oArg = xApsH_arg(oAps, i);
+                                shivver_evalN(1, osArgVs + i, oEnv, oArg);
+                        }
+
+                        osRes[0] = aApsH(nArgs, oHeadV, osArgVs);
+                        return;
+                  }
+
+                  case TAG_CLOH:
+                  {     // For applications of closures,
+                        // evaluate the arguments, add them to environment and continue
+                        // with the body expresssion.
+                        obj_t* oClo     = oHeadV;
+                        size_t nParams  = xCloH_len(oClo);
+                        size_t nArgs    = xApsH_len(oAps);
+                        if (nParams != nArgs)
+                                shivver_fail("arity mismatch in application");
+
+                        // Evaluate all the arguments.
+                        obj_t* osArgs[nArgs];
+                        for(size_t i = 0; i < nArgs; i++)
+                        {       obj_t* oArg = xApsH_arg(oAps, i);
+                                shivver_evalN(1, osArgs + i, oEnv, oArg);
+                        }
+
+                        // Tail call ourselves with the extended environment
+                        // to evaluate the body.
+                        oEnv    = aEnvH ( nParams
+                                        , xCloH_env(oClo)
+                                        , xCloH_parmp(oClo), osArgs);
+
+                        oExp    = xCloH_body(oClo);
+                        goto again;
+                  }
+
+                  default:
+                        shivver_fail("cannot apply");
+                }
+          }
+
 
           // static  --------------------------------------------------
           case TAG_VART:
@@ -147,7 +201,7 @@ void    shivver_evalN
 
           case TAG_SYMT:
           {     if (nArity != 1)
-                        shivver_fail("arity mismtch for symbol");
+                        shivver_fail("arity mismatch for symbol");
                 osRes[0] = oExp;
                 return;
           }
@@ -176,7 +230,7 @@ void    shivver_evalN
 //
 //  We treat an environemnt pointer of NULL as an empty environment,
 //  and will always return false if given one.
-
+//
 obj_t*
 shivver_resolveT
         (obj_t* oEnv, char* name, size_t bump)
