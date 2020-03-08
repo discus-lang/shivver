@@ -9,6 +9,7 @@ shivver_parse_isTermStart(size_t tok)
         switch(tok)
         { case TOKEN_RBRA:
           case TOKEN_SBRA:
+          case TOKEN_CBRA:
           case TOKEN_VAR:
           case TOKEN_SYM:
           case TOKEN_PRM:
@@ -50,10 +51,21 @@ shivver_parse_term
                 return obj;
           }
 
+          // Term ::= '{' Name* '}' Term
+          case TOKEN_CBRA:
+          {     shivver_parse_shift(state);
+                objlist_t* list = shivver_parse_varSpaceList(state);
+                shivver_parse_tok(state, TOKEN_CKET);
+                obj_t* objBody  = shivver_parse_term(state);
+                obj_t* obj      = aAbsH(list->used, list->list, objBody);
+                shivver_objlist_free(list);
+                return obj;
+          }
+
           // Term ::= '[' Term,* ']'
           case TOKEN_SBRA:
           {     shivver_parse_shift(state);
-                objlist_t* list = shivver_parse_termList(state);
+                objlist_t* list = shivver_parse_termCommaList(state);
                 shivver_parse_tok(state, TOKEN_SKET);
                 obj_t* obj      = aMmmH(list->used, list->list);
                 shivver_objlist_free(list);
@@ -74,14 +86,30 @@ shivver_parse_term
         }
 }
 
+// Parse a list of variable names separated by whitespace.
+objlist_t*
+shivver_parse_varSpaceList
+        (parser_t* state)
+{
+        objlist_t* list = shivver_objlist_alloc();
+
+  again:
+        shivver_parse_peek(state);
+        if (! (state->peek_tok == TOKEN_VAR))
+                return list;
+
+        shivver_parse_shift(state);
+        obj_t* obj = aVarH(state->curr_len, state->curr_str);
+        shivver_objlist_append(list, obj);
+        goto again;
+}
 
 
 // Parse a list of terms separated by commas.
 objlist_t*
-shivver_parse_termList
+shivver_parse_termCommaList
         (parser_t* state)
 {
-        // A new empty objlist.
         objlist_t* list = shivver_objlist_alloc();
 
   again:

@@ -107,7 +107,11 @@ shivver_parse_term
         (parser_t* state);
 
 objlist_t*
-shivver_parse_termList
+shivver_parse_varSpaceList
+        (parser_t* state);
+
+objlist_t*
+shivver_parse_termCommaList
         (parser_t* state);
 
 

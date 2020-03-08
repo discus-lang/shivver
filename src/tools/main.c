@@ -30,7 +30,7 @@ int main(int argc, char** argv)
         main_tokens("( ){ %fresh fish #derp }, ((");
 
 
-        char* str       = "[hello, world, [%fresh, %fish]]";
+        char* str       = "[hello, world, {x y} derp]";
         parser_t* state = shivver_parse_alloc(str);
         obj_t* objP     = shivver_parse_term(state);
         shivver_printp(objP);
