@@ -112,8 +112,7 @@ shivver_parse_term0
           }
 
           default:
-                printf("parse fail\n");
-                abort();
+                shivver_fail("parse failure");
         }
 }
 

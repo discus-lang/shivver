@@ -2,7 +2,6 @@
 #include "shivver/runtime.h"
 #include "shivver/codec/ascii.h"
 
-
 // Allocate a new parser state for a null-terminated string.
 parser_t*
 shivver_parse_alloc
@@ -84,6 +83,6 @@ void    shivver_parse_tok
         }
 
         printf("expected %s\n", shivver_token_name(tok));
-        abort();
+        shivver_fail("unexpected tok");
 }
 

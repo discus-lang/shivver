@@ -5,7 +5,9 @@
 obj_t*  shivver_eval (obj_t* oEnv, obj_t* obj)
 { again:
         switch(xObj_tag(obj))
-        { case TAG_MMMH:
+        {
+          // hot ----------------------------------------------------
+          case TAG_MMMH:
           {     size_t len = xMmmH_len(obj);
                 obj_t** buf = alloca(sizeof(obj_t*) * len);
                 for (size_t i = 0; i < len; i++)
@@ -13,21 +15,6 @@ obj_t*  shivver_eval (obj_t* oEnv, obj_t* obj)
                 return aMmmH(len, buf);
           }
 
-          case TAG_SYMT:
-                return obj;
-
-          case TAG_VART:
-          {     obj_t*  oVal = 0;
-                if (shivver_resolveT
-                        ( oEnv
-                        , xVarT_name(obj)
-                        , xVarT_bump(obj)
-                        , &oVal))
-                        return oVal;
-                printf("* variable out of scope\n");
-                shivver_printp(obj);
-                shivver_fail("evaluation failed");
-          }
 
           case TAG_ABSH:
           {     obj_t* oClo
@@ -41,47 +28,78 @@ obj_t*  shivver_eval (obj_t* oEnv, obj_t* obj)
           }
 
           case TAG_APPH:
-          {     // Evaluate the function part of the application to a closure.
-                obj_t* oFun  = xAppH_fun(obj);
-                obj_t* oClo  = shivver_eval(oEnv, oFun);
-                if (xObj_tag(oClo) != TAG_CLOH)
-                {       printf("* not a closure\n");
-                        shivver_printp(oClo);
-                        printf("\n");
-                        shivver_fail("evaluation failed");
-                }
+          {     // Evaluate the head part.
+                obj_t* oHead    = xAppH_fun(obj);
+                obj_t* oHeadV   = shivver_eval(oEnv, oHead);
 
-                // Evaluate the argument part of the application to a result.
-                obj_t* oArg  = xAppH_arg(obj);
-                obj_t* oRes  = shivver_eval(oEnv, oArg);
+                switch(xObj_tag(oHeadV))
+                { case TAG_SYMH:
+                  {     obj_t* oArg = xAppH_arg(obj);
+                        return aAppH(oHeadV, oArg);
+                  }
 
-                switch (xObj_tag(oRes))
-                { // Result is a vector.
-                  case TAG_MMMH:
-                  {     // Arity of function must match number of values in the vector.
-                        size_t nArity = xCloH_len(oClo);
-                        if (xMmmH_len(oRes) != nArity)
-                        {       printf("* arity mismatch\n");
-                                shivver_fail("evaluation failed");
+                  case TAG_CLOH:
+                  {     // Evaluate the argument part of the application to a result.
+                        obj_t* oClo = oHeadV;
+                        obj_t* oArg = xAppH_arg(obj);
+                        obj_t* oRes = shivver_eval(oEnv, oArg);
+
+                        switch (xObj_tag(oRes))
+                        { case TAG_MMMH:
+                          {     // Arity of function must match number of values in the vector.
+                                size_t nArity = xCloH_len(oClo);
+                                if (xMmmH_len(oRes) != nArity)
+                                {       printf("* arity mismatch\n");
+                                        shivver_fail("evaluation failed");
+                                }
+
+                                // Extend the closure environment with the function arguments.
+                                obj_t** osArgs  = xMmmH_args(oRes);
+                                obj_t** osParms = xCloH_parmp(oClo);
+                                obj_t*  oEnvClo = xCloH_env(oClo);
+                                obj_t*  oEnvExt = aEnvH(nArity, oEnvClo, osParms, osArgs);
+
+                                // Evalute the body of the closure.
+                                //   We tail-call the evaluation function,
+                                //   which is equivalent to shivver_eval (oEnvExt, oBody);
+                                oEnv = oEnvExt;
+                                obj  = xCloH_body(oClo);
+                                goto again;
+                          }
+                          default:
+                                shivver_fail("eval: unhandled application");
                         }
 
-                        // Extend the closure environment with the function arguments.
-                        obj_t** osArgs  = xMmmH_args(oRes);
-                        obj_t** osParms = xCloH_parmp(oClo);
-                        obj_t*  oEnvClo = xCloH_env(oClo);
-                        obj_t*  oEnvExt = aEnvH(nArity, oEnvClo, osParms, osArgs);
-
-                        // Evalute the body of the closure.
-                        //   We tail-call the evaluation function,
-                        //   which is equivalent to shivver_eval (oEnvExt, oBody);
-                        oEnv = oEnvExt;
-                        obj  = xCloH_body(oClo);
-                        goto again;
                   }
+
                   default:
-                        shivver_fail("eval: unhandled application");
+                  {     printf("* cannot apply\n");
+                        shivver_printp(oHeadV);
+                        printf("\n");
+                        shivver_fail("evaluation failed");
+                  }
                 }
           }
+
+          // static  --------------------------------------------------
+          case TAG_VART:
+          {     obj_t*  oVal = 0;
+                if (shivver_resolveT
+                        ( oEnv
+                        , xVarT_name(obj)
+                        , xVarT_bump(obj)
+                        , &oVal))
+                        return oVal;
+                printf("* variable out of scope\n");
+                shivver_printp(obj);
+                shivver_fail("evaluation failed");
+          }
+
+          case TAG_SYMT:
+                return obj;
+
+          case TAG_PRMT:
+                return obj;
 
           default:
                 return obj;
