@@ -1,39 +1,26 @@
 
-#include "shivver/runtime.h"
 #include "shivver/codec/ascii.h"
 
 
-// Allocate a new parser state for a null-terminated string.
-parser_t*
-shivver_parse_alloc
-        (char* str)
+// Check if the given token can start a term.
+bool
+shivver_parse_isTermStart(size_t tok)
 {
-        parser_t* state = malloc(sizeof(parser_t));
-        state->str      = str;
-        state->len      = strlen(str);
-
-        state->curr_tok = TOKEN_NONE;
-        state->curr_str = 0;
-        state->curr_len = 0;
-
-        state->peek_tok = TOKEN_NONE;
-        state->peek_str = 0;
-        state->peek_len = 0;
-
-        return state;
-}
-
-
-// Free a parser state.
-void    shivver_parse_free
-        (parser_t* state)
-{
-        free(state);
+        switch(tok)
+        { case TOKEN_RBRA:
+          case TOKEN_SBRA:
+          case TOKEN_VAR:
+          case TOKEN_SYM:
+          case TOKEN_PRM:
+                return true;
+        }
+        return false;
 }
 
 
 // Parse a term.
-obj_t*  shivver_parse_term
+obj_t*
+shivver_parse_term
         (parser_t* state)
 {
         shivver_parse_peek(state);
@@ -63,6 +50,16 @@ obj_t*  shivver_parse_term
                 return obj;
           }
 
+          // Term ::= '[' Term,* ']'
+          case TOKEN_SBRA:
+          {     shivver_parse_shift(state);
+                objlist_t* list = shivver_parse_termList(state);
+                shivver_parse_tok(state, TOKEN_SKET);
+                obj_t* obj      = aMmmH(list->used, list->list);
+                shivver_objlist_free(list);
+                return obj;
+          }
+
           // Term ::= '(' Term ')'
           case TOKEN_RBRA:
           {     shivver_parse_shift(state);
@@ -78,58 +75,28 @@ obj_t*  shivver_parse_term
 }
 
 
-// Load the next token into the peek buffer.
-void    shivver_parse_peek
+
+// Parse a list of terms separated by commas.
+objlist_t*
+shivver_parse_termList
         (parser_t* state)
 {
-        // If already have a peeked then we don't need to scan another one.
-        if (state->peek_tok != 0)
-                return;
+        // A new empty objlist.
+        objlist_t* list = shivver_objlist_alloc();
 
-        // Scan the next token from the input.
-        shivver_lexer_scan
-                ( state->str, state->len
-                , &state->peek_tok, &state->peek_str, &state->peek_len);
-}
-
-
-// Accept the peeked token.
-void    shivver_parse_shift
-        (parser_t* state)
-{
-        // There needs to be a peeked token already in the buffer.
-        assert (state->peek_tok != 0);
-
-        // Load the peeked token into the current token buffer.
-        state->curr_tok = state->peek_tok;
-        state->curr_str = state->peek_str;
-        state->curr_len = state->peek_len;
-
-        // Clear the peek buffer.
-        state->peek_tok = 0;
-        state->peek_str = 0;
-        state->peek_len = 0;
-
-        // Update the current position in the input string.
-        state->str      = state->curr_str + state->curr_len;
-
-        state->len      = state->len
-                        - (state->curr_str - state->str)
-                        - state->curr_len;
-}
-
-
-// Parse the given token, or error.
-void    shivver_parse_tok
-        (parser_t* state, size_t tok)
-{
+  again:
         shivver_parse_peek(state);
-        if(state->peek_tok == tok)
+        if (! shivver_parse_isTermStart(state->peek_tok))
+                return list;
+
+        obj_t* obj = shivver_parse_term(state);
+        shivver_objlist_append(list, obj);
+
+        shivver_parse_peek(state);
+        if (state->peek_tok == TOKEN_COMMA)
         {       shivver_parse_shift(state);
-                return;
+                goto again;
         }
 
-        printf("expected %s\n", shivver_token_name(tok));
-        abort();
+        return list;
 }
-

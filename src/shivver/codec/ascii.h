@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "shivver/runtime.h"
+#include "shivver/util.h"
 
 // ----------------------------------------------------------------------------
 #define TOKEN_NONE      0
@@ -15,6 +16,8 @@
 #define TOKEN_RKET      11
 #define TOKEN_CBRA      12
 #define TOKEN_CKET      13
+#define TOKEN_SBRA      14
+#define TOKEN_SKET      15
 
 #define TOKEN_COMMA     20
 
@@ -46,43 +49,65 @@ shivver_token_name
 
 
 // ----------------------------------------------------------------------------
-bool    shivver_lexer_scan
+bool
+shivver_lexer_scan
         ( char* str             // pointer to next character of input string.
         , size_t  strLen        // length of string prefix to consider.
         , size_t* outTag        // output for token tag.
         , char**  outStr        // output for start of symbol.
         , size_t* outLen);      // output for token length.
 
-size_t  shivver_lexer_scan_var
+size_t
+shivver_lexer_scan_var
         (char* str, size_t strLen);
 
-void    shivver_lexer_load_var
+void
+shivver_lexer_load_var
         (char* str, size_t len, char* out);
 
-size_t  shivver_lexer_scan_symprm
+size_t
+shivver_lexer_scan_symprm
         (char* str, size_t strLen);
 
-void    shivver_lexer_load_symprm
+void
+shivver_lexer_load_symprm
         (char* str, size_t len, char* out);
 
 
 // ----------------------------------------------------------------------------
+// from ascii/parse/base.c
 parser_t*
-        shivver_parse_alloc
+shivver_parse_alloc
         (char* str);
 
-void    shivver_parse_free
+void
+shivver_parse_free
         (parser_t* state);
 
-obj_t*  shivver_parse_term
+void
+shivver_parse_peek
         (parser_t* state);
 
-void    shivver_parse_peek
+void
+shivver_parse_shift
         (parser_t* state);
 
-void    shivver_parse_shift
-        (parser_t* state);
-
-void    shivver_parse_tok
+void
+shivver_parse_tok
         (parser_t* state, size_t tok);
+
+
+// from ascii/parse/term.c
+bool
+shivver_parse_isTermStart
+        (size_t tok);
+
+obj_t*
+shivver_parse_term
+        (parser_t* state);
+
+objlist_t*
+shivver_parse_termList
+        (parser_t* state);
+
 
