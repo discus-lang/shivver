@@ -181,7 +181,7 @@ shivver_console_line (char* line)
                 shivver_parse_free(state);
 
                 obj_t* objEval  = shivver_eval(0, obj);
-                shivver_printl(objEval);
+                shivver_printp(objEval);
                 printf("\n");
                 return;
         }

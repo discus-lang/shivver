@@ -70,6 +70,13 @@ void    shivver_printl(obj_t* obj)
                 break;
           }
 
+          case TAG_CLOH:
+                printf("&cloh...");
+                break;
+
+          case TAG_ENVH:
+                printf("&envh...");
+                break;
 
           // static ---------------------------------------
           case TAG_VART:
@@ -83,6 +90,6 @@ void    shivver_printl(obj_t* obj)
           }
 
           default:
-                printf("&invalid %u", xObj_tag(obj));
+                printf("&invalid %0x", xObj_tag(obj));
         }
 }

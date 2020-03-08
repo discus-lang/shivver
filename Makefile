@@ -8,8 +8,8 @@ clean:
 	rm -Rf bin build
 
 
-# FLAGS_DEBUG		= -g -fsanitize=address
-FLAGS_DEBUG		=
+FLAGS_DEBUG		= -g -fsanitize=address
+# FLAGS_DEBUG		=
 
 sources_shivver_c	= $(shell find src/shivver -name "*.c")
 sources_shivver_h	= $(shell find src/shivver -name "*.h")

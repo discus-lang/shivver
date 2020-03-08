@@ -117,10 +117,23 @@ void    shivver_printp(obj_t* obj);
 void    shivver_printm(obj_t* obj);
 
 // from eval.c
-obj_t*  shivver_eval(obj_t* env, obj_t* obj);
+obj_t*
+shivver_eval
+        (obj_t* env, obj_t* obj);
 
-bool    shivver_resolveT
-        (obj_t* oEnv, char* name, size_t nBump, obj_t** outResult);
+void
+shivver_evalN
+        (size_t         nArity
+        , obj_t**       osRes
+        , obj_t*        oEnv
+        , obj_t*        oExp);
+
+bool
+shivver_resolveT
+        ( obj_t**       outResult
+        , obj_t*        oEnv
+        , char*         name
+        , size_t        nBump);
 
 bool    shivver_eqSym
         (obj_t* oSym, char* name);
