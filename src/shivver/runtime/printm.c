@@ -19,14 +19,14 @@ void    shivver_printm(obj_t* obj)
 
           case TAG_SYMT:
           {     printf(" .tag    = symt\n");
-                printf(" .size   = %u\n",       xSymT_size(obj));
+                printf(" .size   = %u\n",       xSymT_len(obj));
                 printf(" .name   = \"%s\"\n",   xSymT_name(obj));
                 break;
           }
 
           case TAG_VART:
           {     printf(" .tag    = vart\n");
-                printf(" .size   = %zu\n",      xVarT_size(obj));
+                printf(" .size   = %u\n",       xVarT_len(obj));
                 printf(" .name   = \"%s\"\n",   xVarT_name(obj));
                 printf(" .bump   = %u\n",       xVarT_bump(obj));
                 break;

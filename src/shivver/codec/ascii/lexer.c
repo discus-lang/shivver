@@ -41,7 +41,7 @@ shivver_token_name
 //   function returns false.
 //
 bool    shivver_lexer_scan
-        ( char* str             // pointer to next character of input string.
+        ( char*   str           // pointer to next character of input string.
         , size_t  strLen        // length of input prefix to consider.
         , size_t* outTag        // output for token tag.
         , char**  outStr        // output for pointer to start of next token.

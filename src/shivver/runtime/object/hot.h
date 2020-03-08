@@ -12,12 +12,14 @@
 //
 //      7  6  5  4  3  2  1  0
 //  0   len.......  0  0  0  F
-//  1   pointer 0
-//  ... pointer ...
+//  1   pointer 0.............
+//  ... pointer...............
 //
 static inline obj_t*
-aMmmH (size_t len, obj_t** arg)
-{       uint64_t* buf = halloc(1 + len);
+aMmmH (uint32_t len32, obj_t** arg)
+{
+        uint64_t  len = (uint64_t)len32;
+        uint64_t* buf = halloc(1 + len);
         buf[0] = len << 32 | TAG_MMMH;
         for (size_t i = 0; i < len; i++)
                 buf[1 + i] = (uint64_t)arg[i];
@@ -48,24 +50,29 @@ xMmmH_args(obj_t* obj)
 // A variable name with the characters stored in the object.
 //
 //      7  6  5  4  3  2  1  0
-//  0   len.......  0  0  0  F
-//  1   chars ...
+//  0   len.......  bump...  F
+//  1   chars.................
+//  ... chars.................
 //
-//  len: records the length of the payload in bytes.
-
+//  len: records the length of the string in bytes,
+//       not including the trailing null byte.
+//
 // Allocate a new variable object in the heap and copy the
 // name string into it.
+//
 static inline obj_t*
-aVarH (size_t len, char* str)
+aVarH (uint32_t len32, char* str)
 {
+        uint64_t len    = (uint64_t)len32;
+
         // Length of the string including the null byte.
-        size_t lenn  = len + 1;
+        uint64_t lenn   = len + 1;
 
         // Size of the whole object in 64-bit words.
-        size_t len64 = (lenn + 7) << 3;
+        uint64_t lenw  = (lenn + 7) << 3;
 
         // Allocate the object and write the header.
-        uint64_t* buf64 = halloc(1 + len64);
+        uint64_t* buf64 = halloc(1 + lenw);
         buf64[0] = (len << 32) | TAG_VARH;
 
         // Copy in the character and null byte.
@@ -77,10 +84,22 @@ aVarH (size_t len, char* str)
         return (obj_t*)buf8;
 }
 
+static inline uint32_t
+xVarH_len(obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (uint32_t)(buf[0] >> 32);
+}
+
 static inline char*
-xVarH_name (obj_t* obj)
+xVarH_name(obj_t* obj)
 {       uint8_t* buf = (uint8_t*)obj;
         return (char*)(buf + 8);
+}
+
+static inline uint24_t
+xVarH_bump(obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (uint24_t)(buf[0] >> 8) & 0x0ffffff;
 }
 
 
@@ -89,23 +108,27 @@ xVarH_name (obj_t* obj)
 //
 //      7  6  5  4  3  2  1  0
 //  0   len.......  0  0  0  F
-//  1   chars ...
+//  1   chars.................
+//  ... chars.................
 //
-//  len: records the length of the payload in bytes.
+//  len: records the length of the string in bytes.
+//       not including the trailing null byte.
 
 // Allocate a new symbol object in the heap and copy the
 // name string into it.
 static inline obj_t*
-aSymH (size_t len, char* str)
+aSymH (uint32_t len32, char* str)
 {
+        uint64_t len    = (uint64_t)len32;
+
         // Length of the string including the null byte.
-        size_t lenn  = len + 1;
+        size_t lenn     = len + 1;
 
         // Size of the whole object in 64-bit words.
-        size_t len64 = (lenn + 7) << 3;
+        size_t lenw    = (lenn + 7) << 3;
 
         // Allocate the object and write the header.
-        uint64_t* buf64 = halloc(1 + len64);
+        uint64_t* buf64 = halloc(1 + lenw);
         buf64[0] = (len << 32) | TAG_SYMH;
 
         // Copy in the character and null byte.
@@ -115,6 +138,12 @@ aSymH (size_t len, char* str)
         }
         buf8[8 + len] = 0;
         return (obj_t*)buf8;
+}
+
+static inline uint32_t
+xSymH_len(obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (uint32_t)(buf[0] >> 32);
 }
 
 static inline char*
@@ -136,16 +165,18 @@ xSymH_name (obj_t* obj)
 // Allocate a new primitive object in the heap and copy the
 // name string into it.
 static inline obj_t*
-aPrmH (size_t len, char* str)
+aPrmH (uint32_t len32, char* str)
 {
+        uint64_t len    = (uint64_t)len32;
+
         // Length of the string including the null byte.
-        size_t lenn  = len + 1;
+        size_t lenn     = len + 1;
 
         // Size of the whole object in 64-bit words.
-        size_t len64 = (lenn + 7) << 3;
+        size_t lenw     = (lenn + 7) << 3;
 
         // Allocate the object and write the header.
-        uint64_t* buf64 = halloc(1 + len64);
+        uint64_t* buf64 = halloc(1 + lenw);
         buf64[0] = (len << 32) | TAG_PRMH;
 
         // Copy in the character and null byte.
@@ -155,6 +186,12 @@ aPrmH (size_t len, char* str)
         }
         buf8[8 + len] = 0;
         return (obj_t*)buf8;
+}
+
+static inline uint32_t
+xPrmH_len(obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (uint32_t)(buf[0] >> 32);
 }
 
 static inline char*

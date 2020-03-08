@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <assert.h>
 #include "shivver/runtime.h"
 
 // ----------------------------------------------------------------------------
@@ -20,6 +21,22 @@
 #define TOKEN_VAR       30
 #define TOKEN_SYM       31
 #define TOKEN_PRM       32
+
+
+// ----------------------------------------------------------------------------
+typedef struct {
+        char*   str;
+        size_t  len;    // remaining chars in string to parse.
+
+        size_t  curr_tok;
+        char*   curr_str;
+        size_t  curr_len;
+
+        size_t  peek_tok;
+        char*   peek_str;
+        size_t  peek_len;
+
+} parser_t;
 
 
 // ----------------------------------------------------------------------------
@@ -50,14 +67,22 @@ void    shivver_lexer_load_symprm
 
 
 // ----------------------------------------------------------------------------
-/*
-obj_t*  shivver_parse_term
-        (lexer_t* state);
+parser_t*
+        shivver_parse_alloc
+        (char* str);
 
-obj_t*  shivver_parse_term1
-        ( lexer_t* state
-        , size_t tok, size_t len);
+void    shivver_parse_free
+        (parser_t* state);
+
+obj_t*  shivver_parse_term
+        (parser_t* state);
+
+void    shivver_parse_peek
+        (parser_t* state);
+
+void    shivver_parse_shift
+        (parser_t* state);
 
 void    shivver_parse_tok
-        (lexer_t* state, size_t tok);
-*/
+        (parser_t* state, size_t tok);
+

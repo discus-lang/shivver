@@ -5,7 +5,9 @@
 void    shivver_printp(obj_t* obj)
 {
         switch (xObj_tag(obj))
-        { case TAG_MMMH:
+        {
+          // hot ----------------------------------------------------
+          case TAG_MMMH:
           {     uint32_t len = xMmmH_len(obj);
                 printf("(&mmmh %u", len);
                 for(size_t i = 0; i < len; i++)
@@ -16,17 +18,21 @@ void    shivver_printp(obj_t* obj)
                 break;
           }
 
-          case TAG_SYMT:
-          {     printf  ("(&symt %u \"%s\")"
-                        , xSymT_size(obj)
-                        , xSymT_name(obj));
+          case TAG_VARH:
+          {     printf  ("(&varh %u \"%s\" %u)"
+                        , xVarH_len(obj), xVarH_name(obj), xVarH_bump(obj));
                 break;
           }
 
-          case TAG_VART:
-          {     printf  ("(&vart %zu \"%s\" %d)"
-                        , xVarT_size(obj), xVarT_name(obj)
-                        , xVarT_bump(obj));
+          case TAG_SYMH:
+          {     printf  ("(&symh %u \"%s\")"
+                        , xSymH_len(obj), xSymH_name(obj));
+                break;
+          }
+
+          case TAG_PRMH:
+          {     printf  ("(&prmh %u \"%s\")"
+                        , xPrmH_len(obj), xPrmH_name(obj));
                 break;
           }
 
@@ -63,6 +69,22 @@ void    shivver_printp(obj_t* obj)
                 printf(")");
                 break;
           }
+
+          // static -------------------------------------------------
+          case TAG_SYMT:
+          {     printf  ("(&symt %u \"%s\")"
+                        , xSymT_len(obj)
+                        , xSymT_name(obj));
+                break;
+          }
+
+          case TAG_VART:
+          {     printf  ("(&vart %u \"%s\" %u)"
+                        , xVarT_len(obj), xVarT_name(obj)
+                        , xVarT_bump(obj));
+                break;
+          }
+
 
           default:
           {     printf("&invalid");

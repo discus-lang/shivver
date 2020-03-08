@@ -26,18 +26,15 @@ int main(int argc, char** argv)
         shivver_printl(objE);
         printf("\n");
 
+
         main_tokens("( ){ %fresh fish #derp }, ((");
 
 
-//        char* str       = "(%fish)";
-//        lexer_t state;
-//        state.buf       = str;
-//        state.len       = strlen(str);
-//        state.pos       = 0;
-//        state.prev      = 0;
-//        obj_t* objP     = shivver_parse_term(&state);
-//        shivver_printl(objP);
-//        printf("\n");
+        char* str       = "(hello)";
+        parser_t* state = shivver_parse_alloc(str);
+        obj_t* objP     = shivver_parse_term(state);
+        shivver_printp(objP);
+        printf("\n");
 
 }
 
