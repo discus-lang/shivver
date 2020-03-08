@@ -106,6 +106,10 @@ obj_t*
 shivver_parse_term
         (parser_t* state);
 
+obj_t*
+shivver_parse_term0
+        (parser_t* state);
+
 objlist_t*
 shivver_parse_varSpaceList
         (parser_t* state);

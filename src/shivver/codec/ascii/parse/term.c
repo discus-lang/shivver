@@ -19,9 +19,40 @@ shivver_parse_isTermStart(size_t tok)
 }
 
 
-// Parse a term.
+// Parse a term or term application.
 obj_t*
 shivver_parse_term
+        (parser_t* state)
+{
+        obj_t* oFun     = shivver_parse_term0(state);
+
+        shivver_parse_peek(state);
+
+        // When the function is directly applied to a term list,
+        // build an aps node directly to avoid the intermediate mmm node.
+        if (state->peek_tok == TOKEN_SBRA)
+        {       shivver_parse_shift(state);
+                objlist_t* list = shivver_parse_termCommaList(state);
+                shivver_parse_tok(state, TOKEN_SKET);
+                obj_t* obj      = aApsH (list->used, oFun, list->list);
+                shivver_objlist_free(list);
+                return obj;
+        }
+
+        // Function is applied to some other term.
+        if (shivver_parse_isTermStart(state->peek_tok))
+        {       obj_t*  oArg    = shivver_parse_term0(state);
+                return aAppH(oFun, oArg);
+        }
+
+        // Some other thing is after the first term.
+        return oFun;
+}
+
+
+// Parse a term.
+obj_t*
+shivver_parse_term0
         (parser_t* state)
 {
         shivver_parse_peek(state);

@@ -251,7 +251,7 @@ xAbsH_body (obj_t* obj)
 
 
 // ----------------------------------------------------------------------------
-// An application to a high-arity term.
+// An application to a high arity term.
 //
 //      7  6  5  4  3  2  1  0
 //  0   0  0  0  0  0  0  0  F
@@ -259,22 +259,22 @@ xAbsH_body (obj_t* obj)
 //  2   args pointer
 //
 static inline obj_t*
-aApvH (obj_t* oFun, obj_t* oArg)
+aAppH (obj_t* oFun, obj_t* oArg)
 {       uint64_t* buf = halloc(3);
-        buf[0] = TAG_APVH;
+        buf[0] = TAG_APPH;
         buf[1] = (uint64_t)oFun;
         buf[2] = (uint64_t)oArg;
         return (obj_t*)buf;
 }
 
 static inline obj_t*
-xApvH_fun (obj_t* obj)
+xAppH_fun (obj_t* obj)
 {       uint64_t* buf = (uint64_t*)obj;
         return (obj_t*)buf[1];
 }
 
 static inline obj_t*
-xApvH_arg (obj_t* obj)
+xAppH_arg (obj_t* obj)
 {       uint64_t* buf = (uint64_t*)obj;
         return (obj_t*)buf[2];
 }

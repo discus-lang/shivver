@@ -10,7 +10,7 @@ int main(int argc, char** argv)
 {
         shivver_heapInit(1024);
         obj_t* obj
-         = aApvH( aAbsH ( 2
+         = aAppH( aAbsH ( 2
                         , (obj_t*[]){aSymT("x"), aSymT("y")}
                         , aMmmH (2, (obj_t*[]){aVarT("y", 0), aVarT("x", 0)}))
                 , aMmmH (2, (obj_t*[]){aSymT("fresh"), aSymT("fish")}));
@@ -30,10 +30,12 @@ int main(int argc, char** argv)
         main_tokens("( ){ %fresh fish #derp }, ((");
 
 
-        char* str       = "[hello, world, {x y} derp]";
+        char* str       = "thing [hello, world, {x y} derp]";
         parser_t* state = shivver_parse_alloc(str);
         obj_t* objP     = shivver_parse_term(state);
         shivver_printp(objP);
+        printf("\n");
+        shivver_printl(objP);
         printf("\n");
 
 }

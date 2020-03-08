@@ -49,6 +49,15 @@ void    shivver_printp(obj_t* obj)
                 break;
           }
 
+          case TAG_APPH:
+          {     printf("(&apph ");
+                shivver_printp(xAppH_fun(obj));
+                printf(" ");
+                shivver_printp(xAppH_arg(obj));
+                printf(")");
+                break;
+          }
+
           case TAG_APSH:
           {     printf("(&apsh %u ", xApsH_len(obj));
                 shivver_printp(xApsH_fun(obj));
@@ -57,15 +66,6 @@ void    shivver_printp(obj_t* obj)
                 {       printf(" ");
                         shivver_printp(xApsH_arg(obj, i));
                 }
-                printf(")");
-                break;
-          }
-
-          case TAG_APVH:
-          {     printf("(&apvh ");
-                shivver_printp(xApvH_fun(obj));
-                printf(" ");
-                shivver_printp(xApvH_arg(obj));
                 printf(")");
                 break;
           }

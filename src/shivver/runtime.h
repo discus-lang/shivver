@@ -68,7 +68,7 @@ heap_t shivver_heap;
 //        0010 sym
 //        0011 prm
 //        0100 abs
-//        0101 apv
+//        0101 app
 //        0110 aps
 //        1000 clo
 //        1001 env
@@ -79,7 +79,7 @@ heap_t shivver_heap;
 #define TAG_SYMH        0x2d
 #define TAG_PRMH        0x3d
 #define TAG_ABSH        0x4d
-#define TAG_APVH        0x5d
+#define TAG_APPH        0x5d
 #define TAG_APSH        0x6d
 #define TAG_CLOH        0x8d
 #define TAG_ENVH        0x9d

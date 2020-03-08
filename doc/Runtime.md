@@ -1,13 +1,14 @@
 
 
 ```
-Term  ::= mvar   Name Nat       (like 'name^0')
+Term  ::= mmmm n Term^n         '[' Term,* ']'
+
+       |  mvar   Name Nat       (like 'name^0')
        |  msym   Name           (like '%name')
        |  mprm   Name           (like '#name')
 
        |  mabs n Name^n Term    '{' Name* '}' Term
        |  mapp   Term   Term    Term Term
-       |  mmmm n Term^n         '[' Term,* ']'
 
        |  mlet Bind  Term       ':let' Bind  ':in' Term
        |  mrec Binds Term       ':rec' Binds ':in' Term

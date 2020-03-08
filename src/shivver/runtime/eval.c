@@ -39,9 +39,9 @@ obj_t*  shivver_eval (obj_t* oEnv, obj_t* obj)
                 return oClo;
           }
 
-          case TAG_APVH:
+          case TAG_APPH:
           {     // Evaluate the function part of the application to a closure.
-                obj_t* oFun  = xApvH_fun(obj);
+                obj_t* oFun  = xAppH_fun(obj);
                 obj_t* oClo  = shivver_eval(oEnv, oFun);
                 if (xObj_tag(oClo) != TAG_CLOH)
                 {       printf("* not a closure\n");
@@ -51,13 +51,13 @@ obj_t*  shivver_eval (obj_t* oEnv, obj_t* obj)
                 }
 
                 // Evaluate the argument part of the application to a result.
-                obj_t* oArg  = xApvH_arg(obj);
+                obj_t* oArg  = xAppH_arg(obj);
                 obj_t* oRes  = shivver_eval(oEnv, oArg);
 
                 switch (xObj_tag(oRes))
                 { // Result is a vector.
                   case TAG_MMMH:
-                  {     // Ariry of function must match number of values in the vector.
+                  {     // Arity of function must match number of values in the vector.
                         size_t nArity = xCloH_len(oClo);
                         if (xMmmH_len(oRes) != nArity)
                         {       printf("* arity mismatch\n");
