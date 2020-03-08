@@ -2,6 +2,16 @@
 #include "shivver/runtime.h"
 
 
+// ------------------------------------------------------------------------------------------------
+// Print a failure message and abort the program.
+//  This is used for unrecoverable internal errors.
+void
+shivver_fail
+        (char* reason)
+        __attribute__((noreturn));
+
+
+// ------------------------------------------------------------------------------------------------
 typedef struct
 {       obj_t** list;   // array of object pointers.
         size_t  len;    // length of the array.

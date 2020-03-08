@@ -1,5 +1,6 @@
 
 #include "shivver/runtime.h"
+#include "shivver/util.h"
 
 obj_t*  shivver_eval (obj_t* oEnv, obj_t* obj)
 { again:
@@ -25,7 +26,7 @@ obj_t*  shivver_eval (obj_t* oEnv, obj_t* obj)
                         return oVal;
                 printf("* variable out of scope\n");
                 shivver_printp(obj);
-                abort();
+                shivver_fail("evaluation failed");
           }
 
           case TAG_ABSH:
@@ -47,7 +48,7 @@ obj_t*  shivver_eval (obj_t* oEnv, obj_t* obj)
                 {       printf("* not a closure\n");
                         shivver_printp(oClo);
                         printf("\n");
-                        abort();
+                        shivver_fail("evaluation failed");
                 }
 
                 // Evaluate the argument part of the application to a result.
@@ -61,7 +62,7 @@ obj_t*  shivver_eval (obj_t* oEnv, obj_t* obj)
                         size_t nArity = xCloH_len(oClo);
                         if (xMmmH_len(oRes) != nArity)
                         {       printf("* arity mismatch\n");
-                                abort();
+                                shivver_fail("evaluation failed");
                         }
 
                         // Extend the closure environment with the function arguments.
@@ -78,7 +79,7 @@ obj_t*  shivver_eval (obj_t* oEnv, obj_t* obj)
                         goto again;
                   }
                   default:
-                        abort();
+                        shivver_fail("eval: unhandled application");
                 }
           }
 
@@ -129,7 +130,7 @@ bool    shivver_eqSym
           default:
                 printf("* eqSym: object is not a symbol");
                 shivver_printp(oSym);
-                abort();
+                shivver_fail("evaluation failed");
         }
 }
 

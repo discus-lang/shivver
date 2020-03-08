@@ -11,16 +11,21 @@ shivver_token_name
         switch(tag)
         { case TOKEN_NONE:      return "none";
           case TOKEN_END:       return "end";
+
           case TOKEN_RBRA:      return "rbra";
           case TOKEN_RKET:      return "rket";
           case TOKEN_CBRA:      return "cbra";
           case TOKEN_CKET:      return "cket";
+          case TOKEN_SBRA:      return "sbra";
+          case TOKEN_SKET:      return "sket";
+
           case TOKEN_COMMA:     return "comma";
 
           case TOKEN_VAR:       return "var";
           case TOKEN_SYM:       return "sym";
           case TOKEN_PRM:       return "prm";
-          default:              abort();
+
+          default:              shivver_fail("shivver_token_name: no match");
         }
 }
 
