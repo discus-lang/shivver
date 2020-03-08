@@ -2,6 +2,11 @@
 #include "shivver/runtime.h"
 #include "shivver/util.h"
 
+static inline void
+reqeval (bool prop, char* message)
+{       require(prop, message);
+}
+
 
 obj_t*  shivver_eval (obj_t* oEnv, obj_t* oExp)
 {
@@ -22,13 +27,9 @@ void    shivver_evalN
           // hot ----------------------------------------------------
           case TAG_MMMH:
           {     size_t nLen = xMmmH_len(oExp);
+                reqeval ( nLen == nArity
+                        , "eval arity does not match vector length");
 
-                // The arity of the vector must match that required by the context.
-                if (nLen != nArity)
-                        shivver_fail("arity mismatch in vector");
-
-                // Evaluate each of the components in turn,
-                // writing them into the result buffer.
                 for (size_t i = 0; i < nLen; i++)
                         shivver_evalN(1, osRes + i, oEnv, xMmmH_arg(oExp, i));
 
@@ -36,41 +37,38 @@ void    shivver_evalN
           }
 
           case TAG_VARH:
-          {     if (nArity != 1)
-                        shivver_fail("arity mismatch for variable");
+          {     reqeval ( nArity == 1
+                        , "eval arity for variable must be one");
 
                 obj_t* oRes
                  = shivver_resolveT
                         (oEnv, xVarH_name(oExp), xVarH_bump(oExp));
 
-                if (oRes == 0)
-                {       printf("* variable out of scope\n");
-                        shivver_printp(oExp);
-                        shivver_fail("evaluation failed");
-                }
+                reqeval ( oRes != 0
+                        , "variable out of scope");
 
                 osRes[0] = oRes;
                 return;
           }
 
           case TAG_SYMH:
-          {     if (nArity != 1)
-                        shivver_fail("arity mismtch for symbol");
+          {     reqeval ( nArity == 1
+                        , "eval arity for symbol must be one");
                 osRes[0] = oExp;
                 return;
           }
 
           case TAG_PRMH:
-          {     if (nArity != 1)
-                        shivver_fail("arity mismatch for primitive");
+          {     reqeval ( nArity == 1
+                        , "eval arity for primitive must be one");
                 osRes[0] = oExp;
                 return;
           }
 
           case TAG_ABSH:
           {     // Convert abstractions into closures.
-                if (nArity != 1)
-                        shivver_fail("arity mismatch for abstraction");
+                reqeval ( nArity == 1
+                        , "eval arity for abstraction must be one");
 
                 obj_t* oAbs     = oExp;
                 obj_t* oBody    = xAbsH_body(oAbs);
@@ -111,7 +109,7 @@ void    shivver_evalN
 
                         // Tail call ourselves with the extended environment
                         // to evaluate the body.
-                        oEnv    = aEnvH (nParams
+                        oEnv    = aEnvH ( nParams
                                         , xCloH_env(oClo)
                                         , xCloH_parmp(oClo), osArgs);
 
@@ -120,7 +118,7 @@ void    shivver_evalN
                   }
 
                   default:
-                        shivver_fail("cannot apply");
+                        shivver_fail("cannot apply value");
                 }
           }
 
@@ -154,8 +152,8 @@ void    shivver_evalN
                         obj_t* oClo     = oHeadV;
                         size_t nParams  = xCloH_len(oClo);
                         size_t nArgs    = xApsH_len(oAps);
-                        if (nParams != nArgs)
-                                shivver_fail("arity mismatch in application");
+                        reqeval ( nParams == nArgs
+                                , "number of parameterss must match number of arguments");
 
                         // Evaluate all the arguments.
                         obj_t* osArgs[nArgs];
@@ -175,40 +173,37 @@ void    shivver_evalN
                   }
 
                   default:
-                        shivver_fail("cannot apply");
+                        shivver_fail("cannot apply value");
                 }
           }
 
 
           // static  --------------------------------------------------
           case TAG_VART:
-          {     if (nArity != 1)
-                        shivver_fail("arity mismatch for variable");
+          {     reqeval ( nArity == 1
+                        , "eval arity for variable must be one");
 
                 obj_t* oRes
                  = shivver_resolveT
                         (oEnv, xVarT_name(oExp), xVarT_bump(oExp));
 
-                if (oRes != 0)
-                {       printf("* variable out of scope\n");
-                        shivver_printp(oExp);
-                        shivver_fail("evaluation failed");
-                }
+                reqeval ( oRes != 0
+                        , "variable out of scope");
 
                 osRes[0] = oRes;
                 return;
         }
 
           case TAG_SYMT:
-          {     if (nArity != 1)
-                        shivver_fail("arity mismatch for symbol");
+          {     reqeval ( nArity == 1
+                        , "eval arity for symbol must be one");
                 osRes[0] = oExp;
                 return;
           }
 
           case TAG_PRMT:
-          {     if (nArity != 1)
-                        shivver_fail("arity mismatch for primitive");
+          {     reqeval ( nArity == 1
+                        , "eval arity for primitive must be one");
                 osRes[0] = oExp;
                 return;
           }
@@ -219,8 +214,6 @@ void    shivver_evalN
 
         }
 }
-
-
 
 
 // TODO: handle bump counter.
