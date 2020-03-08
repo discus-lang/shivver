@@ -17,10 +17,6 @@ void    shivver_evalN
         , obj_t*  oEnv          // Evaluation environment.
         , obj_t*  oExp)         // Term expression to evaluate.
 { again:
-        printf("* eval\n");
-        shivver_printp(oExp);
-        printf("\n\n");
-
         switch(xObj_tag(oExp))
         {
           // hot ----------------------------------------------------
@@ -43,14 +39,18 @@ void    shivver_evalN
           {     if (nArity != 1)
                         shivver_fail("arity mismatch for variable");
 
-                if (shivver_resolveT
-                        ( osRes
-                        , oEnv, xVarH_name(oExp), xVarH_bump(oExp)))
-                        return;
+                obj_t* oRes
+                 = shivver_resolveT
+                        (oEnv, xVarH_name(oExp), xVarH_bump(oExp));
 
-                printf("* variable out of scope\n");
-                shivver_printp(oExp);
-                shivver_fail("evaluation failed");
+                if (oRes == 0)
+                {       printf("* variable out of scope\n");
+                        shivver_printp(oExp);
+                        shivver_fail("evaluation failed");
+                }
+
+                osRes[0] = oRes;
+                return;
           }
 
           case TAG_SYMH:
@@ -68,13 +68,14 @@ void    shivver_evalN
           }
 
           case TAG_ABSH:
-          {     obj_t* oAbs     = oExp;
-                obj_t* oBody    = xAbsH_body(oAbs);
+          {     // Convert abstractions into closures.
                 if (nArity != 1)
                         shivver_fail("arity mismatch for abstraction");
 
-                osRes[0] = aCloH( xAbsH_len(oExp)
-                                , oEnv, xAbsH_parmp(oExp), oBody);
+                obj_t* oAbs     = oExp;
+                obj_t* oBody    = xAbsH_body(oAbs);
+                osRes[0]        = aCloH ( xAbsH_len(oExp)
+                                        , oEnv, xAbsH_parmp(oExp), oBody);
                 return;
           }
 
@@ -104,19 +105,14 @@ void    shivver_evalN
                         obj_t*  oEnvClo = xCloH_env(oClo);
                         obj_t*  oBody   = xCloH_body(oClo);
 
-                        printf("* eval params = %zu\n", nParams);
-
                         // Evaluate the arguments.
                         obj_t* osArgs[nParams];
                         shivver_evalN(nParams, osArgs, oEnv, oArg);
 
-                        for (size_t i = 0; i < nParams; i++)
-                        {       shivver_printp(osParms[i]);
-                                shivver_printp(osArgs[i]);
-                        }
-                        printf("\n");
-
                         // Extend the closure environment with the function arguments.
+                        //  This copies the argument pointers into the new environment
+                        //  frame, so it's ok to give up the osArgs array
+                        //  in the following tail call.
                         obj_t*  oEnvExt = aEnvH(nParams, oEnvClo, osParms, osArgs);
 
                         // Tailcall ourselves to evaluate the body.
@@ -135,15 +131,19 @@ void    shivver_evalN
           {     if (nArity != 1)
                         shivver_fail("arity mismatch for variable");
 
-                if (shivver_resolveT
-                        ( osRes
-                        , oEnv, xVarT_name(oExp), xVarT_bump(oExp)))
-                        return;
+                obj_t* oRes
+                 = shivver_resolveT
+                        (oEnv, xVarT_name(oExp), xVarT_bump(oExp));
 
-                printf("* variable out of scope\n");
-                shivver_printp(oExp);
-                shivver_fail("evaluation failed");
-          }
+                if (oRes != 0)
+                {       printf("* variable out of scope\n");
+                        shivver_printp(oExp);
+                        shivver_fail("evaluation failed");
+                }
+
+                osRes[0] = oRes;
+                return;
+        }
 
           case TAG_SYMT:
           {     if (nArity != 1)
@@ -177,18 +177,18 @@ void    shivver_evalN
 //  We treat an environemnt pointer of NULL as an empty environment,
 //  and will always return false if given one.
 
-bool    shivver_resolveT
-        ( obj_t** outResult
-        , obj_t*  oEnv, char* name, size_t bump)
+obj_t*
+shivver_resolveT
+        (obj_t* oEnv, char* name, size_t bump)
 { again:
-        if (oEnv == 0) return false;
+        if (oEnv == 0)
+                return 0;
 
         size_t nCount = xEnvH_len(oEnv);
         for (size_t i = 0; i < nCount; i++)
         {       obj_t* oParm = xEnvH_var(oEnv, i);
                 if (shivver_eqSym (oParm, name))
-                {       *outResult = xEnvH_val(oEnv, i);
-                        return true;
+                {       return xEnvH_val(oEnv, i);
                 }
         }
 

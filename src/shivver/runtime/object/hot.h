@@ -371,16 +371,20 @@ xCloH_body (obj_t* obj)
 //  0   len.......  0  0  0  F
 //  1   parent pointer          obj_t*
 //  2   variables pointer       obj_t**  always points into an xAbsH.
-//  3   values pointer          obj_t**  always points into an xMmmH.
+//  3   values pointer          obj_t*
+//  ... values pointer...
 //
 static inline obj_t*
-aEnvH (uint32_t len, obj_t* oEnv, obj_t** oParms, obj_t** oArgs)
+aEnvH (uint32_t len, obj_t* oEnv, obj_t** oParms, obj_t* oArgs[])
 {
-        uint64_t* buf = halloc(4);
+        uint64_t* buf = halloc(3 + len);
         buf[0] = (uint64_t)len << 32 | TAG_ENVH;
         buf[1] = (uint64_t)oEnv;
         buf[2] = (uint64_t)oParms;
-        buf[3] = (uint64_t)oArgs;
+
+        for (size_t i = 0; i < len; i++)
+                buf[3 + i] = (uint64_t)oArgs[i];
+
         return (obj_t*)buf;
 }
 
@@ -412,11 +416,6 @@ xEnvH_var (obj_t* obj, uint32_t i)
 static inline obj_t*
 xEnvH_val (obj_t* obj, uint32_t i)
 {       uint64_t* buf = (uint64_t*)obj;
-        return (obj_t*)((obj_t**)buf[3])[i];
+        return (obj_t*)(buf[3 + i]);
 }
 
-static inline obj_t**
-xEnvH_valp (obj_t* obj)
-{       uint64_t* buf = (uint64_t*)obj;
-        return (obj_t**)buf[3];
-}

@@ -21,7 +21,7 @@ objects_main		= $(patsubst %.c,build/x86_64/%.o,${sources_main_c})
 
 build/x86_64/%.o : %.c ${sources_shivver_h}
 	@mkdir -p $(dir $@)
-	clang -std=c99  -Wall -Werror -O2 ${FLAGS_DEBUG} -Isrc -c $< -o $@
+	clang -std=c99  -Wall -Werror -O1 ${FLAGS_DEBUG} -Isrc -c $< -o $@
 
 bin/shivver: ${objects_main} ${objects_shivver}
 	@mkdir -p $(dir $@)

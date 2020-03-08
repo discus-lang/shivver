@@ -70,6 +70,12 @@ void    shivver_printp(obj_t* obj)
                 break;
           }
 
+          case TAG_ENVH:
+          {     printf("(&envh %u ...", xEnvH_len(obj));
+                printf(")");
+                break;
+          }
+
           // static -------------------------------------------------
           case TAG_SYMT:
           {     printf  ("(&symt %u \"%s\")"

@@ -56,7 +56,6 @@ void    shivver_printm(obj_t* obj)
           {     printf(" .tag    = envh\n");
                 printf(" .count  = %u\n",       xEnvH_len(obj));
                 printf(" .varp   = %p\n",       xEnvH_varp(obj));
-                printf(" .valp   = %p\n",       xEnvH_valp(obj));
 
                 uint32_t n = xEnvH_len(obj);
                 for(uint32_t i = 0; i < n; i++)

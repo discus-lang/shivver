@@ -128,10 +128,9 @@ shivver_evalN
         , obj_t*        oEnv
         , obj_t*        oExp);
 
-bool
+obj_t*
 shivver_resolveT
-        ( obj_t**       outResult
-        , obj_t*        oEnv
+        ( obj_t*        oEnv
         , char*         name
         , size_t        nBump);
 
