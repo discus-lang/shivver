@@ -132,7 +132,11 @@ size_t  shivver_lexer_scan_var
 {
         size_t len = 0;
         while(  strLen > 0
-         &&     *str >= 'a' && *str <= 'z')
+         && (   (*str >= 'a' && *str <= 'z')
+             || (*str >= 'A' && *str <= 'Z')
+             || (*str >= '0' && *str <= '9')
+             || (*str == '\'')
+             || (*str == '_')))
         {
                 str++; strLen--; len++;
         }
@@ -161,8 +165,12 @@ size_t  shivver_lexer_scan_symprm
         // skip across sigil.
         str++; strLen--; len++;
 
-        while ( strLen > 0
-         &&     *str >= 'a' && *str <= 'z')
+        while(  strLen > 0
+         && (   (*str >= 'a' && *str <= 'z')
+             || (*str >= 'A' && *str <= 'Z')
+             || (*str >= '0' && *str <= '9')
+             || (*str == '\'')
+             || (*str == '_')))
         {
                 str++; strLen--; len++;
         }

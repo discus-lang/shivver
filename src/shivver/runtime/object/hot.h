@@ -154,11 +154,12 @@ xSymH_name (obj_t* obj)
 
 
 // ----------------------------------------------------------------------------
-// A primtiive name with the characters stored in the object.
+// A primitive name with the characters stored in the object.
 //
 //      7  6  5  4  3  2  1  0
 //  0   len.......  0  0  0  F
-//  1   chars ...
+//  1   chars.................
+//  ..  chars.................
 //
 //  len: records the length of the payload in bytes.
 
