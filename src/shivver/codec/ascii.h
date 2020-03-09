@@ -119,3 +119,7 @@ shivver_parse_termCommaList
         (parser_t* state);
 
 
+// from ascii/parse/prim.c
+obj_t*
+shivver_parse_nat_lit
+        (char* str);

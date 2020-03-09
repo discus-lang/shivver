@@ -2,6 +2,13 @@
 #include "shivver/runtime.h"
 
 // ------------------------------------------------------------------------------------------------
+// from util/string.c
+char*
+shivver_string_stripPrefix
+        (char* line, char* prefix);
+
+
+// ------------------------------------------------------------------------------------------------
 typedef struct
 {       obj_t** list;   // array of object pointers.
         size_t  len;    // length of the array.

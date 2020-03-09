@@ -59,6 +59,11 @@ heap_t shivver_heap;
 // Objects
 //                                      sort    mode
 //         7  6  5  4  3  2  1  0       ------- ---
+
+//  symt   0  0  0  0  bump  .  F       0 0 0 1 0 1 0 1  = 0x15
+//  vart   0  0  0  0  bump  .  F       0 0 1 0 0 1 0 1  = 0x25
+//  prmt   0  0  0  0  bump  .  F       0 0 1 1 0 1 0 1  = 0x35
+
 //  mmmh   len.ptrs... 0  0  0  F       0 0 0 0 1 1 0 1  = 0x0d
 //  varh   len.chars.. 0  0  0  F       0 0 0 1 1 1 0 1  = 0x1d
 //  symh   len.chars.. 0  0  0  F       0 0 1 0 1 1 0 1  = 0x2d
@@ -69,12 +74,11 @@ heap_t shivver_heap;
 //  cloh   len.ptrs... 0  0  0  F       1 0 0 0 1 1 0 1  = 0x8d
 //  envh   len.ptrs... 0  0  0  F       1 0 0 1 1 1 0 1  = 0x9d
 
-//  symt   0  0  0  0  bump  .  F       0 0 0 1 0 0 0 1  = 0x11
-//  vart   0  0  0  0  bump  .  F       0 0 1 0 0 0 0 1  = 0x21
-//  prmt   0  0  0  0  bump  .  F       0 0 1 1 0 0 0 1  = 0x31
-//
-//  mode: 00 static
-//        01 cold
+//  nata   value..............  F       0 0 0 0 0 0 1 1  = 0x03
+
+//  mode: 00 atomic
+//        01 static
+//        10 cold
 //        11 hot
 //
 //  sort: 0000 mmm
@@ -87,6 +91,8 @@ heap_t shivver_heap;
 //        1000 clo
 //        1001 env
 //
+//  lit:  0000 nat
+//
 
 #define TAG_MMMH        0x0d
 #define TAG_VARH        0x1d
@@ -98,17 +104,19 @@ heap_t shivver_heap;
 #define TAG_CLOH        0x8d
 #define TAG_ENVH        0x9d
 
-#define TAG_VART        0x11
-#define TAG_SYMT        0x21
-#define TAG_PRMT        0x31
+#define TAG_VART        0x15
+#define TAG_SYMT        0x25
+#define TAG_PRMT        0x35
 
+#define TAG_NATA        0x03
 
 // ----------------------------------------------------------------------------
 // inlines
 #include "shivver/runtime/heap.h"
 #include "shivver/runtime/object/base.h"
-#include "shivver/runtime/object/hot.h"
+#include "shivver/runtime/object/atomic.h"
 #include "shivver/runtime/object/static.h"
+#include "shivver/runtime/object/hot.h"
 
 
 void    shivver_heapInit(size_t nWords);

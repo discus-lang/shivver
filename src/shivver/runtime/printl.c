@@ -6,7 +6,14 @@
 void    shivver_printl(obj_t* obj)
 {
         switch (xObj_tag(obj))
-        { // hot ------------------------------------------
+        { // atomic ---------------------------------------
+          case TAG_NATA:
+          {     printf("#nat'%llu", xNatA(obj));
+                return;
+          }
+
+
+          // hot ------------------------------------------
           case TAG_MMMH:
           {     printf("[");
                 size_t len = xMmmH_len(obj);
@@ -15,22 +22,22 @@ void    shivver_printl(obj_t* obj)
                         if (len - i > 1) printf(", ");
                 }
                 printf("]");
-                break;
+                return;
           }
 
           case TAG_VARH:
           {     printf("%s", xVarH_name(obj));
-                break;
+                return;
           }
 
           case TAG_SYMH:
           {     printf("%%%s", xSymH_name(obj));
-                break;
+                return;
           }
 
           case TAG_PRMH:
           {     printf("#%s", xSymH_name(obj));
-                break;
+                return;
           }
 
           case TAG_ABSH:
@@ -43,7 +50,7 @@ void    shivver_printl(obj_t* obj)
                 printf("} ");
                 shivver_printl(xAbsH_body(obj));
                 printf(")");
-                break;
+                return;
           }
 
           case TAG_APPH:
@@ -52,7 +59,7 @@ void    shivver_printl(obj_t* obj)
                 printf(" ");
                 shivver_printl(xAppH_arg(obj));
                 printf(")");
-                break;
+                return;
           }
 
           case TAG_APSH:
@@ -67,29 +74,32 @@ void    shivver_printl(obj_t* obj)
                 }
                 printf("]");
                 printf(")");
-                break;
+                return;
           }
 
           case TAG_CLOH:
-                printf("&cloh...");
-                break;
+          {     printf("&cloh...");
+                return;
+          }
 
           case TAG_ENVH:
-                printf("&envh...");
-                break;
+          {     printf("&envh...");
+                return;
+          }
 
           // static ---------------------------------------
           case TAG_VART:
           {     printf("%s", xVarT_name(obj));
-                break;
+                return;
           }
 
           case TAG_SYMT:
           {     printf("%%%s", xSymT_name(obj));
-                break;
+                return;
           }
 
           default:
-                printf("&invalid %0x", xObj_tag(obj));
+          {     printf("&invalid %0x", xObj_tag(obj));
+          }
         }
 }

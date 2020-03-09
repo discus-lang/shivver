@@ -78,7 +78,17 @@ shivver_parse_term0
           case TOKEN_PRM:
           {     // Skip of the sigil char when copying the name.
                 shivver_parse_shift(state);
-                obj_t* obj = aPrmH(state->curr_len - 1, state->curr_str + 1);
+                size_t nStr     = state->curr_len  - 1;
+                char*  str      = (char*)alloca(nStr + 1);
+                memcpy(str, state->curr_str + 1, nStr);
+                str[nStr] = 0;
+
+                obj_t* obj = 0;
+
+                obj     = shivver_parse_nat_lit(str);
+                if (obj != 0) return obj;
+
+                obj     = aPrmH(nStr, state->curr_str + 1);
                 return obj;
           }
 

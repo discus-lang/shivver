@@ -24,6 +24,14 @@ void    shivver_evalN
 { again:
         switch(xObj_tag(oExp))
         {
+          // atomic -------------------------------------------------
+          case TAG_NATA:
+          {     reqeval ( nArity == 1
+                        , "eval arity for literal must be one");
+                osRes[0] = oExp;
+                return;
+          }
+
           // hot ----------------------------------------------------
           case TAG_MMMH:
           {     size_t nLen = xMmmH_len(oExp);
@@ -54,6 +62,7 @@ void    shivver_evalN
           case TAG_SYMH:
           {     reqeval ( nArity == 1
                         , "eval arity for symbol must be one");
+
                 osRes[0] = oExp;
                 return;
           }
@@ -61,6 +70,7 @@ void    shivver_evalN
           case TAG_PRMH:
           {     reqeval ( nArity == 1
                         , "eval arity for primitive must be one");
+
                 osRes[0] = oExp;
                 return;
           }
@@ -153,23 +163,31 @@ void    shivver_evalN
                         size_t nParams  = xCloH_len(oClo);
                         size_t nArgs    = xApsH_len(oAps);
                         reqeval ( nParams == nArgs
-                                , "number of parameterss must match number of arguments");
+                                , "number of parameters must match number of arguments");
 
-                        // Evaluate all the arguments.
-                        obj_t* osArgs[nArgs];
-                        for(size_t i = 0; i < nArgs; i++)
-                        {       obj_t* oArg = xApsH_arg(oAps, i);
-                                shivver_evalN(1, osArgs + i, oEnv, oArg);
+                        // Application of closure with no parameters.
+                        //  so we have ({} Term) []
+                        if (nParams == 0)
+                        {       oExp    = xCloH_body(oClo);
+                                goto again;
                         }
+                        else
+                        {       // Evaluate all the arguments.
+                                obj_t* osArgs[nArgs];
+                                for(size_t i = 0; i < nArgs; i++)
+                                {       obj_t* oArg = xApsH_arg(oAps, i);
+                                        shivver_evalN(1, osArgs + i, oEnv, oArg);
+                                }
 
-                        // Tail call ourselves with the extended environment
-                        // to evaluate the body.
-                        oEnv    = aEnvH ( nParams
-                                        , xCloH_env(oClo)
-                                        , xCloH_parmp(oClo), osArgs);
+                                // Tail call ourselves with the extended environment
+                                // to evaluate the body.
+                                oEnv    = aEnvH ( nParams
+                                                , xCloH_env(oClo)
+                                                , xCloH_parmp(oClo), osArgs);
 
-                        oExp    = xCloH_body(oClo);
-                        goto again;
+                                oExp    = xCloH_body(oClo);
+                                goto again;
+                        }
                   }
 
                   default:

@@ -125,28 +125,6 @@ shivver_console_isLineWhite(char* line)
 }
 
 
-// Strip the prefix from the line.
-char*
-shivver_console_stripPrefix(char* line, char* prefix)
-{
-        size_t i = 0;
-
-  again:
-        if (prefix[i] == 0)
-                return line + i;
-
-        if (line[i] == 0)
-                return 0;
-
-        if (line[i] != prefix[i])
-                return 0;
-
-        i++;
-        goto again;
-
-}
-
-
 // Handle an input line to the console.
 void
 shivver_console_line (char* line)
@@ -157,14 +135,14 @@ shivver_console_line (char* line)
         char* arg;
 
         // Treat the line as a term and show its tokens.
-        arg = shivver_console_stripPrefix(line, ":tokens");
+        arg = shivver_string_stripPrefix(line, ":tokens");
         if (arg != 0)
         {       shivver_main_tokens(arg);
                 return;
         }
 
         // Parse the line and show its physical description.
-        arg = shivver_console_stripPrefix(line, ":printp");
+        arg = shivver_string_stripPrefix(line, ":printp");
         if (arg != 0)
         {       parser_t* state = shivver_parse_alloc(arg);
                 obj_t* obj      = shivver_parse_term(state);
