@@ -8,9 +8,6 @@ reqeval (bool prop, char* message)
 {       require(prop, message);
 }
 
-
-
-
 obj_t*  shivver_eval (obj_t* oEnv, obj_t* oExp)
 {
         obj_t*  oRes     = 0;
@@ -77,6 +74,15 @@ void    shivver_evalN
         switch(xObj_tag(oExp))
         {
           // atomic -------------------------------------------------
+          case TAG_SYMA:
+          case TAG_PRMA:
+          case TAG_PRZA:
+          case TAG_NATA:
+          {     reqeval (nArity == 1,   "eval arity for atom must be one");
+                osRes[0] = oExp;
+                return;
+          }
+
           case TAG_VARA:
           {     reqeval (nArity == 1,   "eval arity for variable must be one");
                 obj_t* oRes
@@ -85,30 +91,6 @@ void    shivver_evalN
 
                 reqeval ( oRes != 0,    "variable out of scope");
                 osRes[0] = oRes;
-                return;
-          }
-
-          case TAG_SYMA:
-          {     reqeval (nArity == 1,   "eval arity for symbol must be one");
-                osRes[0] = oExp;
-                return;
-          }
-
-          case TAG_PRMA:
-          {     reqeval (nArity == 1,   "eval arity for primitive must be one");
-                osRes[0] = oExp;
-                return;
-          }
-
-          case TAG_PRZA:
-          {     reqeval (nArity == 1,   "eval arity for primitive must be one");
-                osRes[0] = oExp;
-                return;
-          }
-
-          case TAG_NATA:
-          {     reqeval (nArity == 1,   "eval arity for literal must be one");
-                osRes[0] = oExp;
                 return;
           }
 
@@ -277,6 +259,13 @@ void    shivver_evalN
 
 
           // static  --------------------------------------------------
+          case TAG_SYMT:
+          case TAG_PRMT:
+          {     reqeval ( nArity == 1,  "eval arity for atom must be one");
+                osRes[0] = oExp;
+                return;
+          }
+
           case TAG_VART:
           {     reqeval ( nArity == 1,  "eval arity for variable must be one");
 
@@ -286,18 +275,6 @@ void    shivver_evalN
                 reqeval ( oRes != 0,    "variable out of scope");
 
                 osRes[0] = oRes;
-                return;
-        }
-
-          case TAG_SYMT:
-          {     reqeval ( nArity == 1,  "eval arity for symbol must be one");
-                osRes[0] = oExp;
-                return;
-          }
-
-          case TAG_PRMT:
-          {     reqeval ( nArity == 1,  "eval arity for primitive must be one");
-                osRes[0] = oExp;
                 return;
           }
 
