@@ -62,7 +62,7 @@ shivver_parse_term0
           case TOKEN_VAR:
           {     // Copy the name from the lexer buffer.
                 shivver_parse_shift(state);
-                obj_t* obj = aVarH(state->curr_len, state->curr_str);
+                obj_t* obj = aVarA(state->curr_len, state->curr_str);
                 return obj;
           }
 
@@ -70,7 +70,7 @@ shivver_parse_term0
           case TOKEN_SYM:
           {     // Skip over the sigil char when copying the name.
                 shivver_parse_shift(state);
-                obj_t* obj = aSymH(state->curr_len - 1, state->curr_str + 1);
+                obj_t* obj = aSymA(state->curr_len - 1, state->curr_str + 1);
                 return obj;
           }
 
@@ -88,7 +88,7 @@ shivver_parse_term0
                 obj     = shivver_parse_nat_lit(str);
                 if (obj != 0) return obj;
 
-                obj     = aPrmH(nStr, state->curr_str + 1);
+                obj     = aPrmA(nStr, state->curr_str + 1);
                 return obj;
           }
 
@@ -139,7 +139,7 @@ shivver_parse_varSpaceList
                 return list;
 
         shivver_parse_shift(state);
-        obj_t* obj = aVarH(state->curr_len, state->curr_str);
+        obj_t* obj = aVarA(state->curr_len, state->curr_str);
         shivver_objlist_append(list, obj);
         goto again;
 }

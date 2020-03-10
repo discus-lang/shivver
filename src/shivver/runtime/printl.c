@@ -7,6 +7,21 @@ void    shivver_printl(obj_t* obj)
 {
         switch (xObj_tag(obj))
         { // atomic ---------------------------------------
+          case TAG_VARA:
+          {     printf("%s",    xVarA_name(obj));
+                return;
+          }
+
+          case TAG_SYMA:
+          {     printf("%%%s",  xSymA_name(obj));
+                return;
+          }
+
+          case TAG_PRMA:
+          {     printf("#%s",   xPrmA_name(obj));
+                return;
+          }
+
           case TAG_NATA:
           {     printf("#nat'%llu", xNatA(obj));
                 return;
@@ -22,21 +37,6 @@ void    shivver_printl(obj_t* obj)
                         if (len - i > 1) printf(", ");
                 }
                 printf("]");
-                return;
-          }
-
-          case TAG_VARH:
-          {     printf("%s", xVarH_name(obj));
-                return;
-          }
-
-          case TAG_SYMH:
-          {     printf("%%%s", xSymH_name(obj));
-                return;
-          }
-
-          case TAG_PRMH:
-          {     printf("#%s", xSymH_name(obj));
                 return;
           }
 

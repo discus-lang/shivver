@@ -13,3 +13,13 @@ shivver_parse_nat_lit
 
         return 0;
 }
+
+/*
+obj_t*
+shivver_parse_nat_prim
+        (char* str)
+{
+        if (strcmp(str, "nat'add") == 0)        return aNat
+
+}
+*/

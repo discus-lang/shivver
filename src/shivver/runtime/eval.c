@@ -25,6 +25,37 @@ void    shivver_evalN
         switch(xObj_tag(oExp))
         {
           // atomic -------------------------------------------------
+          case TAG_VARA:
+          {     reqeval ( nArity == 1
+                        , "eval arity for variable must be one");
+
+                obj_t* oRes
+                 = shivver_resolveT
+                        (oEnv, xVarA_name(oExp), xVarA_bump(oExp));
+
+                reqeval ( oRes != 0
+                        , "variable out of scope");
+
+                osRes[0] = oRes;
+                return;
+          }
+
+          case TAG_SYMA:
+          {     reqeval ( nArity == 1
+                        , "eval arity for symbol must be one");
+
+                osRes[0] = oExp;
+                return;
+          }
+
+          case TAG_PRMA:
+          {     reqeval ( nArity == 1
+                        , "eval arity for primitive must be one");
+
+                osRes[0] = oExp;
+                return;
+          }
+
           case TAG_NATA:
           {     reqeval ( nArity == 1
                         , "eval arity for literal must be one");
@@ -41,37 +72,6 @@ void    shivver_evalN
                 for (size_t i = 0; i < nLen; i++)
                         shivver_evalN(1, osRes + i, oEnv, xMmmH_arg(oExp, i));
 
-                return;
-          }
-
-          case TAG_VARH:
-          {     reqeval ( nArity == 1
-                        , "eval arity for variable must be one");
-
-                obj_t* oRes
-                 = shivver_resolveT
-                        (oEnv, xVarH_name(oExp), xVarH_bump(oExp));
-
-                reqeval ( oRes != 0
-                        , "variable out of scope");
-
-                osRes[0] = oRes;
-                return;
-          }
-
-          case TAG_SYMH:
-          {     reqeval ( nArity == 1
-                        , "eval arity for symbol must be one");
-
-                osRes[0] = oExp;
-                return;
-          }
-
-          case TAG_PRMH:
-          {     reqeval ( nArity == 1
-                        , "eval arity for primitive must be one");
-
-                osRes[0] = oExp;
                 return;
           }
 
@@ -97,7 +97,7 @@ void    shivver_evalN
                 shivver_evalN (1, &oHeadV, oEnv, oHead);
 
                 switch(xObj_tag(oHeadV))
-                { case TAG_SYMH:
+                { case TAG_SYMA:
                   {     // For applications of symbols,
                         // evaluate all the arguments and rebuild the application.
                         obj_t*  oArgV;
@@ -142,7 +142,7 @@ void    shivver_evalN
                 shivver_evalN (1, &oHeadV, oEnv, oHead);
 
                 switch(xObj_tag(oHeadV))
-                { case TAG_SYMH:
+                { case TAG_SYMA:
                   {     // For applications of symbols,
                         // evaluate all the arguments and rebuild the application.
                         obj_t* osArgVs[nArgs];
@@ -270,8 +270,8 @@ bool    shivver_eqSym
         { case TAG_VART:
                 return strcmp(xVarT_name(oExp), name) == 0;
 
-          case TAG_VARH:
-                return strcmp(xVarH_name(oExp), name) == 0;
+          case TAG_VARA:
+                return strcmp(xVarA_name(oExp), name) == 0;
 
           default:
                 printf("* eqSym: object is not a variable");
