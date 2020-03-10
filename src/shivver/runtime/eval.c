@@ -57,6 +57,14 @@ void    shivver_evalN
                 return;
           }
 
+          case TAG_PRZA:
+          {     reqeval ( nArity == 1
+                        , "eval arity for primitive must be one");
+
+                osRes[0] = oExp;
+                return;
+          }
+
           case TAG_NATA:
           {     reqeval ( nArity == 1
                         , "eval arity for literal must be one");
@@ -106,6 +114,7 @@ void    shivver_evalN
                         osRes[0] = aAppH(oHeadV, oArgV);
                         return;
                   }
+
 
                   case TAG_CLOH:
                   {     // For applications of closures,

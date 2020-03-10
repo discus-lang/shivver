@@ -31,7 +31,7 @@ shivver_prim_console_printp
           }
 
           case TAG_PRZA:
-          {     char* name = shivver_runtime_prim_name(xPrzA_tag(obj));
+          {     char* name = shivver_prim_tag_name(xPrzA_tag(obj));
                 if (name != 0)
                 {       printf ("(&prza \"%s\")", name);
                         return;
