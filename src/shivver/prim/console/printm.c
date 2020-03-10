@@ -2,7 +2,9 @@
 #include "shivver/runtime.h"
 
 // Print the raw memory layout of an object.
-void    shivver_printm(obj_t* obj)
+void
+shivver_prim_console_printm
+        (obj_t* obj)
 {
         printf("obj %p\n", obj);
 

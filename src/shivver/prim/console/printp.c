@@ -1,8 +1,12 @@
 
 #include "shivver/runtime.h"
+#include "shivver/prim.h"
+
 
 // Print the physical structure of the graph.
-void    shivver_printp(obj_t* obj)
+void
+shivver_prim_console_printp
+        (obj_t* obj)
 {
         switch (xObj_tag(obj))
         {
@@ -63,7 +67,7 @@ void    shivver_printp(obj_t* obj)
                 printf("(&mmmh %u", len);
                 for(size_t i = 0; i < len; i++)
                 {       printf(" ");
-                        shivver_printp(xMmmH_arg(obj, i));
+                        shivver_prim_console_printp(xMmmH_arg(obj, i));
                 }
                 printf(")");
                 break;
@@ -75,30 +79,30 @@ void    shivver_printp(obj_t* obj)
                 size_t len = xAbsH_len(obj);
                 for(size_t i = 0; i < len; i++)
                 {       printf(" ");
-                        shivver_printp(xAbsH_parm(obj, i));
+                        shivver_prim_console_printp(xAbsH_parm(obj, i));
                 }
                 printf(" ");
-                shivver_printp(xAbsH_body(obj));
+                shivver_prim_console_printp(xAbsH_body(obj));
                 printf(")");
                 break;
           }
 
           case TAG_APPH:
           {     printf("(&apph ");
-                shivver_printp(xAppH_fun(obj));
+                shivver_prim_console_printp(xAppH_fun(obj));
                 printf(" ");
-                shivver_printp(xAppH_arg(obj));
+                shivver_prim_console_printp(xAppH_arg(obj));
                 printf(")");
                 break;
           }
 
           case TAG_APSH:
           {     printf("(&apsh %u ", xApsH_len(obj));
-                shivver_printp(xApsH_fun(obj));
+                shivver_prim_console_printp(xApsH_fun(obj));
                 size_t len = xApsH_len(obj);
                 for(size_t i = 0; i < len; i++)
                 {       printf(" ");
-                        shivver_printp(xApsH_arg(obj, i));
+                        shivver_prim_console_printp(xApsH_arg(obj, i));
                 }
                 printf(")");
                 break;

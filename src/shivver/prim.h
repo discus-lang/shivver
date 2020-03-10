@@ -1,3 +1,4 @@
+#pragma once
 
 #define PRIM_NAT_ADD    10
 #define PRIM_NAT_SUB    11
@@ -8,6 +9,8 @@
 #define PRIM_NAT_LE     16
 #define PRIM_NAT_GT     17
 #define PRIM_NAT_GE     18
+
+#include "shivver/prim/console.h"
 
 char*
 shivver_runtime_prim_name

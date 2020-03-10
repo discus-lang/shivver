@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include "shivver/runtime/prim.h"
 
 typedef uint32_t uint24_t;
 
@@ -68,15 +67,6 @@ heap_t shivver_heap;
 
 void    shivver_heapInit(size_t nWords);
 
-
-// from printl.c
-void    shivver_printl(obj_t* obj);
-
-// from printp.c
-void    shivver_printp(obj_t* obj);
-
-// from printm.c
-void    shivver_printm(obj_t* obj);
 
 // from eval.c
 obj_t*

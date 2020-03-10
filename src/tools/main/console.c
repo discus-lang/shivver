@@ -147,7 +147,7 @@ shivver_console_line (char* line)
         {       parser_t* state = shivver_parse_alloc(arg);
                 obj_t* obj      = shivver_parse_term(state);
                 shivver_parse_free(state);
-                shivver_printp(obj);
+                shivver_prim_console_printp(obj);
                 printf("\n");
                 return;
         }
@@ -169,7 +169,7 @@ shivver_console_line (char* line)
                 shivver_parse_free(state);
 
                 obj_t* objEval  = shivver_eval(0, obj);
-                shivver_printl(objEval);
+                shivver_prim_console_printl(objEval);
                 printf("\n");
                 return;
         }

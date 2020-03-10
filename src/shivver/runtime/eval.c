@@ -1,5 +1,6 @@
 
 #include "shivver/runtime.h"
+#include "shivver/prim.h"
 #include "shivver/util.h"
 
 static inline void
@@ -227,7 +228,7 @@ void    shivver_evalN
           }
 
           default:
-                shivver_printp(oExp);
+                shivver_prim_console_printp(oExp);
                 shivver_fail("don't know how to evaluate");
 
         }
@@ -275,7 +276,7 @@ bool    shivver_eqSym
 
           default:
                 printf("* eqSym: object is not a variable");
-                shivver_printp(oExp);
+                shivver_prim_console_printp(oExp);
                 shivver_fail("evaluation failed");
         }
 }
