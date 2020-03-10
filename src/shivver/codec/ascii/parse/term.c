@@ -88,6 +88,9 @@ shivver_parse_term0
                 obj     = shivver_parse_nat_lit(str);
                 if (obj != 0) return obj;
 
+                obj     = shivver_parse_nat_prim(str);
+                if (obj != 0) return obj;
+
                 obj     = aPrmA(nStr, state->curr_str + 1);
                 return obj;
           }

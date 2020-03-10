@@ -152,6 +152,12 @@ shivver_console_line (char* line)
                 return;
         }
 
+        arg = shivver_string_stripPrefix(line, ":");
+        if(arg != 0)
+        {       printf("unknown command '%s'\n", arg);
+                return;
+        }
+
         // treat line as a term to parse.
         else {  parser_t* state = shivver_parse_alloc(line);
 

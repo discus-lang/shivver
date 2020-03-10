@@ -26,6 +26,22 @@ void    shivver_printp(obj_t* obj)
                 break;
           }
 
+          case TAG_PRZA:
+          {     char* name = shivver_runtime_prim_name(xPrzA_tag(obj));
+                if (name != 0)
+                {       printf ("(&prza \"%s\")", name);
+                        return;
+                }
+                printf("&invalid");
+                break;
+          }
+
+          case TAG_NATA:
+          {     printf  ("(&nata %lld)"
+                        , xNatA(obj));
+                break;
+          }
+
           // static ---------------------------------------
           case TAG_SYMT:
           {     printf  ("(&symt %u \"%s\")"

@@ -123,3 +123,7 @@ shivver_parse_termCommaList
 obj_t*
 shivver_parse_nat_lit
         (char* str);
+
+obj_t*
+shivver_parse_nat_prim
+        (char* str);

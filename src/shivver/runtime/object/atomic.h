@@ -153,9 +153,29 @@ xPrmA_len(obj_t* obj)
 }
 
 static inline char*
-xPrmA_name (obj_t* obj)
+xPrmA_name(obj_t* obj)
 {       uint8_t* buf = (uint8_t*)obj;
         return (char*)(buf + 8);
+}
+
+
+// ----------------------------------------------------------------------------
+// A primitive operator tag.
+//
+//      7  6  5  4  3  2  1  0
+//  0   prim-tag..  0  0  0  F
+//
+static inline obj_t*
+aPrzA (uint32_t tag)
+{       uint64_t* buf   = halloc(1);
+        buf[0]  = (((uint64_t)tag) << 32) | TAG_PRZA;
+        return (obj_t*)buf;
+}
+
+static inline uint32_t
+xPrzA_tag(obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (uint32_t)(buf[0] >> 32);
 }
 
 
