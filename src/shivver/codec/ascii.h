@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <setjmp.h>
 #include <assert.h>
 #include "shivver/runtime.h"
 #include "shivver/util.h"
@@ -28,17 +29,27 @@
 
 // ----------------------------------------------------------------------------
 typedef struct {
-        char*   str;
-        size_t  len;    // remaining chars in string to parse.
+        char*   str;            // stirng to parse.
+        size_t  len;            // remaining chars in string to parse.
 
+        // the current token buffer.
         size_t  curr_tok;
         char*   curr_str;
         size_t  curr_len;
 
+        // the peeked token buffer.
         size_t  peek_tok;
         char*   peek_str;
         size_t  peek_len;
 
+        // Where to jump to on parse error.
+        jmp_buf jmp_err;
+
+        // Error message string.
+        //  If there has not been an error then this is 0.
+        //  If there was an error during parsing then this is set to the
+        //  error message, which will be freed by shivver_parse_free.
+        char*   error_str;
 } parser_t;
 
 
@@ -94,16 +105,17 @@ shivver_parse_shift
 
 void
 shivver_parse_tok
-        (parser_t* state, size_t tok);
+        ( parser_t* state
+        , size_t tok);
 
 
 // from ascii/parse/term.c
-bool
-shivver_parse_isTermStart
-        (size_t tok);
-
 obj_t*
 shivver_parse_term
+        (parser_t* state);
+
+obj_t*
+shivver_parse_term1
         (parser_t* state);
 
 obj_t*
@@ -111,12 +123,16 @@ shivver_parse_term0
         (parser_t* state);
 
 objlist_t*
-shivver_parse_varSpaceList
+shivver_parse_termCommaList
         (parser_t* state);
 
 objlist_t*
-shivver_parse_termCommaList
+shivver_parse_varSpaceList
         (parser_t* state);
+
+bool
+shivver_parse_isTermStart
+        (size_t tok);
 
 
 // from ascii/parse/prim.c

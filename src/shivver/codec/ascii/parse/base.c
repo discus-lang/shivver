@@ -1,8 +1,10 @@
 
+#include <setjmp.h>
 #include "shivver/runtime.h"
 #include "shivver/codec/ascii.h"
 
-// Allocate a new parser state for a null-terminated string.
+
+// Allocate a new parser state to parse the given null-terminated string.
 parser_t*
 shivver_parse_alloc
         (char* str)
@@ -19,6 +21,8 @@ shivver_parse_alloc
         state->peek_str = 0;
         state->peek_len = 0;
 
+        state->error_str = 0;
+
         return state;
 }
 
@@ -27,11 +31,13 @@ shivver_parse_alloc
 void    shivver_parse_free
         (parser_t* state)
 {
+        if (state->error_str != 0)
+                free(state->error_str);
         free(state);
 }
 
 
-// Load the next token into the peek buffer.
+// Load the next token into the peek buffer of the state.
 void    shivver_parse_peek
         (parser_t* state)
 {
@@ -47,6 +53,8 @@ void    shivver_parse_peek
 
 
 // Accept the peeked token.
+//  This moves it from the 'peek' buffer to the 'curr' buffer,
+//  and clears the 'peek' buffer.
 void    shivver_parse_shift
         (parser_t* state)
 {
@@ -72,17 +80,29 @@ void    shivver_parse_shift
 }
 
 
-// Parse the given token, or error.
+// Parse the given token, which must be returned next by the lexer,
+// else fail with an unexpected token message.
 void    shivver_parse_tok
         (parser_t* state, size_t tok)
 {
         shivver_parse_peek(state);
+
+        // We got the token that we were expecting.
         if(state->peek_tok == tok)
         {       shivver_parse_shift(state);
                 return;
         }
 
-        printf("expected %s\n", shivver_token_name(tok));
-        shivver_fail("unexpected tok");
+        // We didn't get the token that we were expecting.
+        //  Build an error message in freshly allocated space.
+        //  The space will get freed along with the parse state.
+        char* err = malloc(256);
+        snprintf( err, 256
+                , "Unexpected token %s"
+                , shivver_token_name(tok));
+        state->error_str = err;
+
+        // Return to the caller of the top-level parse function.
+        longjmp(state->jmp_err, 1);
 }
 

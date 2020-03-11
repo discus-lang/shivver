@@ -4,6 +4,7 @@
 #include "shivver/codec/ascii.h"
 
 
+// Parse a literal natural number, like "#nat'23"
 obj_t*
 shivver_parse_nat_lit
         (char* str)
@@ -16,6 +17,7 @@ shivver_parse_nat_lit
 }
 
 
+// Parse a nat primtitive, or return 0 if it's not recognised.
 obj_t*
 shivver_parse_nat_prim
         (char* str)

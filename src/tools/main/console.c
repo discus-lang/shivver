@@ -146,6 +146,16 @@ shivver_console_line (char* line)
         if (arg != 0)
         {       parser_t* state = shivver_parse_alloc(arg);
                 obj_t* obj      = shivver_parse_term(state);
+
+                // If there was a parse error then obj is set to 0,
+                if (obj == 0)
+                {       printf("%s\n", state->error_str);
+                        shivver_parse_free(state);
+                        return;
+                }
+
+                // Line was parsed successfully,
+                //  so print out its physical description.
                 shivver_parse_free(state);
                 shivver_prim_console_printp(obj);
                 printf("\n");
@@ -154,21 +164,28 @@ shivver_console_line (char* line)
 
         arg = shivver_string_stripPrefix(line, ":");
         if(arg != 0)
-        {       printf("unknown command '%s'\n", arg);
+        {       printf("Unknown command '%s'\n", arg);
                 return;
         }
 
-        // treat line as a term to parse.
-        else {  parser_t* state = shivver_parse_alloc(line);
-
+        // Treat line as a term to parse and evaluate.
+        else {
+                // Try to parse the term.
+                parser_t* state = shivver_parse_alloc(line);
                 obj_t* obj      = shivver_parse_term(state);
-                shivver_parse_peek(state);
-                if (state->peek_tok != TOKEN_END)
-                        shivver_fail("parse error at end of input");
 
+                // If there was a parse error then obj is set to 0,
+                //  and the error message is set in the parse state.
+                if (obj == 0)
+                {       printf("%s\n", state->error_str);
+                        shivver_parse_free(state);
+                        return;
+                }
+
+                // Line was parsed successfully,
+                //  so evaluate it and print the result.
                 shivver_parse_free(state);
-
-                obj_t* objEval  = shivver_eval(0, obj);
+                obj_t* objEval = shivver_eval(0, obj);
                 shivver_prim_console_printl(objEval);
                 printf("\n");
                 return;
