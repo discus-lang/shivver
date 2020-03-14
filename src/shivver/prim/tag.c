@@ -1,7 +1,6 @@
 
 #include <stdlib.h>
-#include "shivver/prim.h"
-
+#include "shivver/prim/tag.h"
 
 char*
 shivver_prim_tag_name

@@ -1,5 +1,5 @@
 #pragma once
-#include "shivver/runtime/object.h"
+#include "shivver/runtime/heap.h"
 
 
 // ----------------------------------------------------------------------------

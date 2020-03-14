@@ -1,7 +1,6 @@
 #pragma once
-#include "shivver/util.h"
 #include "shivver/runtime/error.h"
-#include "shivver/runtime/object.h"
+#include "shivver/runtime/heap/tag.h"
 
 // ----------------------------------------------------------------------------
 // Runtime heap space.
@@ -11,6 +10,14 @@ typedef struct {
         uint64_t* next;
         uint64_t* last;
 } heap_t;
+
+
+// ----------------------------------------------------------------------------
+// Generic heap object representation
+typedef struct {
+        uint64_t header;
+        uint64_t payload[];
+} obj_t;
 
 
 // ----------------------------------------------------------------------------
@@ -28,5 +35,4 @@ halloc (size_t nWords)
         shivver_heap.next += nWords;
         return (void*)obj;
 }
-
 

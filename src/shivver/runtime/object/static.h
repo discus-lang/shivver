@@ -1,9 +1,9 @@
 #pragma once
+#include "shivver/runtime/object.h"
 
 // Objects that refer to data in statically allocated memory.
 //  either 1) the text segment of the unix process, or
 //         2) memory that was allocated at startup and lives forever.
-#include "shivver/runtime/object.h"
 
 
 // ----------------------------------------------------------------------------

@@ -16,53 +16,6 @@ obj_t*  shivver_eval (obj_t* oEnv, obj_t* oExp)
 }
 
 
-size_t  shivver_eval_takeNat
-        ( obj_t*        obj)
-{
-        switch(xObj_tag(obj))
-        { case TAG_NATA:
-                return xNatA(obj);
-        }
-        shivver_fail("not a nat");
-}
-
-static inline size_t
-takeNat (obj_t* obj)
-{       return shivver_eval_takeNat(obj);
-}
-
-
-void    shivver_evalPrim
-        ( size_t        nArity
-        , obj_t**       osRes
-        , size_t        tag
-        , obj_t**       osArg)
-{
-        switch(tag) {
-         case PRIM_NAT_ADD:
-         {      osRes[0] = aNatA(takeNat(osArg[0]) + takeNat(osArg[1]));
-                return;
-         }
-
-         case PRIM_NAT_SUB:
-         {      osRes[0] = aNatA(takeNat(osArg[0]) - takeNat(osArg[1]));
-                return;
-         }
-
-         case PRIM_NAT_MUL:
-         {      osRes[0] = aNatA(takeNat(osArg[0]) * takeNat(osArg[1]));
-                return;
-         }
-
-         case PRIM_NAT_DIV:
-         {      osRes[0] = aNatA(takeNat(osArg[0]) / takeNat(osArg[1]));
-                return;
-         }
-
-         default:
-                shivver_fail("invalid prim");
-        }
-}
 
 
 void    shivver_evalN
@@ -86,7 +39,7 @@ void    shivver_evalN
           case TAG_VARA:
           {     reqeval (nArity == 1,   "eval arity for variable must be one");
                 obj_t* oRes
-                 = shivver_resolveT
+                 = shivver_eval_resolveT
                         (oEnv, xVarA_name(oExp), xVarA_bump(oExp));
 
                 reqeval ( oRes != 0,    "variable out of scope");
@@ -144,7 +97,7 @@ void    shivver_evalN
                         reqeval ( nArity == nResults
                                 , "eval arity does not match number of prim op results");
 
-                        shivver_evalPrim (nArity, osRes, pTag, osArgs);
+                        shivver_eval_prim (nArity, osRes, pTag, osArgs);
                         return;
                   }
 
@@ -214,7 +167,7 @@ void    shivver_evalN
                         size_t nResults = shivver_prim_tag_results(pTag);
                         reqeval ( nArity == nResults
                                 , "eval arity does not match number of prim op results");
-                        shivver_evalPrim (nArity, osRes, pTag, osArgs);
+                        shivver_eval_prim (nArity, osRes, pTag, osArgs);
                         return;
                   }
 
@@ -270,7 +223,7 @@ void    shivver_evalN
           {     reqeval ( nArity == 1,  "eval arity for variable must be one");
 
                 obj_t* oRes
-                 = shivver_resolveT
+                 = shivver_eval_resolveT
                         (oEnv, xVarT_name(oExp), xVarT_bump(oExp));
                 reqeval ( oRes != 0,    "variable out of scope");
 
@@ -285,50 +238,4 @@ void    shivver_evalN
         }
 }
 
-
-// TODO: handle bump counter.
-// Lookup a variable from the given environment.
-//  If we find it set the outResult to the value and return true,
-//  otherwise return false.
-//
-//  We treat an environemnt pointer of NULL as an empty environment,
-//  and will always return false if given one.
-//
-obj_t*
-shivver_resolveT
-        (obj_t* oEnv, char* name, size_t bump)
-{ again:
-        if (oEnv == 0)
-                return 0;
-
-        size_t nCount = xEnvH_len(oEnv);
-        for (size_t i = 0; i < nCount; i++)
-        {       obj_t* oParm = xEnvH_var(oEnv, i);
-                if (shivver_eqSym (oParm, name))
-                {       return xEnvH_val(oEnv, i);
-                }
-        }
-
-        oEnv = xEnvH_parent(oEnv);
-        goto again;
-}
-
-
-// Check if a symbol has the given name.
-bool    shivver_eqSym
-        (obj_t* oExp, char* name)
-{
-        switch(xObj_tag(oExp))
-        { case TAG_VART:
-                return strcmp(xVarT_name(oExp), name) == 0;
-
-          case TAG_VARA:
-                return strcmp(xVarA_name(oExp), name) == 0;
-
-          default:
-                printf("* eqSym: object is not a variable");
-                shivver_prim_console_printp(oExp);
-                shivver_fail("evaluation failed");
-        }
-}
 

@@ -1,9 +1,11 @@
 #pragma once
+#include "shivver/runtime/types.h"
 
 void
 shivver_fail
         (char* reason)
         __attribute__((noreturn));
+
 
 static inline void
 require ( bool  prop
