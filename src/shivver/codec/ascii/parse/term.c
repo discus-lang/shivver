@@ -66,13 +66,20 @@ shivver_parse_term0
         (parser_t* state)
 {
         shivver_parse_peek(state);
-
         switch (state->peek_tok)
         { // Term ::= Var
           case TOKEN_VAR:
           {     // Copy the name from the lexer buffer.
                 shivver_parse_shift(state);
                 obj_t* obj = aVarA(state->curr_len, state->curr_str);
+                return obj;
+          }
+
+          // Term ::= Mac
+          case TOKEN_MAC:
+          {     // Skip over the sigil char when copying the name.
+                shivver_parse_shift(state);
+                obj_t* obj = aMacA(state->curr_len - 1, state->curr_str + 1);
                 return obj;
           }
 

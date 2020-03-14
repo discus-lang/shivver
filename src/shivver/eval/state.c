@@ -22,7 +22,7 @@ shivver_eval_alloc
         if (res == 0)
         {       return state;
         }
-        abort();
+        shivver_fail("shivver_eval_alloc: eval error handler not set.");
 }
 
 

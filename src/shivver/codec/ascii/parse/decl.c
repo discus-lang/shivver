@@ -12,20 +12,20 @@ shivver_parse_decl
         switch (state->peek_tok)
         { // Term ::= !term Mac '=' Term
           case TOKEN_KEY_TERM:
-          {     printf("parsing term decl\n");
-                abort();
+          {     shivver_parse_shift(state);
+                obj_t* oMac     = shivver_parse_mac(state);
+                shivver_parse_tok(state, TOKEN_EQ);
+                obj_t* oBody    = shivver_parse_term1(state);
+                return  aApsH (2, aSymT("decl"), (obj_t*[]){oMac, oBody});
           }
 
           default:
           {
                 //  Build an error message in freshly allocated space.
                 //  The space will get freed along with the parse state.
-                char* err = malloc(256);
-                snprintf( err, 256
-                        , "Unexpected token '%s'"
+                shivver_parse_fail
+                        ( state, "Unexpected '%s'"
                         , shivver_token_name(state->peek_tok));
-                state->error_str = err;
-                longjmp(state->jmp_err, 1);
           }
         }
 }

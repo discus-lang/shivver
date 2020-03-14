@@ -21,6 +21,7 @@
 #define TOKEN_SKET      15
 
 #define TOKEN_COMMA     20
+#define TOKEN_EQ        21
 
 #define TOKEN_VAR       30
 #define TOKEN_SYM       31
@@ -95,45 +96,34 @@ shivver_lexer_load_signame
 // ----------------------------------------------------------------------------
 // from ascii/parse/base.c
 parser_t*
-shivver_parse_alloc
+        shivver_parse_alloc
         (char* str);
 
-void
-shivver_parse_free
+void    shivver_parse_free
         (parser_t* state);
 
 void
-shivver_parse_peek
-        (parser_t* state);
+shivver_parse_fail
+        ( parser_t*     state
+        , char*         format
+        , ...)
+        __attribute__((noreturn));
 
-void
-shivver_parse_shift
-        (parser_t* state);
+void    shivver_parse_peek      (parser_t* state);
+void    shivver_parse_shift     (parser_t* state);
 
-void
-shivver_parse_tok
-        ( parser_t* state
-        , size_t tok);
+void    shivver_parse_tok       (parser_t* state, size_t tok);
+obj_t*  shivver_parse_mac       (parser_t* state);
 
 
 // from ascii/parse/decl.c
-obj_t*
-shivver_parse_decl
-        (parser_t* state);
+obj_t*  shivver_parse_decl      (parser_t* state);
 
 
 // from ascii/parse/term.c
-obj_t*
-shivver_parse_term_zero
-        (parser_t* state);
-
-obj_t*
-shivver_parse_term1
-        (parser_t* state);
-
-obj_t*
-shivver_parse_term0
-        (parser_t* state);
+obj_t*  shivver_parse_term_zero (parser_t* state);
+obj_t*  shivver_parse_term1     (parser_t* state);
+obj_t*  shivver_parse_term0     (parser_t* state);
 
 objlist_t*
 shivver_parse_termCommaList
@@ -149,10 +139,5 @@ shivver_parse_isTermStart
 
 
 // from ascii/parse/prim.c
-obj_t*
-shivver_parse_nat_lit
-        (char* str);
-
-obj_t*
-shivver_parse_nat_prim
-        (char* str);
+obj_t*  shivver_parse_nat_lit   (char* str);
+obj_t*  shivver_parse_nat_prim  (char* str);

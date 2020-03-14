@@ -20,6 +20,7 @@ shivver_token_name
           case TOKEN_SKET:      return "sket";
 
           case TOKEN_COMMA:     return "comma";
+          case TOKEN_EQ:        return "eq";
 
           case TOKEN_VAR:       return "var";
           case TOKEN_SYM:       return "sym";
@@ -91,6 +92,7 @@ bool    shivver_lexer_scan
           case '[': *outTag = TOKEN_SBRA;  goto single;
           case ']': *outTag = TOKEN_SKET;  goto single;
           case ',': *outTag = TOKEN_COMMA; goto single;
+          case '=': *outTag = TOKEN_EQ;    goto single;
 
           // symbol name
           case '%':

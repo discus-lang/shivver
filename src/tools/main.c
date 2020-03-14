@@ -36,7 +36,8 @@ int main(int argc, char** argv)
                         shivver_parse_free(state_parse);
                         return 0;
                 }
-                shivver_prim_console_printp (obj_parse);
+                shivver_prim_console_printl (obj_parse);
+                printf("\n");
                 free(buf);
         }
 
