@@ -1,4 +1,6 @@
 #pragma once
+#include "shivver/runtime/object.h"
+
 
 // Generic functions that work for all object types.
 

@@ -1,5 +1,10 @@
 #include "shivver/runtime.h"
 
+// ----------------------------------------------------------------------------
+// heap
+heap_t shivver_heap;
+
+
 void
 shivver_heapInit(size_t nWords)
 {

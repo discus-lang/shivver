@@ -1,69 +1,20 @@
 #pragma once
 #include <stdlib.h>
-#include <stdbool.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
-typedef uint32_t uint24_t;
-
-
-// ----------------------------------------------------------------------------
-// Runtime heap space.
-typedef struct {
-        uint64_t  size;
-        uint64_t* base;
-        uint64_t* next;
-        uint64_t* last;
-} heap_t;
-
-
-// ----------------------------------------------------------------------------
-// Generic heap object represen tation.
-typedef struct {
-        uint64_t header;
-        uint64_t payload[];
-} obj_t;
-
-typedef struct {
-        uint64_t header;
-        char*    string;
-} obj_symt_t;
-
-typedef struct {
-        uint64_t header;
-        char*    string;
-} obj_vart_t;
-
-
-// ----------------------------------------------------------------------------
-void
-shivver_fail
-        (char* reason)
-        __attribute__((noreturn));
-
-static inline void
-require ( bool  prop
-        , char* message)
-{
-        if (!prop) shivver_fail(message);
-}
-
-
-// ----------------------------------------------------------------------------
-// heap
-heap_t shivver_heap;
-
-
-// ----------------------------------------------------------------------------
-// inlines
+#include "shivver/runtime/types.h"
 #include "shivver/runtime/heap.h"
-#include "shivver/runtime/tag.h"
+#include "shivver/runtime/object.h"
 #include "shivver/runtime/object/base.h"
 #include "shivver/runtime/object/atomic.h"
 #include "shivver/runtime/object/static.h"
 #include "shivver/runtime/object/hot.h"
 
+
+
+// ----------------------------------------------------------------------------
+// inlines
 
 void    shivver_heapInit(size_t nWords);
 

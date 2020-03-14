@@ -2,7 +2,7 @@
 
 // Hot objects that live in the dynamic heap and whose payloads are stored
 // directly in the object itself.
-#include "shivver/runtime.h"
+#include "shivver/runtime/object.h"
 
 
 // ----------------------------------------------------------------------------

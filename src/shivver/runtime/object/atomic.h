@@ -1,10 +1,12 @@
 #pragma once
-
-#include "shivver/runtime.h"
+#include "shivver/runtime/object.h"
 
 
 // ----------------------------------------------------------------------------
-// A variable name with the characters stored in the object.
+// Allocate a new atomic variable object in the heap an copy
+// the name string into it.
+//
+// Atomic variables have their characters stored in the object itself.
 //
 //      7  6  5  4  3  2  1  0
 //  0   len.......  bump...  F
@@ -13,9 +15,6 @@
 //
 //  len: records the length of the string in bytes,
 //       not including the trailing null byte.
-//
-// Allocate a new variable object in the heap and copy the
-// name string into it.
 //
 static inline obj_t*
 aVarA (uint32_t len32, char* str)

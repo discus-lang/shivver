@@ -1,3 +1,5 @@
+#pragma once
+#include "shivver/runtime/types.h"
 
 // Objects
 //                                      sort    mode
@@ -54,4 +56,11 @@
 
 #define TAG_NATA        0x03
 
+
+// ----------------------------------------------------------------------------
+// Generic heap object representation
+typedef struct {
+        uint64_t header;
+        uint64_t payload[];
+} obj_t;
 
