@@ -10,10 +10,10 @@ shivver_parse_decl
         shivver_parse_peek(state);
 
         switch (state->peek_tok)
-        { // Term ::= !term Mac '=' Term
-          case TOKEN_KEY_TERM:
+        { // Term ::= Mac '=' Term
+          case TOKEN_MAC:
           {     shivver_parse_shift(state);
-                obj_t* oMac     = shivver_parse_mac(state);
+                obj_t* oMac     = aMacA(state->curr_len - 1, state->curr_str + 1);
                 shivver_parse_tok(state, TOKEN_EQ);
                 obj_t* oBody    = shivver_parse_term1(state);
                 return  aApsH (2, aSymT("decl"), (obj_t*[]){oMac, oBody});

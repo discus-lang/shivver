@@ -14,6 +14,11 @@ shivver_prim_console_printl
                 return;
           }
 
+          case TAG_MACA:
+          {     printf("@%s",   xMacA_name(obj));
+                return;
+          }
+
           case TAG_SYMA:
           {     printf("%%%s",  xSymA_name(obj));
                 return;
@@ -21,6 +26,11 @@ shivver_prim_console_printl
 
           case TAG_PRMA:
           {     printf("#%s",   xPrmA_name(obj));
+                return;
+          }
+
+          case TAG_PRZA:
+          {     printf("#%s",   shivver_prim_tag_name(xPrzA_tag(obj)));
                 return;
           }
 

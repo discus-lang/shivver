@@ -92,6 +92,7 @@ bool    shivver_lexer_scan
           case '[': *outTag = TOKEN_SBRA;  goto single;
           case ']': *outTag = TOKEN_SKET;  goto single;
           case ',': *outTag = TOKEN_COMMA; goto single;
+          case ';': *outTag = TOKEN_SEMI;  goto single;
           case '=': *outTag = TOKEN_EQ;    goto single;
 
           // symbol name

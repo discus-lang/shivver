@@ -21,7 +21,8 @@
 #define TOKEN_SKET      15
 
 #define TOKEN_COMMA     20
-#define TOKEN_EQ        21
+#define TOKEN_SEMI      21
+#define TOKEN_EQ        22
 
 #define TOKEN_VAR       30
 #define TOKEN_SYM       31
