@@ -1,4 +1,5 @@
 
+#include <assert.h>
 #include "shivver/eval.h"
 #include "shivver/prim.h"
 #include "shivver/util.h"
@@ -8,18 +9,51 @@ reqeval (bool prop, char* message)
 {       require(prop, message);
 }
 
-obj_t*  shivver_eval (obj_t* oEnv, obj_t* oExp)
+
+// Evaluate a term, expecting a single result value.
+//  On success, the result is returned directly.
+//  On failure, we return 0 and the error message is in state->error_str.
+//   The messsage string in state->error_str needs to be freed by the caller.
+obj_t*
+shivver_eval_term_zero
+        ( eval_t*       state   // Evaluation state.
+        , obj_t*        oEnv    // Evaluation environemnt.
+        , obj_t*        oExp)   // Term expression to evaluate.
+{
+        int ret = setjmp(state->jmp_err);
+        if (ret == 0)
+                return shivver_eval_term1 (state, oEnv, oExp);
+        else {
+                // We got longjmped to, so there was a parse error.
+                // An error message need to have been set in the state.
+                assert(state->error_str != 0);
+
+                // Signal to the caller that there was an error by
+                // returning 0.
+                return 0;
+        }
+}
+
+
+// Evaluate a term, expecting a single result value.
+//  On failure we longjmp to the destination defined in the state.
+obj_t*
+shivver_eval_term1
+        ( eval_t*       state   // Evaluation state.
+        , obj_t*        oEnv    // Evaluation environment.
+        , obj_t*        oExp)   // Term expression to evaluate.
 {
         obj_t*  oRes     = 0;
-        shivver_evalN(1, &oRes, oEnv, oExp);
+        shivver_eval_termN(state, 1, &oRes, oEnv, oExp);
         return oRes;
 }
 
 
-
-
-void    shivver_evalN
-        ( size_t        nArity  // Number of values we expect from evaluation.
+// Evaluate a term, expecting the given number of result values.
+void
+shivver_eval_termN
+        ( eval_t*       state   // Evaluation state.
+        , size_t        nArity  // Number of values we expect from evaluation.
         , obj_t**       osRes   // Array of pointers to fill with results.
         , obj_t*        oEnv    // Evaluation environment.
         , obj_t*        oExp)   // Term expression to evaluate.
@@ -39,10 +73,13 @@ void    shivver_evalN
           case TAG_VARA:
           {     reqeval (nArity == 1,   "eval arity for variable must be one");
                 obj_t* oRes
-                 = shivver_eval_resolveT
+                 = shivver_eval_resolve
                         (oEnv, xVarA_name(oExp), xVarA_bump(oExp));
 
-                reqeval ( oRes != 0,    "variable out of scope");
+                shivver_eval_require
+                        ( state, oRes != 0
+                        , "Variable '%s' not in scope."
+                        , xVarA_name(oExp));
                 osRes[0] = oRes;
                 return;
           }
@@ -52,7 +89,9 @@ void    shivver_evalN
           {     size_t nLen = xMmmH_len(oExp);
                 reqeval (nLen == nArity, "eval arity does not match vector length");
                 for (size_t i = 0; i < nLen; i++)
-                        shivver_evalN(1, osRes + i, oEnv, xMmmH_arg(oExp, i));
+                        shivver_eval_termN
+                                ( state, 1, osRes + i
+                                , oEnv, xMmmH_arg(oExp, i));
                 return;
           }
 
@@ -73,7 +112,9 @@ void    shivver_evalN
 
                 // Evaluate the head.
                 obj_t* oHeadV   = 0;
-                shivver_evalN (1, &oHeadV, oEnv, oHead);
+                shivver_eval_termN
+                        ( state, 1, &oHeadV
+                        , oEnv, oHead);
 
                 uint32_t tag    = xObj_tag(oHeadV);
                 switch(tag)
@@ -81,7 +122,7 @@ void    shivver_evalN
                   {     // For applications of symbols,
                         // evaluate all the arguments and rebuild the application.
                         obj_t*  oArgV;
-                        shivver_evalN(1, &oArgV, oEnv, oArg);
+                        shivver_eval_termN (state, 1, &oArgV, oEnv, oArg);
                         osRes[0] = aAppH(oHeadV, oArgV);
                         return;
                   }
@@ -91,7 +132,7 @@ void    shivver_evalN
                         size_t nParams  = shivver_prim_tag_args(pTag);
 
                         obj_t* osArgs[nParams];
-                        shivver_evalN(nParams, osArgs, oEnv, oArg);
+                        shivver_eval_termN (state, nParams, osArgs, oEnv, oArg);
 
                         size_t nResults = shivver_prim_tag_results(pTag);
                         reqeval ( nArity == nResults
@@ -110,7 +151,7 @@ void    shivver_evalN
 
                         // Evaluate the arguments.
                         obj_t* osArgs[nParams];
-                        shivver_evalN(nParams, osArgs, oEnv, oArg);
+                        shivver_eval_termN (state, nParams, osArgs, oEnv, oArg);
 
                         // Tail call ourselves with the extended environment
                         // to evaluate the body.
@@ -134,7 +175,7 @@ void    shivver_evalN
 
                 // Evaluate the head.
                 obj_t* oHeadV   = 0;
-                shivver_evalN (1, &oHeadV, oEnv, oHead);
+                shivver_eval_termN (state, 1, &oHeadV, oEnv, oHead);
 
                 switch(xObj_tag(oHeadV))
                 { case TAG_SYMA:
@@ -143,7 +184,7 @@ void    shivver_evalN
                         obj_t* osArgVs[nArgs];
                         for(size_t i = 0; i < nArgs; i++)
                         {       obj_t* oArg = xApsH_arg(oAps, i);
-                                shivver_evalN(1, osArgVs + i, oEnv, oArg);
+                                shivver_eval_termN (state, 1, osArgVs + i, oEnv, oArg);
                         }
 
                         osRes[0] = aApsH(nArgs, oHeadV, osArgVs);
@@ -160,7 +201,7 @@ void    shivver_evalN
                         obj_t* osArgs[nArgs];
                         for(size_t i = 0; i < nArgs; i++)
                         {       obj_t* oArg = xApsH_arg(oAps, i);
-                                shivver_evalN(1, osArgs + i, oEnv, oArg);
+                                shivver_eval_termN (state, 1, osArgs + i, oEnv, oArg);
                         }
 
                         // Apply the primitive.
@@ -191,7 +232,7 @@ void    shivver_evalN
                                 obj_t* osArgs[nArgs];
                                 for(size_t i = 0; i < nArgs; i++)
                                 {       obj_t* oArg = xApsH_arg(oAps, i);
-                                        shivver_evalN(1, osArgs + i, oEnv, oArg);
+                                        shivver_eval_termN (state, 1, osArgs + i, oEnv, oArg);
                                 }
 
                                 // Tail call ourselves with the extended environment
@@ -223,7 +264,7 @@ void    shivver_evalN
           {     reqeval ( nArity == 1,  "eval arity for variable must be one");
 
                 obj_t* oRes
-                 = shivver_eval_resolveT
+                 = shivver_eval_resolve
                         (oEnv, xVarT_name(oExp), xVarT_bump(oExp));
                 reqeval ( oRes != 0,    "variable out of scope");
 

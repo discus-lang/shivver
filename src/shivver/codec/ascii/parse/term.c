@@ -4,11 +4,11 @@
 
 
 // Parse a term.
-//  On success the term is returned directly.
-//  On failure, null is returned and the error message is in state->error_str.
-//   The message string in state->error_str need to be freed by the caller.
+//  On success, the term is returned directly.
+//  On failure, we return 0 and the error message is in state->error_str.
+//   The message string in state->error_str needs to be freed by the caller.
 obj_t*
-shivver_parse_term
+shivver_parse_term_zero
         (parser_t* state)
 {
         int ret = setjmp(state->jmp_err);

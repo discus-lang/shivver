@@ -11,3 +11,4 @@
 
 // from heap/init.c
 void    shivver_heapInit(size_t nWords);
+

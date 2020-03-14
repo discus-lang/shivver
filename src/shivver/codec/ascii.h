@@ -29,7 +29,7 @@
 
 // ----------------------------------------------------------------------------
 typedef struct {
-        char*   str;            // stirng to parse.
+        char*   str;            // string to parse.
         size_t  len;            // remaining chars in string to parse.
 
         // the current token buffer.
@@ -111,7 +111,7 @@ shivver_parse_tok
 
 // from ascii/parse/term.c
 obj_t*
-shivver_parse_term
+shivver_parse_term_zero
         (parser_t* state);
 
 obj_t*

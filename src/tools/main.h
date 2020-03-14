@@ -16,3 +16,12 @@ shivver_console_line
 void
 shivver_main_tokens
         (char* str);
+
+
+void
+shivver_console_cmd_eval
+        (char*  line);
+
+void
+shivver_console_cmd_printp
+        (char*  line);

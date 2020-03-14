@@ -51,8 +51,10 @@ shivver_console_init()
 void
 shivver_console_start()
 {
+        // Initialize the console interface.
         shivver_console_init();
 
+        // Allocate a buffer to store the read line.
         size_t  lineMax = 1024;
         char*   line    = malloc(sizeof(char) * lineMax + 1);
         size_t  pos     = 0;
@@ -79,7 +81,7 @@ shivver_console_start()
                 {       line[pos] = 0;
                         printf("\n");
                         fflush(stdout);
-                        shivver_console_line(line);
+                        shivver_console_line (line);
                         pos = 0;
                         goto start;
                 }
@@ -127,7 +129,8 @@ shivver_console_isLineWhite(char* line)
 
 // Handle an input line to the console.
 void
-shivver_console_line (char* line)
+shivver_console_line
+        ( char* line)
 {
         if (shivver_console_isLineWhite(line))
                 return;
@@ -144,21 +147,7 @@ shivver_console_line (char* line)
         // Parse the line and show its physical description.
         arg = shivver_string_stripPrefix(line, ":printp");
         if (arg != 0)
-        {       parser_t* state = shivver_parse_alloc(arg);
-                obj_t* obj      = shivver_parse_term(state);
-
-                // If there was a parse error then obj is set to 0,
-                if (obj == 0)
-                {       printf("%s\n", state->error_str);
-                        shivver_parse_free(state);
-                        return;
-                }
-
-                // Line was parsed successfully,
-                //  so print out its physical description.
-                shivver_parse_free(state);
-                shivver_prim_console_printp(obj);
-                printf("\n");
+        {       shivver_console_cmd_printp(arg);
                 return;
         }
 
@@ -169,25 +158,6 @@ shivver_console_line (char* line)
         }
 
         // Treat line as a term to parse and evaluate.
-        else {
-                // Try to parse the term.
-                parser_t* state = shivver_parse_alloc(line);
-                obj_t* obj      = shivver_parse_term(state);
-
-                // If there was a parse error then obj is set to 0,
-                //  and the error message is set in the parse state.
-                if (obj == 0)
-                {       printf("%s\n", state->error_str);
-                        shivver_parse_free(state);
-                        return;
-                }
-
-                // Line was parsed successfully,
-                //  so evaluate it and print the result.
-                shivver_parse_free(state);
-                obj_t* objEval = shivver_eval(0, obj);
-                shivver_prim_console_printl(objEval);
-                printf("\n");
-                return;
-        }
+        else    shivver_console_cmd_eval(line);
 }
+

@@ -4,16 +4,19 @@
 #include "shivver/eval.h"
 
 // TODO: handle bump counter.
-// Lookup a variable from the given environment.
-//  If we find it set the outResult to the value and return true,
-//  otherwise return false.
 //
-//  We treat an environemnt pointer of NULL as an empty environment,
+// Lookup a variable from the given environment.
+//  If we find it then return the associated object,
+//  otherwise return 0.
+//
+//  We treat an environment pointer of 0 as an empty environment,
 //  and will always return false if given one.
 //
 obj_t*
-shivver_eval_resolveT
-        (obj_t* oEnv, char* name, size_t bump)
+shivver_eval_resolve
+        ( obj_t*        oEnv
+        , char*         name
+        , size_t        bump)
 { again:
         if (oEnv == 0)
                 return 0;
@@ -31,10 +34,11 @@ shivver_eval_resolveT
 }
 
 
-// Check if a symbol has the given name.
+// Check if a variable has the given name.
 bool
 shivver_eval_eqSym
-        (obj_t* oExp, char* name)
+        ( obj_t*        oExp
+        , char*         name)
 {
         switch(xObj_tag(oExp))
         { case TAG_VART:

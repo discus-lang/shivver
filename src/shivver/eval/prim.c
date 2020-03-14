@@ -2,6 +2,7 @@
 #include "shivver/prim.h"
 
 
+// Check that ths is a NatA object, and take its value.
 size_t
 shivver_eval_takeNat
         ( obj_t*        obj)
@@ -20,6 +21,7 @@ takeNat (obj_t* obj)
 }
 
 
+// Evaluate a primitive operators applied to its arguments.
 void
 shivver_eval_prim
         ( size_t        nArity
