@@ -116,6 +116,12 @@ shivver_parse_tok
         , size_t tok);
 
 
+// from ascii/parse/decl.c
+obj_t*
+shivver_parse_decl
+        (parser_t* state);
+
+
 // from ascii/parse/term.c
 obj_t*
 shivver_parse_term_zero

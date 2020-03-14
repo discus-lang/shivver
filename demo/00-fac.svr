@@ -1,9 +1,5 @@
-!shivver core
 
 !term @fac {x y}
  = #if  [ #nat'eq [x, #nat'0]
         , {} #nat'1
         , {} @fac [#nat'sub [x #nat'1]]]
-
-
-
