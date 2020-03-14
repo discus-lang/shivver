@@ -3,13 +3,14 @@
 
 
 // ----------------------------------------------------------------------------
-// Allocate a new atomic variable object in the heap an copy
+// Allocate an atomic name object in the heap and copy
 // the name string into it.
 //
-// Atomic variables have their characters stored in the object itself.
+// Atomic names have their characters stored in the object itself.
+// The atomic name format is used for var, sym, prm, and mac objects.
 //
 //      7  6  5  4  3  2  1  0
-//  0   len.......  bump...  F
+//  0   len.......  aux....  F
 //  1   chars.................
 //  ... chars.................
 //
@@ -17,21 +18,26 @@
 //       not including the trailing null byte.
 //
 static inline obj_t*
-aVarA (uint32_t len32, char* str)
+aNameA  ( uint8_t       tag
+        , uint24_t      aux
+        , uint32_t      len
+        , char*         str)
 {
-        uint64_t len    = (uint64_t)len32;
+        uint64_t len64  = (uint64_t)len;
 
         // Length of the string including the null byte.
-        uint64_t lenn   = len + 1;
+        uint64_t lenn   = len64 + 1;
 
         // Size of the whole object in 64-bit words.
         uint64_t lenw  = (lenn + 7) << 3;
 
         // Allocate the object and write the header.
         uint64_t* buf64 = halloc(1 + lenw);
-        buf64[0] = (len << 32) | TAG_VARA;
+        buf64[0] = ((uint64_t)len << 32)
+                 | ((uint64_t)aux << 8)
+                 | (uint64_t)tag;
 
-        // Copy in the character and null byte.
+        // Copy in the characters and null byte.
         uint8_t*  buf8  = (uint8_t*)buf64;
         for (size_t i = 0; i < len; i++)
         {       buf8[8 + i] = str[i];
@@ -41,22 +47,48 @@ aVarA (uint32_t len32, char* str)
 }
 
 static inline uint32_t
-xVarA_len(obj_t* obj)
+xNameA_len(obj_t* obj)
 {       uint64_t* buf = (uint64_t*)obj;
         return (uint32_t)(buf[0] >> 32);
 }
 
+static inline uint24_t
+xNameA_aux(obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return (uint32_t)((buf[0] >> 8) & 0x0ffffff);
+}
+
 static inline char*
-xVarA_name(obj_t* obj)
+xNameA_str(obj_t* obj)
 {       uint8_t* buf = (uint8_t*)obj;
         return (char*)(buf + 8);
 }
 
+
+
+// ----------------------------------------------------------------------------
+// A variable name with the characters stored in the object.
+//
+//      7  6  5  4  3  2  1  0
+//  0   len.......  bump...  F
+//  1   chars.................
+//  ... chars.................
+//
+static inline obj_t*
+aVarA (uint32_t len, char* str)
+{       return aNameA(TAG_VARA, 0, len, str); }
+
+static inline uint32_t
+xVarA_len(obj_t* obj)
+{       return xNameA_len(obj); }
+
+static inline char*
+xVarA_name(obj_t* obj)
+{       return xNameA_str(obj); }
+
 static inline uint24_t
 xVarA_bump(obj_t* obj)
-{       uint64_t* buf = (uint64_t*)obj;
-        return (uint24_t)(buf[0] >> 8) & 0x0ffffff;
-}
+{       return xNameA_aux(obj); }
 
 
 // ----------------------------------------------------------------------------
@@ -67,46 +99,17 @@ xVarA_bump(obj_t* obj)
 //  1   chars.................
 //  ... chars.................
 //
-//  len: records the length of the string in bytes.
-//       not including the trailing null byte.
-
-// Allocate a new symbol object in the heap and copy the
-// name string into it.
 static inline obj_t*
-aSymA (uint32_t len32, char* str)
-{
-        uint64_t len    = (uint64_t)len32;
-
-        // Length of the string including the null byte.
-        size_t lenn     = len + 1;
-
-        // Size of the whole object in 64-bit words.
-        size_t lenw    = (lenn + 7) << 3;
-
-        // Allocate the object and write the header.
-        uint64_t* buf64 = halloc(1 + lenw);
-        buf64[0] = (len << 32) | TAG_SYMA;
-
-        // Copy in the character and null byte.
-        uint8_t*  buf8  = (uint8_t*)buf64;
-        for (size_t i = 0; i < len; i++)
-        {       buf8[8 + i] = str[i];
-        }
-        buf8[8 + len] = 0;
-        return (obj_t*)buf8;
-}
+aSymA (uint32_t len, char* str)
+{       return aNameA(TAG_SYMA, 0, len, str); }
 
 static inline uint32_t
 xSymA_len(obj_t* obj)
-{       uint64_t* buf = (uint64_t*)obj;
-        return (uint32_t)(buf[0] >> 32);
-}
+{       return xNameA_len(obj); }
 
 static inline char*
 xSymA_name (obj_t* obj)
-{       uint8_t* buf = (uint8_t*)obj;
-        return (char*)(buf + 8);
-}
+{       return xNameA_str(obj); }
 
 
 // ----------------------------------------------------------------------------
@@ -117,45 +120,17 @@ xSymA_name (obj_t* obj)
 //  1   chars.................
 //  ..  chars.................
 //
-//  len: records the length of the payload in bytes.
-
-// Allocate a new primitive object in the heap and copy the
-// name string into it.
 static inline obj_t*
-aPrmA (uint32_t len32, char* str)
-{
-        uint64_t len    = (uint64_t)len32;
-
-        // Length of the string including the null byte.
-        size_t lenn     = len + 1;
-
-        // Size of the whole object in 64-bit words.
-        size_t lenw     = (lenn + 7) << 3;
-
-        // Allocate the object and write the header.
-        uint64_t* buf64 = halloc(1 + lenw);
-        buf64[0] = (len << 32) | TAG_PRMA;
-
-        // Copy in the character and null byte.
-        uint8_t*  buf8  = (uint8_t*)buf64;
-        for (size_t i = 0; i < len; i++)
-        {       buf8[8 + i] = str[i];
-        }
-        buf8[8 + len] = 0;
-        return (obj_t*)buf8;
-}
+aPrmA (uint32_t len, char* str)
+{       return aNameA(TAG_PRMA, 0, len, str); }
 
 static inline uint32_t
 xPrmA_len(obj_t* obj)
-{       uint64_t* buf = (uint64_t*)obj;
-        return (uint32_t)(buf[0] >> 32);
-}
+{       return xNameA_len(obj); }
 
 static inline char*
 xPrmA_name(obj_t* obj)
-{       uint8_t* buf = (uint8_t*)obj;
-        return (char*)(buf + 8);
-}
+{       return xNameA_str(obj); }
 
 
 // ----------------------------------------------------------------------------
@@ -179,6 +154,28 @@ xPrzA_tag(obj_t* obj)
 
 
 // ----------------------------------------------------------------------------
+// A macro name with the characters stored in the object.
+//
+//      7  6  5  4  3  2  1  0
+//  0   len.......  0  0  0  F
+//  1   chars.................
+//  ..  chars.................
+//
+static inline obj_t*
+aMacA (uint32_t len, char* str)
+{       return aNameA(TAG_MACA, 0, len, str); }
+
+static inline uint32_t
+xMacA_len(obj_t* obj)
+{       return xNameA_len(obj); }
+
+static inline char*
+xMacA_name(obj_t* obj)
+{       return xNameA_str(obj); }
+
+
+
+// ----------------------------------------------------------------------------
 static inline obj_t*
 aNatA (uint64_t n)
 {       uint64_t* buf = (uint64_t*)halloc(1);
@@ -191,7 +188,4 @@ xNatA (obj_t* obj)
 {       uint64_t* buf = (uint64_t*)obj;
         return buf[0] >> 8;
 }
-
-
-
 

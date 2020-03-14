@@ -28,7 +28,7 @@ void    shivver_main_tokens(char* str)
 
                   case TOKEN_SYM:
                   {     char *buf = malloc(len + 1);
-                        shivver_lexer_load_symprm(str, len, buf);
+                        shivver_lexer_load_signame(str, len, buf);
                         buf[len] = 0;
                         printf("%%sym \"%s\"\n", buf);
                         free(buf);
@@ -37,9 +37,28 @@ void    shivver_main_tokens(char* str)
 
                   case TOKEN_PRM:
                   {     char *buf = malloc(len + 1);
-                        shivver_lexer_load_symprm(str, len, buf);
+                        shivver_lexer_load_signame(str, len, buf);
                         buf[len] = 0;
                         printf("%%prm \"%s\"\n", buf);
+                        free(buf);
+                        break;
+                  }
+
+                  case TOKEN_MAC:
+                  {     char *buf = malloc(len + 1);
+                        shivver_lexer_load_signame(str, len, buf);
+                        buf[len] = 0;
+                        printf("%%mac \"%s\"\n", buf);
+                        free(buf);
+                        break;
+                  }
+
+
+                  case TOKEN_KEY:
+                  {     char *buf = malloc(len + 1);
+                        shivver_lexer_load_signame(str, len, buf);
+                        buf[len] = 0;
+                        printf("%%key \"%s\"\n", buf);
                         free(buf);
                         break;
                   }

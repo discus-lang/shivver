@@ -49,8 +49,8 @@ xMmmH_args(obj_t* obj)
 //      7  6  5  4  3  2  1  0
 //  0   len.......  0  0  0  F
 //  1   body pointer
-//  2   variable pointer 0
-//  ... variable pointer ...
+//  2   variable pointer 0 ...
+//  ... variable pointer .....
 //
 static inline obj_t*
 aAbsH (uint32_t len, obj_t* oParm[], obj_t* oBody)

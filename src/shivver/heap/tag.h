@@ -19,7 +19,9 @@
 //  vara   len.chars.. 0  0  0  F       0 0 0 0 0 0 0 1  = 0x01
 //  syma   len.chars.. 0  0  0  F       0 0 0 1 0 0 0 1  = 0x11
 //  prma   len.chars.. 0  0  0  F       0 0 1 0 0 0 0 1  = 0x21
-//  prza   prm-tag.... 0  0  0  F       0 0 1 0 0 0 0 1  = 0x31
+//  maca   len.chars.. 0  0  0  F       0 0 1 0 0 0 0 1  = 0x31
+
+//  prza   prm-tag.... 0  0  0  F       0 0 1 0 0 0 0 1  = 0x41
 
 //  nata   value..............  F       0 0 0 0 0 0 1 1  = 0x03
 
@@ -52,7 +54,9 @@
 #define TAG_VARA        0x01
 #define TAG_SYMA        0x11
 #define TAG_PRMA        0x21
-#define TAG_PRZA        0x31
+#define TAG_MACA        0x31
+
+#define TAG_PRZA        0x41
 
 #define TAG_NATA        0x03
 

@@ -25,6 +25,13 @@
 #define TOKEN_VAR       30
 #define TOKEN_SYM       31
 #define TOKEN_PRM       32
+#define TOKEN_MAC       33
+#define TOKEN_KEY       34
+
+#define TOKEN_KEY_TERM  40
+#define TOKEN_KEY_LET   41
+#define TOKEN_KEY_REC   42
+#define TOKEN_KEY_IN    43
 
 
 // ----------------------------------------------------------------------------
@@ -77,11 +84,11 @@ shivver_lexer_load_var
         (char* str, size_t len, char* out);
 
 size_t
-shivver_lexer_scan_symprm
+shivver_lexer_scan_signame
         (char* str, size_t strLen);
 
 void
-shivver_lexer_load_symprm
+shivver_lexer_load_signame
         (char* str, size_t len, char* out);
 
 

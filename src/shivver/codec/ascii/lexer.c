@@ -24,8 +24,15 @@ shivver_token_name
           case TOKEN_VAR:       return "var";
           case TOKEN_SYM:       return "sym";
           case TOKEN_PRM:       return "prm";
+          case TOKEN_MAC:       return "mac";
+          case TOKEN_KEY:       return "key";
 
-          default:              shivver_fail("shivver_token_name: no match");
+          case TOKEN_KEY_TERM:  return "key'term";
+          case TOKEN_KEY_LET:   return "key'let";
+          case TOKEN_KEY_REC:   return "key'rec";
+          case TOKEN_KEY_IN:    return "key'in";
+
+          default: shivver_fail("shivver_token_name: no match");
         }
 }
 
@@ -56,7 +63,7 @@ bool    shivver_lexer_scan
   // Try to lex a token from this point.
   again:
         if (strLen == 0)
-        {       *outTag = TOKEN_END;
+        {       *outTag = TOKEN_END; *outStr = str;
                 *outLen = 0;
                 return true;
         }
@@ -65,7 +72,7 @@ bool    shivver_lexer_scan
         switch (*str)
         { // end of string
           case '\0':
-                *outTag = TOKEN_END;
+                *outTag = TOKEN_END; *outStr = str;
                 *outLen = 0;
                 return true;
 
@@ -85,34 +92,63 @@ bool    shivver_lexer_scan
           case ']': *outTag = TOKEN_SKET;  goto single;
           case ',': *outTag = TOKEN_COMMA; goto single;
 
-          // symbol
+          // symbol name
           case '%':
-          {     *outTag = TOKEN_SYM;
-                *outStr = str;
-                *outLen = shivver_lexer_scan_symprm(str, strLen);
+          {     *outTag = TOKEN_SYM; *outStr = str;
+                *outLen = shivver_lexer_scan_signame(str, strLen);
                 return true;
           }
 
-          // primitive
+          // primitive name
           case '#':
-          {     *outTag = TOKEN_PRM;
-                *outStr = str;
-                *outLen = shivver_lexer_scan_symprm(str, strLen);
+          {     *outTag = TOKEN_PRM; *outStr = str;
+                *outLen = shivver_lexer_scan_signame(str, strLen);
                 return true;
+          }
+
+          // macro name
+          case '@':
+          {     *outTag = TOKEN_MAC; *outStr = str;
+                *outLen = shivver_lexer_scan_signame(str, strLen);
+                return true;
+          }
+
+          // keyword name
+          case '!':
+          {     size_t nStr = shivver_lexer_scan_signame(str, strLen);
+                char*  buf  = (char*)alloca(nStr + 1);
+                memcpy(buf, str, nStr);
+                buf[nStr] = 0;
+
+                *outTag = TOKEN_NONE; *outStr = str;
+                *outLen = 0;
+
+                // Check if this is one of the recognised keywords.
+                if (strcmp(buf, "!term") == 0)
+                {       *outTag = TOKEN_KEY_TERM; *outLen = nStr; return true; }
+
+                if (strcmp(buf, "!let") == 0)
+                {       *outTag = TOKEN_KEY_LET;  *outLen = nStr; return true; }
+
+                if (strcmp(buf, "!rec") == 0)
+                {       *outTag = TOKEN_KEY_REC;  *outLen = nStr; return true; }
+
+                if (strcmp(buf, "!in") == 0)
+                {       *outTag = TOKEN_KEY_IN;   *outLen = nStr; return true; }
+
+                return false;
           }
 
           default:
                 // variables
                 if (*str >= 'a' && *str <= 'z')
-                {       *outTag = TOKEN_VAR;
-                        *outStr = str;
+                {       *outTag = TOKEN_VAR; *outStr = str;
                         *outLen = shivver_lexer_scan_var(str, strLen);
                         return true;
                 }
 
                 // lex failure.
-                *outTag = TOKEN_NONE;
-                *outStr = 0;
+                *outTag = TOKEN_NONE; *outStr = 0;
                 *outLen = 0;
                 return false;
         }
@@ -121,7 +157,6 @@ bool    shivver_lexer_scan
         *outLen = 1;
         *outStr = str;
         return true;
-
 }
 
 
@@ -157,7 +192,7 @@ void    shivver_lexer_load_var
 
 // ------------------------------------------------------------------------------------------------
 // Scan a symbol name, returning the raw length in the lex buffer.
-size_t  shivver_lexer_scan_symprm
+size_t  shivver_lexer_scan_signame
         (char* str, size_t strLen)
 {
         size_t len = 0;
@@ -181,7 +216,7 @@ size_t  shivver_lexer_scan_symprm
 
 // Load a symbol name from the lex buffer into the given string buffer.
 //   The state should be as it was just after scanning the token.
-void    shivver_lexer_load_symprm
+void    shivver_lexer_load_signame
         (char* str, size_t strLen, char* out)
 {
         for (size_t i = 0; i < strLen; i++)
