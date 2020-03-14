@@ -1,6 +1,7 @@
 
 #include "shivver/runtime/object.h"
 #include "shivver/prim.h"
+#include "shivver/eval.h"
 
 // TODO: handle bump counter.
 // Lookup a variable from the given environment.

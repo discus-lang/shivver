@@ -6,7 +6,6 @@
 #include "shivver/runtime/object/atomic.h"
 #include "shivver/runtime/object/static.h"
 #include "shivver/runtime/object/hot.h"
-#include "shivver/runtime/eval.h"
 
 
 // ----------------------------------------------------------------------------
