@@ -1,4 +1,5 @@
 #pragma once
+#include <stdarg.h>
 #include "shivver/heap.h"
 #include "shivver/eval/types.h"
 
@@ -45,7 +46,7 @@ void
 shivver_eval_error
         ( eval_t*       state
         , char*         format
-        , ...);
+        , va_list       args);
 
 
 // from eval/term.c

@@ -60,15 +60,11 @@ void
 shivver_eval_error
         ( eval_t*       state
         , char*         format
-        , ...)
+        , va_list       args)
 {
         // Print the message into a new buffer.
         char* str       = malloc(1024);
-
-        va_list args;
-        va_start (args, format);
         vsnprintf (str, 1024, format, args);
-        va_end (args);
 
         // Set the error string, which will be freed by the
         // top-level caller to this evaluator.

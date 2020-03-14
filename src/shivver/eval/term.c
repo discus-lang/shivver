@@ -1,12 +1,25 @@
 
 #include <assert.h>
+#include <stdarg.h>
 #include "shivver/eval.h"
 #include "shivver/prim.h"
 #include "shivver/util.h"
 
+
+// Assert a property is true during evaluation.
+//  This is inlined so we get a fast-path that does not need a function-call
+//  when the property is true.
 static inline void
-reqeval (bool prop, char* message)
-{       require(prop, message);
+reqeval ( eval_t*       state
+        , bool          prop
+        , char*         format
+        , ...)
+{
+        if ( __builtin_expect (prop, true)) return;
+        va_list args;
+        va_start(args, format);
+        shivver_eval_error(state, format, args);
+        va_end(args);
 }
 
 
@@ -65,20 +78,24 @@ shivver_eval_termN
           case TAG_PRMA:
           case TAG_PRZA:
           case TAG_NATA:
-          {     reqeval (nArity == 1,   "eval arity for atom must be one");
+          {     reqeval ( state, nArity == 1
+                        , "Arity mismatch for atom -- need '%d', have '1'."
+                        , nArity);
                 osRes[0] = oExp;
                 return;
           }
 
           case TAG_VARA:
-          {     reqeval (nArity == 1,   "eval arity for variable must be one");
+          {     reqeval ( state, nArity == 1
+                        , "Arity mismatch for variable -- need '%d', have '1'."
+                        , nArity);
+
                 obj_t* oRes
                  = shivver_eval_resolve
                         (oEnv, xVarA_name(oExp), xVarA_bump(oExp));
 
-                shivver_eval_require
-                        ( state, oRes != 0
-                        , "Variable '%s' not in scope."
+                reqeval ( state, oRes != 0
+                        , "Variable '%s' is not in scope."
                         , xVarA_name(oExp));
                 osRes[0] = oRes;
                 return;
@@ -87,7 +104,10 @@ shivver_eval_termN
           // hot ----------------------------------------------------
           case TAG_MMMH:
           {     size_t nLen = xMmmH_len(oExp);
-                reqeval (nLen == nArity, "eval arity does not match vector length");
+                reqeval ( state, nLen == nArity
+                        , "Arity mismatch for term vector -- need '%d', have '%d'."
+                        , nArity, nLen);
+
                 for (size_t i = 0; i < nLen; i++)
                         shivver_eval_termN
                                 ( state, 1, osRes + i
@@ -97,7 +117,10 @@ shivver_eval_termN
 
           case TAG_ABSH:
           {     // Convert abstractions into closures.
-                reqeval ( nArity == 1,  "eval arity for abstraction must be one");
+                reqeval ( state, nArity == 1
+                        , "Arity mismatch for abstraction -- need '%d', have '1'."
+                        , nArity);
+
                 obj_t* oAbs     = oExp;
                 obj_t* oBody    = xAbsH_body(oAbs);
                 osRes[0]        = aCloH ( xAbsH_len(oExp)
@@ -129,15 +152,22 @@ shivver_eval_termN
 
                   case TAG_PRZA:
                   {     uint32_t pTag   = xPrzA_tag(oHeadV);
-                        size_t nParams  = shivver_prim_tag_args(pTag);
 
+                        // Evaluate all the arguments.
+                        size_t nParams  = shivver_prim_tag_args(pTag);
                         obj_t* osArgs[nParams];
                         shivver_eval_termN (state, nParams, osArgs, oEnv, oArg);
 
+                        // Get the number of result values produced by this primitive.
                         size_t nResults = shivver_prim_tag_results(pTag);
-                        reqeval ( nArity == nResults
-                                , "eval arity does not match number of prim op results");
 
+                        // The number of produced results must match that required
+                        // by the contetxt.
+                        reqeval ( state, nArity == nResults
+                                , "Arity mismatch in prim result -- need '%d', have '%d'."
+                                , nArity, nResults);
+
+                        // Evaluate the primitive itself.
                         shivver_eval_prim (nArity, osRes, pTag, osArgs);
                         return;
                   }
@@ -164,7 +194,8 @@ shivver_eval_termN
                   }
 
                   default:
-                        shivver_fail("cannot apply value");
+                        reqeval ( state, false
+                                , "Cannot apply non-functional value.");
                 }
           }
 
@@ -194,8 +225,9 @@ shivver_eval_termN
                   case TAG_PRZA:
                   {     uint32_t pTag   = xPrzA_tag(oHeadV);
                         size_t nParams  = shivver_prim_tag_args(pTag);
-                        reqeval ( nParams == nArgs
-                                , "number of parameters must match number of arguments");
+                        reqeval ( state, nParams == nArgs
+                                , "Arity mismatch in prim application -- need '%d', have '%d'"
+                                , nParams, nArgs);
 
                         // Evaluate all the arguments.
                         obj_t* osArgs[nArgs];
@@ -206,8 +238,9 @@ shivver_eval_termN
 
                         // Apply the primitive.
                         size_t nResults = shivver_prim_tag_results(pTag);
-                        reqeval ( nArity == nResults
-                                , "eval arity does not match number of prim op results");
+                        reqeval ( state, nArity == nResults
+                                , "Arity mismatch in prin result -- need '%d', have '%d'"
+                                , nArity, nResults);
                         shivver_eval_prim (nArity, osRes, pTag, osArgs);
                         return;
                   }
@@ -218,8 +251,9 @@ shivver_eval_termN
                         // with the body expresssion.
                         obj_t* oClo     = oHeadV;
                         size_t nParams  = xCloH_len(oClo);
-                        reqeval ( nParams == nArgs
-                                , "number of parameters must match number of arguments");
+                        reqeval ( state, nParams == nArgs
+                                , "Arity mismatch in function application -- need '%d', have '%d'"
+                                , nParams, nArgs);
 
                         // Application of closure with no parameters.
                         //  so we have ({} Term) []
@@ -247,7 +281,8 @@ shivver_eval_termN
                   }
 
                   default:
-                        shivver_fail("cannot apply value");
+                        reqeval ( state, false
+                                , "Cannot apply non-functional value.");
                 }
           }
 
@@ -255,27 +290,32 @@ shivver_eval_termN
           // static  --------------------------------------------------
           case TAG_SYMT:
           case TAG_PRMT:
-          {     reqeval ( nArity == 1,  "eval arity for atom must be one");
+          {     reqeval ( state, nArity == 1
+                        , "Arity mismatch for atom -- need '%d', have '1'"
+                        , nArity);
                 osRes[0] = oExp;
                 return;
           }
 
           case TAG_VART:
-          {     reqeval ( nArity == 1,  "eval arity for variable must be one");
+          {     reqeval ( state, nArity == 1
+                        , "Arity mismatch for variable -- need '%d', have '1'"
+                        , nArity);
 
                 obj_t* oRes
                  = shivver_eval_resolve
                         (oEnv, xVarT_name(oExp), xVarT_bump(oExp));
-                reqeval ( oRes != 0,    "variable out of scope");
 
+                reqeval ( state, oRes != 0
+                        , "Variable '%s' is not in scope."
+                        , xVarA_name(oExp));
                 osRes[0] = oRes;
                 return;
           }
 
           default:
-                shivver_prim_console_printp(oExp);
-                shivver_fail("don't know how to evaluate");
-
+                reqeval ( state, false
+                        , "Cannot evaluate object.");
         }
 }
 
