@@ -1,18 +1,7 @@
 #pragma once
-#include "shivver/runtime/types.h"
-#include "shivver/runtime/object.h"
+#include "shivver/heap.h"
 
 
-obj_t*
-shivver_eval
-        (obj_t* env, obj_t* obj);
-
-void
-shivver_evalN
-        ( size_t         nArity
-        , obj_t**       osRes
-        , obj_t*        oEnv
-        , obj_t*        oExp);
 
 
 // from eval/resolve.c
@@ -35,3 +24,17 @@ shivver_eval_prim
         , obj_t**       osRes
         , size_t        tag
         , obj_t**       osArg);
+
+
+// from eval/term.c
+obj_t*
+shivver_eval
+        ( obj_t*        env
+        , obj_t*        obj);
+
+void
+shivver_evalN
+        ( size_t        nArity
+        , obj_t**       osRes
+        , obj_t*        oEnv
+        , obj_t*        oExp);

@@ -1,5 +1,5 @@
 #pragma once
-#include "shivver/runtime/heap.h"
+#include "shivver/heap/alloc.h"
 
 
 // Generic functions that work for all object types.

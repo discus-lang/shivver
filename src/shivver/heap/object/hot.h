@@ -1,8 +1,5 @@
 #pragma once
-#include "shivver/runtime/heap.h"
-
-// Hot objects that live in the dynamic heap and whose payloads are stored
-// directly in the object itself.
+#include "shivver/heap/alloc.h"
 
 
 // ----------------------------------------------------------------------------

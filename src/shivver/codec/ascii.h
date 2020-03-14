@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <setjmp.h>
 #include <assert.h>
-#include "shivver/runtime.h"
+#include "shivver/heap.h"
 #include "shivver/util.h"
 
 // ----------------------------------------------------------------------------

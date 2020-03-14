@@ -1,6 +1,5 @@
 #pragma once
-#include "shivver/runtime/error.h"
-#include "shivver/runtime/heap/tag.h"
+#include "shivver/types.h"
 
 // ----------------------------------------------------------------------------
 // Runtime heap space.
@@ -23,16 +22,4 @@ typedef struct {
 // ----------------------------------------------------------------------------
 // heap
 extern heap_t shivver_heap;
-
-
-// ----------------------------------------------------------------------------
-static inline uint64_t*
-halloc (size_t nWords)
-{
-        if (shivver_heap.last - shivver_heap.next < nWords)
-                shivver_fail("halloc: out of space");
-        uint64_t* obj     = shivver_heap.next;
-        shivver_heap.next += nWords;
-        return (void*)obj;
-}
 

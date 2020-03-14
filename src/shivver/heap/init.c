@@ -1,5 +1,6 @@
 
-#include "shivver/runtime.h"
+#include "shivver/heap/types.h"
+
 
 // ----------------------------------------------------------------------------
 // heap

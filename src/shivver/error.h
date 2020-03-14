@@ -1,5 +1,5 @@
 #pragma once
-#include "shivver/runtime/types.h"
+#include "shivver/types.h"
 
 void
 shivver_fail

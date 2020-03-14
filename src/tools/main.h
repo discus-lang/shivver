@@ -1,7 +1,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "shivver/runtime.h"
 #include "shivver/prim.h"
 #include "shivver/eval.h"
 #include "shivver/codec/ascii.h"

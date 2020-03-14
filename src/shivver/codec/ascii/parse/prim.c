@@ -1,5 +1,5 @@
 
-#include "shivver/runtime.h"
+#include "shivver/heap.h"
 #include "shivver/prim.h"
 #include "shivver/codec/ascii.h"
 

@@ -1,6 +1,6 @@
 #pragma once
-#include "shivver/runtime/object.h"
-#include "shivver/runtime.h"
+#include "shivver/heap.h"
+
 
 // ------------------------------------------------------------------------------------------------
 // from util/string.c

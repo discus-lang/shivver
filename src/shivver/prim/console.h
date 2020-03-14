@@ -1,5 +1,5 @@
-
-#include "shivver/runtime.h"
+#pragma once
+#include "shivver/heap.h"
 
 void    shivver_prim_console_printl     (obj_t* obj);
 void    shivver_prim_console_printp     (obj_t* obj);

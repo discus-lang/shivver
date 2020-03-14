@@ -1,6 +1,6 @@
 
 #include <setjmp.h>
-#include "shivver/runtime.h"
+#include "shivver/heap.h"
 #include "shivver/codec/ascii.h"
 
 
