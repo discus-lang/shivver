@@ -118,6 +118,7 @@ obj_t*  shivver_parse_mac       (parser_t* state);
 
 
 // from ascii/parse/decl.c
+obj_t*  shivver_parse_decls     (parser_t* state);
 obj_t*  shivver_parse_decl      (parser_t* state);
 
 

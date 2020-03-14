@@ -29,7 +29,7 @@ int main(int argc, char** argv)
                  = shivver_parse_alloc(buf);
 
                 obj_t* obj_parse
-                 = shivver_parse_decl(state_parse);
+                 = shivver_parse_decls(state_parse);
 
                 if (obj_parse == 0)
                 {       printf("error: %s\n", state_parse->error_str);
@@ -44,6 +44,3 @@ int main(int argc, char** argv)
         shivver_console_start();
         return 0;
 }
-
-
-

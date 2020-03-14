@@ -1,8 +1,15 @@
 
-@fac = {x y}
+!def @fac = {x}
         #if [ #nat'eq [x, #nat'0]
             , {} #nat'1
-            , {} @fac [#nat'sub [x, #nat'1]]];
+            , {} @fac [#nat'sub [x, #nat'1]]]
 
 
+!def @fac'loop = {acc x}
+        #if [ #nat'eq [x, #nat'0]
+            , {} acc
+            , {} #fac'loop [#nat'mul [x, acc], #nat'sub [x, #nat'1]]]
 
+-- todo: write ~ style binders, call by name.
+-- get meta-prog working and write reflective scope checker.
+-- scope checker needs access to all decls in environment.
