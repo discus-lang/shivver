@@ -16,6 +16,9 @@ shivver_parse_decl
                 obj_t* oMac     = aMacA(state->curr_len - 1, state->curr_str + 1);
                 shivver_parse_tok(state, TOKEN_EQ);
                 obj_t* oBody    = shivver_parse_term1(state);
+
+                // We pack the macro name into a symbol so that the resulting
+                // represenation of the declaration is inert.
                 return  aApsH (2, aSymT("decl"), (obj_t*[]){oMac, oBody});
           }
 

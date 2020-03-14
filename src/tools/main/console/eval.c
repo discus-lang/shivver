@@ -43,6 +43,6 @@ shivver_console_cmd_eval
 
         // Evaluation completed successfully,
         //  so print the result.
-        shivver_prim_console_printl (obj_eval);
+        shivver_prim_console_printl (0, obj_eval);
         printf("\n");
 }

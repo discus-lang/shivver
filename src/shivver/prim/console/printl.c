@@ -5,7 +5,8 @@
 // Print the logical structure of the graph.
 void
 shivver_prim_console_printl
-        (obj_t* obj)
+        ( int           prec
+        , obj_t*        obj)
 {
         switch (xObj_tag(obj))
         { // atomic ---------------------------------------
@@ -45,7 +46,7 @@ shivver_prim_console_printl
           {     printf("[");
                 size_t len = xMmmH_len(obj);
                 for(size_t i = 0; i < len; i++)
-                {       shivver_prim_console_printl(xMmmH_arg(obj, i));
+                {       shivver_prim_console_printl(0, xMmmH_arg(obj, i));
                         if (len - i > 1) printf(", ");
                 }
                 printf("]");
@@ -53,39 +54,40 @@ shivver_prim_console_printl
           }
 
           case TAG_ABSH:
-          {     printf("({");
+          {     if(prec > 0) printf("(");
+                printf("{");
                 size_t len = xAbsH_len(obj);
                 for(size_t i = 0; i < len; i++)
-                {       shivver_prim_console_printl(xAbsH_parm(obj, i));
+                {       shivver_prim_console_printl(0, xAbsH_parm(obj, i));
                         if (len - i > 1) printf(" ");
                 }
                 printf("} ");
-                shivver_prim_console_printl(xAbsH_body(obj));
-                printf(")");
+                shivver_prim_console_printl(0, xAbsH_body(obj));
+                if(prec > 0) printf(")");
                 return;
           }
 
           case TAG_APPH:
-          {     printf("(");
-                shivver_prim_console_printl(xAppH_fun(obj));
+          {     if(prec > 0) printf("(");
+                shivver_prim_console_printl(1, xAppH_fun(obj));
                 printf(" ");
-                shivver_prim_console_printl(xAppH_arg(obj));
-                printf(")");
+                shivver_prim_console_printl(1, xAppH_arg(obj));
+                if(prec > 0) printf(")");
                 return;
           }
 
           case TAG_APSH:
-          {     printf("(");
-                shivver_prim_console_printl(xApsH_fun(obj));
+          {     if (prec > 0) printf("(");
+                shivver_prim_console_printl(1, xApsH_fun(obj));
 
                 printf(" [");
                 size_t len = xApsH_len(obj);
                 for(size_t i = 0; i < len; i++)
-                {       shivver_prim_console_printl(xApsH_arg(obj, i));
+                {       shivver_prim_console_printl(0, xApsH_arg(obj, i));
                         if (len - i > 1) printf(", ");
                 }
                 printf("]");
-                printf(")");
+                if (prec > 0) printf(")");
                 return;
           }
 
