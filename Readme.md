@@ -22,7 +22,7 @@ Mac     → (like '@name')
 
 Module  ::= module Var Decl*            '!shivver' Var Decl*
 
-Decl    ::= decl   Name Term            '!def' Mac '=' Term
+Decl    ::= decl   Mac Term             '!def' Mac '=' Term
 
 Term    ::= mvar   Var Nat              Var '^' Nat
          |  msym   Sym                  Sym
@@ -34,7 +34,7 @@ Term    ::= mvar   Var Nat              Var '^' Nat
          |  mabs n Var^n Term           '{' Var* '}' Term
          |  mapp   Term Term            Term Term
 
-         |  mlet   Var* Term Term       '!let' '{' Var* '}' '=' Term '!in' Term
+         |  mlet n Var^n Term Term      '!let' '{' Var* '}' '=' Term '!in' Term
          |  mrec   Binds Term           '!rec' Binds '!in' Term
 
 Binds   ::= bind1  bind                 Bind
