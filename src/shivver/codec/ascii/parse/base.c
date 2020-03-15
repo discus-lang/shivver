@@ -125,7 +125,6 @@ shivver_parse_tok
         , size_t    tok)
 {
         shivver_parse_peek(state);
-
         if(state->peek_tok == tok)
         {       shivver_parse_shift(state);
                 return;
@@ -138,13 +137,31 @@ shivver_parse_tok
 }
 
 
+// Parse a variable name, else error.
+obj_t*
+shivver_parse_var
+        (parser_t* state)
+{
+        shivver_parse_peek(state);
+        if(state->peek_tok == TOKEN_VAR)
+        {       shivver_parse_shift(state);
+                obj_t* obj = aVarA(state->curr_len, state->curr_str);
+                return obj;
+        }
+
+        shivver_parse_fail
+                ( state, "Unexpected token '%s', expected variable name"
+                , state->peek_tok);
+}
+
+
+
 // Parse a macro name, else error.
 obj_t*
 shivver_parse_mac
         (parser_t* state)
 {
         shivver_parse_peek(state);
-
         if(state->peek_tok == TOKEN_MAC)
         {       shivver_parse_shift(state);
                 obj_t* obj = aMacA(state->curr_len - 1, state->curr_str + 1);

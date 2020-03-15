@@ -10,30 +10,31 @@
 #include "shivver/util.h"
 
 // ----------------------------------------------------------------------------
-#define TOKEN_NONE      0
-#define TOKEN_END       1
+#define TOKEN_NONE              0
+#define TOKEN_END               1
 
-#define TOKEN_RBRA      10
-#define TOKEN_RKET      11
-#define TOKEN_CBRA      12
-#define TOKEN_CKET      13
-#define TOKEN_SBRA      14
-#define TOKEN_SKET      15
+#define TOKEN_RBRA              10
+#define TOKEN_RKET              11
+#define TOKEN_CBRA              12
+#define TOKEN_CKET              13
+#define TOKEN_SBRA              14
+#define TOKEN_SKET              15
 
-#define TOKEN_COMMA     20
-#define TOKEN_SEMI      21
-#define TOKEN_EQ        22
+#define TOKEN_COMMA             20
+#define TOKEN_SEMI              21
+#define TOKEN_EQ                22
 
-#define TOKEN_VAR       30
-#define TOKEN_SYM       31
-#define TOKEN_PRM       32
-#define TOKEN_MAC       33
-#define TOKEN_KEY       34
+#define TOKEN_VAR               30
+#define TOKEN_SYM               31
+#define TOKEN_PRM               32
+#define TOKEN_MAC               33
+#define TOKEN_KEY               34
 
-#define TOKEN_KEY_TERM  40
-#define TOKEN_KEY_LET   41
-#define TOKEN_KEY_REC   42
-#define TOKEN_KEY_IN    43
+#define TOKEN_KEY_SHIVVER       40
+#define TOKEN_KEY_DEF           41
+#define TOKEN_KEY_LET           42
+#define TOKEN_KEY_REC           43
+#define TOKEN_KEY_IN            44
 
 
 // ----------------------------------------------------------------------------
@@ -114,11 +115,17 @@ void    shivver_parse_peek      (parser_t* state);
 void    shivver_parse_shift     (parser_t* state);
 
 void    shivver_parse_tok       (parser_t* state, size_t tok);
+obj_t*  shivver_parse_var       (parser_t* state);
 obj_t*  shivver_parse_mac       (parser_t* state);
+
+
+// from ascii/parse/module.c
+obj_t*  shivver_parse_module    (parser_t* state);
 
 
 // from ascii/parse/decl.c
 obj_t*  shivver_parse_decls     (parser_t* state);
+void    shivver_parse_decls_list(parser_t* state, objlist_t* list);
 obj_t*  shivver_parse_decl      (parser_t* state);
 
 

@@ -28,10 +28,12 @@ shivver_token_name
           case TOKEN_MAC:       return "mac";
           case TOKEN_KEY:       return "key";
 
-          case TOKEN_KEY_TERM:  return "key'term";
+          case TOKEN_KEY_DEF:   return "key'def";
           case TOKEN_KEY_LET:   return "key'let";
           case TOKEN_KEY_REC:   return "key'rec";
           case TOKEN_KEY_IN:    return "key'in";
+
+          case TOKEN_KEY_SHIVVER: return "key'shivver";
 
           default: shivver_fail("shivver_token_name: no match");
         }
@@ -127,8 +129,14 @@ bool    shivver_lexer_scan
                 *outLen = 0;
 
                 // Check if this is one of the recognised keywords.
-                if (strcmp(buf, "!term") == 0)
-                {       *outTag = TOKEN_KEY_TERM; *outLen = nStr; return true; }
+                if (strcmp(buf, "!shivver") == 0)
+                {       *outTag = TOKEN_KEY_SHIVVER;
+                        *outLen = nStr;
+                        return true;
+                }
+
+                if (strcmp(buf, "!def") == 0)
+                {       *outTag = TOKEN_KEY_DEF; *outLen = nStr; return true; }
 
                 if (strcmp(buf, "!let") == 0)
                 {       *outTag = TOKEN_KEY_LET;  *outLen = nStr; return true; }

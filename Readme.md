@@ -20,7 +20,7 @@ Sym     → (like '%name')
 Prm     → (like '#name')
 Mac     → (like '@name')
 
-Module  ::= module Var Decl*            '!shivver' Var Decl*
+Module  ::= module Var Decl*            '!shivver' Sym Decl*
 
 Decl    ::= decl   Mac Term             '!def' Mac '=' Term
 

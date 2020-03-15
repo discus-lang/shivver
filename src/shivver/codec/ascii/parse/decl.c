@@ -7,22 +7,33 @@ obj_t*
 shivver_parse_decls
         (parser_t* state)
 {
-        shivver_parse_peek(state);
-        switch (state->peek_tok)
-        { // END
-          case TOKEN_END:
-          {     return  aSymT ("list'nil");
-          }
-
-          // TODO: push multi decls into obj_list so we can have a single wrapper object.
-          default:
-          {     obj_t* oDecl  = shivver_parse_decl(state);
-                obj_t* oDecls = shivver_parse_decls(state);
-                return aApsH (2, aSymT("list'cons"), (obj_t*[]){oDecl, oDecls});
-          }
-        }
+        objlist_t* list = shivver_objlist_alloc();
+        shivver_parse_decls_list(state, list);
+        return aApsH (list->used, aSymT("svr'decls"), list->list);
 }
 
+// Parse a sequence of declarations, appending them to the given list.
+void
+shivver_parse_decls_list
+        ( parser_t*     state
+        , objlist_t*    list)
+{
+        while(true) {
+                shivver_parse_peek(state);
+                switch (state->peek_tok)
+                { // END
+                  case TOKEN_END:
+                  {     return;
+                  }
+
+                  // DECL DECLS
+                  default:
+                  {     obj_t* oDecl  = shivver_parse_decl(state);
+                        shivver_objlist_append(list, oDecl);
+                  }
+                }
+          }
+}
 
 // Parse a declaration.
 obj_t*
@@ -31,17 +42,16 @@ shivver_parse_decl
 {
         shivver_parse_peek(state);
         switch (state->peek_tok)
-        { // Term ::= Mac '=' Term
-          case TOKEN_MAC:
+        { // Term ::= '!def' Mac '=' Term
+          case TOKEN_KEY_DEF:
           {     shivver_parse_shift(state);
-                obj_t* oSym     = aSymA(state->curr_len - 1, state->curr_str + 1);
+                obj_t* oMac     = shivver_parse_mac(state);
                 shivver_parse_tok(state, TOKEN_EQ);
                 obj_t* oBody    = shivver_parse_term1(state);
-                shivver_parse_tok(state, TOKEN_SEMI);
 
                 // We pack the macro name into a symbol so that the resulting
                 // represenation of the declaration is inert.
-                return  aApsH (2, aSymT("decl"), (obj_t*[]){oSym, oBody});
+                return  aApsH (2, aSymT("svr'decl"), (obj_t*[]){oMac, oBody});
           }
 
           default:
