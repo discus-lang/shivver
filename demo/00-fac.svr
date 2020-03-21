@@ -1,11 +1,12 @@
 !shivver core
 
-!def @fac = {x}
-        #if [ #nat'eq [x, #nat'0]
-            , {} #nat'1
-            , {} @fac [#nat'sub [x, #nat'1]]]
+!def @fac {x}
+ = #if  [ #nat'eq [x, #nat'0]
+        , {} #nat'1
+        , {} @fac [#nat'sub [x, #nat'1]]]
 
-!def @fac'loop = {acc x}
-        #if [ #nat'eq [x, #nat'0]
-            , {} acc
-            , {} @fac'loop [#nat'mul [x, acc], #nat'sub [x, #nat'1]]]
+!def @fac'loop {acc x}
+ = #if  [ #nat'eq [x, #nat'0]
+        , {} acc
+        , {} @fac'loop [#nat'mul [x, acc], #nat'sub [x, #nat'1]]]
+

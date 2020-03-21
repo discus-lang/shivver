@@ -43,6 +43,10 @@ Binds   ::= bind1  bind                 Bind
 Bind   ::=  bind   Var '=' Term         Var '=' Term
 ```
 
-
-
+### Decl Sugar
+```
+ ('!def' Mac '{' Name* '}' '=' Term)  ≡  ('!def' Mac '=' '{' Name* '}' Term)
+```
+In a declaration, parameter names can be written on the left of the equality sign,
+rather than as part of an abstraction on the right.
 
