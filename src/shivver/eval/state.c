@@ -83,12 +83,44 @@ shivver_eval_error
 // so that we can refer to the defined macros during evaluation.
 // This prepends the macros in the module decalration to the 'decls'
 // part of the evaluator state.
+//
+// The module expression has format.
+//   Module ::= %svr'module [Frag, %svr'decls [Decl...]]
+//   Decl   ::= %svr'decl   [MAC, EXP]
+//
 void
 shivver_eval_ingest
         ( eval_t*       state
         , obj_t*        oModule)
 {
         obj_t*  osModule[2];
-        assert(dSymAps(oModule, "svr'module", 2, osModule));
+        assert(dSymApsN(oModule, "svr'module", 2, osModule));
+
+        uint32_t nDecls;
+        assert(dSymAps(osModule[1], "svr'decls", &nDecls));
+
+        obj_t*  osDecls[nDecls];
+        assert(dApsArgsN(osModule[1], nDecls, osDecls));
+
+        // Pointer to where to write the pointer to the next link.
+        eval_decl_t** eval_decl = &state->decls;
+
+        // Build an eval_decl_t link for each of the decls.
+        for (uint32_t i = 0; i < nDecls; i++) {
+                obj_t* osDecl[2];
+                assert(dSymApsN(osDecls[i], "svr'decl", 2, osDecl));
+
+                // Allocate a new link to record this declaration.
+                eval_decl_t* link = (eval_decl_t*)malloc(sizeof(eval_decl_t));
+                link->name = osDecl[0];
+                link->body = osDecl[1];
+                link->next = 0;
+
+                // Add the new link to the chain.
+                *eval_decl = link;
+
+                // If there are more links then add them to the tail of the current one.
+                eval_decl = &link->next;
+        }
 
 }
