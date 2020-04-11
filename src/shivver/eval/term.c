@@ -230,9 +230,15 @@ shivver_eval_termN
                 goto again;
           }
 
-          default:
-          {     shivver_prim_console_printp(oHeadV);
+          case TAG_PRMA:
+          {     // Primitive name that we don't have an eval function for,
+                // or hasn't been mapped to a prz identifier.
                 reqeval ( state, false
+                        , "Unknown primitive '#%s'.", xPrmA_name(oHeadV));
+          }
+
+          default:
+          {     reqeval ( state, false
                         , "Cannot apply non-functional value.");
           }
         }
@@ -321,6 +327,13 @@ shivver_eval_termN
                         oExp    = xCloH_body(oClo);
                         goto again;
                 }
+          }
+
+          case TAG_PRMA:
+          {     // Primitive name that we don't have an eval function for,
+                // or hasn't been mapped to a prz identifier.
+                reqeval ( state, false
+                        , "Unknown primitive '#%s'.", xPrmA_name(oHeadV));
           }
 
           default:
