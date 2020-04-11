@@ -1,6 +1,7 @@
 
 #include <stdarg.h>
 #include <setjmp.h>
+#include <assert.h>
 #include "shivver/eval.h"
 
 
@@ -13,7 +14,6 @@ shivver_eval_alloc
         ()
 {
         eval_t* state = (eval_t*)malloc(sizeof(eval_t));
-        state->error_str = 0;
 
         // Initialize the jump buffer to a default target that just aborts.
         // The caller of shivver_eval_alloc should overwrite jmp_error with
@@ -23,6 +23,10 @@ shivver_eval_alloc
         {       return state;
         }
         shivver_fail("shivver_eval_alloc: eval error handler not set.");
+
+        state->error_str = 0;
+        state->decls     = 0;
+
 }
 
 
@@ -72,4 +76,19 @@ shivver_eval_error
 
         // Return to the caller of the top-level evaluator.
         longjmp (state->jmp_err, 1);
+}
+
+
+// Ingest a module declaration into the evaluator state,
+// so that we can refer to the defined macros during evaluation.
+// This prepends the macros in the module decalration to the 'decls'
+// part of the evaluator state.
+void
+shivver_eval_ingest
+        ( eval_t*       state
+        , obj_t*        oModule)
+{
+        obj_t*  osModule[2];
+        assert(dSymAps(oModule, "svr'module", 2, osModule));
+
 }

@@ -7,6 +7,7 @@ int main(int argc, char** argv)
 {
         shivver_heapInit(1024 * 1024);
 
+        obj_t* obj_module = 0;
         if (argc == 2) {
                 char* sFileName = argv[1];
 
@@ -28,19 +29,19 @@ int main(int argc, char** argv)
                 parser_t* state_parse
                  = shivver_parse_alloc(buf);
 
-                obj_t* obj_parse
+                obj_module
                  = shivver_parse_module(state_parse);
 
-                if (obj_parse == 0)
+                if (obj_module == 0)
                 {       printf("error: %s\n", state_parse->error_str);
                         shivver_parse_free(state_parse);
                         return 0;
                 }
-                shivver_prim_console_printl (0, obj_parse);
+                shivver_prim_console_printl (0, obj_module);
                 printf("\n");
                 free(buf);
         }
 
-        shivver_console_start();
+        shivver_console_start(obj_module);
         return 0;
 }

@@ -49,10 +49,15 @@ shivver_console_init()
 
 // Main console loop that handles individual characters.
 void
-shivver_console_start()
+shivver_console_start
+        (obj_t* oModule)
 {
         // Initialize the console interface.
         shivver_console_init();
+
+        // Create an evaluator state and ingest the module declarations.
+        eval_t* state_eval = shivver_eval_alloc();
+        shivver_eval_ingest(state_eval, oModule);
 
         // Allocate a buffer to store the read line.
         size_t  lineMax = 1024;
@@ -81,7 +86,7 @@ shivver_console_start()
                 {       line[pos] = 0;
                         printf("\n");
                         fflush(stdout);
-                        shivver_console_line (line);
+                        shivver_console_line (state_eval, line);
                         pos = 0;
                         goto start;
                 }
@@ -130,7 +135,8 @@ shivver_console_isLineWhite(char* line)
 // Handle an input line to the console.
 void
 shivver_console_line
-        ( char* line)
+        ( eval_t*       state_eval
+        , char*         line)
 {
         if (shivver_console_isLineWhite(line))
                 return;
@@ -158,6 +164,6 @@ shivver_console_line
         }
 
         // Treat line as a term to parse and evaluate.
-        else    shivver_console_cmd_eval(line);
+        else    shivver_console_cmd_eval (state_eval, line);
 }
 

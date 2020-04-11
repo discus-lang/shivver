@@ -7,11 +7,13 @@
 
 
 void
-shivver_console_start();
+shivver_console_start
+        (obj_t* oModule);
 
 void
 shivver_console_line
-        (char* line);
+        ( eval_t*       state_eval
+        , char*         line);
 
 void
 shivver_main_tokens
@@ -20,7 +22,8 @@ shivver_main_tokens
 
 void
 shivver_console_cmd_eval
-        (char*  line);
+        ( eval_t*       state_eval
+        , char*         line);
 
 void
 shivver_console_cmd_printp

@@ -5,7 +5,8 @@
 //  Parse the line as a term, evaluate it, and print the result.
 void
 shivver_console_cmd_eval
-        (char*  line)
+        ( eval_t*       state_eval      // evaluator state
+        , char*         line)           // line to parse and evaluate.
 {
         // Try to parse the term.
         parser_t* state_parse
@@ -22,12 +23,6 @@ shivver_console_cmd_eval
                 return;
         }
         shivver_parse_free(state_parse);
-
-
-        // Line was parsed successfully,
-        //  so evaluate it and print the result.
-        eval_t* state_eval
-         = shivver_eval_alloc();
 
         obj_t* obj_eval
          = shivver_eval_term_zero (state_eval, 0, obj_parse);

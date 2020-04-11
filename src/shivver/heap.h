@@ -6,6 +6,7 @@
 #include "shivver/heap/object/atomic.h"
 #include "shivver/heap/object/static.h"
 #include "shivver/heap/object/hot.h"
+#include "shivver/heap/destruct.h"
 #include "shivver/error.h"
 
 

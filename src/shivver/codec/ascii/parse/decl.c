@@ -14,6 +14,7 @@ shivver_parse_decls
         return oDecls;
 }
 
+
 // Parse a sequence of declarations, appending them to the given list.
 void
 shivver_parse_decls_list
@@ -36,6 +37,7 @@ shivver_parse_decls_list
                 }
           }
 }
+
 
 // Parse a declaration.
 obj_t*

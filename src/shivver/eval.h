@@ -48,6 +48,11 @@ shivver_eval_error
         , char*         format
         , va_list       args);
 
+void
+shivver_eval_ingest
+        ( eval_t*       state
+        , obj_t*        oModule);
+
 
 // from eval/term.c
 obj_t*
