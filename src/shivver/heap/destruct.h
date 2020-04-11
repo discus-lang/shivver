@@ -2,6 +2,26 @@
 #include "shivver/heap/object/atomic.h"
 
 
+
+// ----------------------------------------------------------------------------
+static inline bool
+dMac    ( obj_t*        obj
+        , uint32_t*     outLen      // out pointer to string length.
+        , char**        outName)    // out pointer to string name chars.
+{
+        switch (xObj_tag(obj))
+        { case TAG_MACA:
+          { *outLen     = xMacA_len(obj);
+            *outName    = xMacA_name(obj);
+            return true;
+          }
+        }
+        return false;
+}
+
+
+
+// ----------------------------------------------------------------------------
 // Destruct an application to a vector of terms with an expected length.
 //  If this is indeed an application then set the output values and return true,
 //  otherwise return false.

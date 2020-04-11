@@ -157,6 +157,14 @@ shivver_console_line
                 return;
         }
 
+        // Print out a list of all the top-level macro declarations.
+        arg = shivver_string_stripPrefix(line, ":decls");
+        if (arg != 0)
+        {       shivver_console_cmd_decls(state_eval, arg);
+                return;
+        }
+
+        // Some command we don't recognise.
         arg = shivver_string_stripPrefix(line, ":");
         if(arg != 0)
         {       printf("Unknown command '%s'\n", arg);

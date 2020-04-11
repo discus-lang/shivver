@@ -28,3 +28,8 @@ shivver_console_cmd_eval
 void
 shivver_console_cmd_printp
         (char*  line);
+
+void
+shivver_console_cmd_decls
+        ( eval_t*       state_eval
+        , char*         line);
