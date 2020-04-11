@@ -40,6 +40,12 @@ shivver_prim_console_printp
                 break;
           }
 
+          case TAG_MACA:
+          {     printf  ("(&maca %u \"%s\")"
+                        , xMacA_len(obj), xMacA_name(obj));
+                break;
+          }
+
           case TAG_NATA:
           {     printf  ("(&nata %lld)"
                         , xNatA(obj));

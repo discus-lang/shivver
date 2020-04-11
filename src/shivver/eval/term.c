@@ -62,6 +62,37 @@ shivver_eval_term1
 }
 
 
+// Like 'shivver_eval_termN', but we also unfold macros names in head position.
+void
+shivver_force_termN
+        ( eval_t*       state   // Evaluation state.
+        , size_t        nArity  // Number of values we expect from evaluation.
+        , obj_t**       osRes   // Array of pointers to fill with results.
+        , obj_t*        oEnv    // Evaluation environment.
+        , obj_t*        oExp)   // Term expression to evaluate.
+{ again:
+        switch(xObj_tag(oExp))
+        { case TAG_MACA:
+          {     reqeval ( state, nArity == 1
+                        , "Arity mismatch for macro -- need '%d', have '1'."
+                        , nArity);
+
+                obj_t* oRes
+                 = shivver_eval_resolve_mac
+                        (state->decls, xMacA_name(oExp));
+
+                reqeval ( state, oRes != 0
+                        , "Macro '%s' is undefined."
+                        , xMacA_name(oExp));
+                oExp = oRes;
+                goto again;
+          }
+        }
+
+        shivver_eval_termN (state, nArity, osRes, oEnv, oExp);
+}
+
+
 // Evaluate a term, expecting the given number of result values.
 void
 shivver_eval_termN
@@ -91,13 +122,21 @@ shivver_eval_termN
                         , nArity);
 
                 obj_t* oRes
-                 = shivver_eval_resolve
+                 = shivver_eval_resolve_var
                         (oEnv, xVarA_name(oExp), xVarA_bump(oExp));
 
                 reqeval ( state, oRes != 0
                         , "Variable '%s' is not in scope."
                         , xVarA_name(oExp));
                 osRes[0] = oRes;
+                return;
+          }
+
+          case TAG_MACA:
+          {     reqeval ( state, nArity == 1
+                        , "Arity mismatch for macro -- need '%d', have '1'."
+                        , nArity);
+                osRes[0] = oExp;
                 return;
           }
 
@@ -135,7 +174,7 @@ shivver_eval_termN
 
                 // Evaluate the head.
                 obj_t* oHeadV   = 0;
-                shivver_eval_termN
+                shivver_force_termN
                         ( state, 1, &oHeadV
                         , oEnv, oHead);
 
@@ -194,6 +233,7 @@ shivver_eval_termN
                   }
 
                   default:
+                        shivver_prim_console_printp(oHeadV);
                         reqeval ( state, false
                                 , "Cannot apply non-functional value.");
                 }
@@ -206,7 +246,7 @@ shivver_eval_termN
 
                 // Evaluate the head.
                 obj_t* oHeadV   = 0;
-                shivver_eval_termN (state, 1, &oHeadV, oEnv, oHead);
+                shivver_force_termN (state, 1, &oHeadV, oEnv, oHead);
 
                 switch(xObj_tag(oHeadV))
                 { case TAG_SYMA:
@@ -281,7 +321,8 @@ shivver_eval_termN
                   }
 
                   default:
-                        reqeval ( state, false
+                       shivver_prim_console_printp(oHeadV);
+                       reqeval ( state, false
                                 , "Cannot apply non-functional value.");
                 }
           }
@@ -303,7 +344,7 @@ shivver_eval_termN
                         , nArity);
 
                 obj_t* oRes
-                 = shivver_eval_resolve
+                 = shivver_eval_resolve_var
                         (oEnv, xVarT_name(oExp), xVarT_bump(oExp));
 
                 reqeval ( state, oRes != 0

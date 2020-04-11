@@ -15,13 +15,24 @@ shivver_eval_prim
 
 // from eval/resolve.c
 obj_t*
-shivver_eval_resolve
+shivver_eval_resolve_var
         ( obj_t*        oEnv
         , char*         name
         , size_t        nBump);
 
+obj_t*
+shivver_eval_resolve_mac
+        ( eval_decl_t*  decls
+        , char*         name);
+
 bool
 shivver_eval_eqSym
+        ( obj_t*        oSym
+        , char*         name);
+
+
+bool
+shivver_eval_eqMac
         ( obj_t*        oSym
         , char*         name);
 
