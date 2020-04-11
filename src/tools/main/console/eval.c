@@ -29,12 +29,15 @@ shivver_console_cmd_eval
 
         // If there was an eval error then obj_eval is set to 0,
         //  and the error message is set in the eval state.
+        // The error message is built in malloced memory so we need to
+        // free it after we've printed it.
         if (obj_eval == 0)
-        {       printf("error: %s\n", state_eval->error_str);
-                shivver_eval_free(state_eval);
+        {       assert(state_eval->error_str != 0);
+                printf("error: %s\n", state_eval->error_str);
+                free(state_eval->error_str);
+                state_eval->error_str = 0;
                 return;
         }
-        shivver_eval_free(state_eval);
 
         // Evaluation completed successfully,
         //  so print the result.

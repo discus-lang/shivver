@@ -35,6 +35,7 @@ void
 shivver_eval_free
         (eval_t*        state)
 {
+        if (state->error_str != 0) free(state->error_str);
         free(state);
 }
 
