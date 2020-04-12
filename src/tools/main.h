@@ -21,6 +21,10 @@ shivver_main_tokens
 
 
 void
+shivver_console_cmd_help
+        ();
+
+void
 shivver_console_cmd_eval
         ( eval_t*       state_eval
         , char*         line);

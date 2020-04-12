@@ -57,7 +57,8 @@ shivver_console_start
 
         // Create an evaluator state and ingest the module declarations.
         eval_t* state_eval = shivver_eval_alloc();
-        shivver_eval_ingest(state_eval, oModule);
+        if (oModule != 0)
+                shivver_eval_ingest(state_eval, oModule);
 
         // Allocate a buffer to store the read line.
         size_t  lineMax = 1024;
@@ -142,6 +143,13 @@ shivver_console_line
                 return;
 
         char* arg;
+
+        // Print the help page.
+        arg = shivver_string_stripPrefix(line, ":help");
+        if (arg != 0)
+        {       shivver_console_cmd_help();
+                return;
+        }
 
         // Treat the line as a term and show its tokens.
         arg = shivver_string_stripPrefix(line, ":tokens");

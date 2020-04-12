@@ -33,4 +33,3 @@
 !def @sum {xx}
  = @foldl [{x y} #nat'add [x, y], 0, xx]
 
-

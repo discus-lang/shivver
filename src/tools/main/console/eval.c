@@ -18,7 +18,7 @@ shivver_console_cmd_eval
         // If there was a parse error then obj_parse is set to 0,
         //  and the error message is set in the parse state.
         if (obj_parse == 0)
-        {       printf("error: %s\n", state_parse->error_str);
+        {       printf("error: %s\n\n", state_parse->error_str);
                 shivver_parse_free(state_parse);
                 return;
         }
@@ -33,7 +33,7 @@ shivver_console_cmd_eval
         // free it after we've printed it.
         if (obj_eval == 0)
         {       assert(state_eval->error_str != 0);
-                printf("error: %s\n", state_eval->error_str);
+                printf("error: %s\n\n", state_eval->error_str);
                 free(state_eval->error_str);
                 state_eval->error_str = 0;
                 return;
@@ -42,5 +42,5 @@ shivver_console_cmd_eval
         // Evaluation completed successfully,
         //  so print the result.
         shivver_prim_console_printl (0, obj_eval);
-        printf("\n");
+        printf("\n\n");
 }

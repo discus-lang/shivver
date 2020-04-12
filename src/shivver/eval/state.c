@@ -14,6 +14,8 @@ shivver_eval_alloc
         ()
 {
         eval_t* state = (eval_t*)malloc(sizeof(eval_t));
+        state->error_str = 0;
+        state->decls     = 0;
 
         // Initialize the jump buffer to a default target that just aborts.
         // The caller of shivver_eval_alloc should overwrite jmp_error with
@@ -23,10 +25,6 @@ shivver_eval_alloc
         {       return state;
         }
         shivver_fail("shivver_eval_alloc: eval error handler not set.");
-
-        state->error_str = 0;
-        state->decls     = 0;
-
 }
 
 

@@ -1,10 +1,10 @@
 
 #include "tools/main.h"
-
 #include "shivver/codec/ascii.h"
 
 int main(int argc, char** argv)
 {
+        printf("shivver, version 0.1: http://shivver.org  :? for help\n");
         shivver_heapInit(1024 * 1024);
 
         obj_t* obj_module = 0;
