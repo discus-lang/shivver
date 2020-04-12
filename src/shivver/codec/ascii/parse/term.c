@@ -117,6 +117,20 @@ shivver_parse_term0
                 return obj;
           }
 
+          case TOKEN_NAT:
+          {
+                shivver_parse_shift(state);
+                size_t nStr     = state->curr_len;
+                char*  str      = (char*)alloca(nStr + 1);
+                memcpy(str, state->curr_str, nStr);
+                str[nStr] = 0;
+
+                obj_t* obj = 0;
+                obj     = shivver_parse_nat_lit(str);
+                assert (obj != 0);
+                return obj;
+          }
+
           // Term ::= '{' Name* '}' Term
           case TOKEN_CBRA:
           {     shivver_parse_shift(state);
@@ -218,6 +232,7 @@ shivver_parse_isTermStart
           case TOKEN_SYM:
           case TOKEN_PRM:
           case TOKEN_MAC:
+          case TOKEN_NAT:
                 return true;
         }
         return false;

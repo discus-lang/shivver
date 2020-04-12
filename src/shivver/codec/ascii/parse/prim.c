@@ -10,6 +10,9 @@ shivver_parse_nat_lit
         (char* str)
 {
         size_t x;
+        if (sscanf(str, "%zu", &x) == 1)
+                return aNatA(x);
+
         if (sscanf(str, "nat'%zu", &x) == 1)
                 return aNatA(x);
 

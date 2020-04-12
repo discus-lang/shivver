@@ -27,6 +27,7 @@ shivver_token_name
           case TOKEN_PRM:       return "prm";
           case TOKEN_MAC:       return "mac";
           case TOKEN_KEY:       return "key";
+          case TOKEN_NAT:       return "nat";
 
           case TOKEN_KEY_DEF:   return "key'def";
           case TOKEN_KEY_LET:   return "key'let";
@@ -158,6 +159,13 @@ bool    shivver_lexer_scan
                         return true;
                 }
 
+                // primitive nats without the #nat' prefix.
+                if (*str >= '0' && *str <= '9')
+                {       *outTag = TOKEN_NAT; *outStr = str;
+                        *outLen = shivver_lexer_scan_nat(str, strLen);
+                        return true;
+                }
+
                 // lex failure.
                 *outTag = TOKEN_NONE; *outStr = 0;
                 *outLen = 0;
@@ -233,3 +241,22 @@ void    shivver_lexer_load_signame
         for (size_t i = 0; i < strLen; i++)
                 out[i] = str[i];
 }
+
+
+// ------------------------------------------------------------------------------------------------
+// Scan a natural number, returning the raw length in the lex buffer.
+size_t  shivver_lexer_scan_nat
+        (char* str, size_t strLen)
+{
+        size_t len = 0;
+
+        while(  strLen > 0
+         &&    (*str >= '0' && *str <= '9'))
+        {
+                str++; strLen--; len++;
+        }
+
+        return len;
+}
+
+

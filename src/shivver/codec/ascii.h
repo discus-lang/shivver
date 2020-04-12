@@ -29,6 +29,7 @@
 #define TOKEN_PRM               32
 #define TOKEN_MAC               33
 #define TOKEN_KEY               34
+#define TOKEN_NAT               35
 
 #define TOKEN_KEY_SHIVVER       40
 #define TOKEN_KEY_DEF           41
@@ -85,6 +86,10 @@ shivver_lexer_scan_var
 void
 shivver_lexer_load_var
         (char* str, size_t len, char* out);
+
+size_t
+shivver_lexer_scan_nat
+        (char* str, size_t strLen);
 
 size_t
 shivver_lexer_scan_signame
