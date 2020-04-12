@@ -105,15 +105,15 @@ shivver_parse_term0
                 // is one of the predefine dones.
                 obj_t* obj = 0;
 
-                obj     = shivver_parse_nat_lit(str);
+                obj = shivver_parse_nat_lit(str);
                 if (obj != 0) return obj;
 
-                obj     = shivver_parse_nat_prim(str);
+                obj = shivver_parse_nat_prim(str);
                 if (obj != 0) return obj;
 
                 // If the previous prim parsing functions did not recognize
                 // the prim name then just stash the name in a raw Prm node.
-                obj     = aPrmA(nStr, state->curr_str + 1);
+                obj = aPrmA(nStr, state->curr_str + 1);
                 return obj;
           }
 

@@ -1,0 +1,36 @@
+!shivver core
+
+!def @length {xx}
+ = #match
+   [xx  , %list'nil,  {} 0
+        , %list'cons, {x xs} #nat'add [1, @length xs]]
+
+
+!def @range {n m}
+ = #if  [ #nat'gt [n, m]
+        , {} %list'nil []
+        , {} %list'cons [n, @range [#nat'add [n, 1], m]]]
+
+
+!def @append {xx yy}
+ = #match
+   [ xx , %list'nil,  {} yy
+        , %list'cons, {x xs} %list'cons [x, @append [xs, yy]]]
+
+
+!def @reverse {xx}
+ = #match
+   [ xx , %list'nil,  {} xx
+        , %list'cons, {x xs} @append [@reverse xs, %list'cons [x, %list'nil []]]]
+
+
+!def @foldl {f z xx}
+ = #match
+   [ xx , %list'nil,  {} z
+        , %list'cons, {x xs} @foldl [f, f [z, x], xs]]
+
+
+!def @sum {xx}
+ = @foldl [{x y} #nat'add [x, y], 0, xx]
+
+
