@@ -25,7 +25,7 @@ shivver_console_cmd_eval
         shivver_parse_free(state_parse);
 
         obj_t* obj_eval
-         = shivver_eval_term_zero (state_eval, 0, obj_parse);
+         = shivver_eval_term1_null (state_eval, 0, obj_parse);
 
         // If there was an eval error then obj_eval is set to 0,
         //  and the error message is set in the eval state.

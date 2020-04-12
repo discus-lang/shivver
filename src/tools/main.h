@@ -33,3 +33,8 @@ void
 shivver_console_cmd_decls
         ( eval_t*       state_eval
         , char*         line);
+
+void
+shivver_console_cmd_decl
+        ( eval_t*       state_eval
+        , char*         line);

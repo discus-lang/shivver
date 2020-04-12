@@ -70,7 +70,7 @@ shivver_eval_ingest
 
 // from eval/term.c
 obj_t*
-shivver_eval_term_zero
+shivver_eval_term1_null
         ( eval_t*       state
         , obj_t*        env
         , obj_t*        obj);
@@ -80,6 +80,14 @@ shivver_eval_term1
         ( eval_t*       state
         , obj_t*        env
         , obj_t*        obj);
+
+void
+shivver_force_termN
+        ( eval_t*       state
+        , size_t        nArity
+        , obj_t**       osRes
+        , obj_t*        oEnv
+        , obj_t*        oExp);
 
 void
 shivver_eval_termN

@@ -164,6 +164,13 @@ shivver_console_line
                 return;
         }
 
+        // Print out a single declaration.
+        arg = shivver_string_stripPrefix(line, ":decl");
+        if (arg != 0)
+        {       shivver_console_cmd_decl(state_eval, arg);
+                return;
+        }
+
         // Some command we don't recognise.
         arg = shivver_string_stripPrefix(line, ":");
         if(arg != 0)

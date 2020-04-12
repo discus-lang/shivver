@@ -38,8 +38,6 @@ int main(int argc, char** argv)
                         shivver_parse_free(state_parse);
                         return 0;
                 }
-                shivver_prim_console_printl (0, obj_module);
-                printf("\n");
                 free(buf);
         }
 

@@ -7,19 +7,22 @@
 #include "shivver/util.h"
 
 
-// Evaluate a term, expecting a single result value.
+// Force evaluate a term, expecting a single result value.
 //  On success, the result is returned directly.
 //  On failure, we return 0 and the error message is in state->error_str.
 //   The messsage string in state->error_str needs to be freed by the caller.
 obj_t*
-shivver_eval_term_zero
+shivver_eval_term1_null
         ( eval_t*       state   // Evaluation state.
         , obj_t*        oEnv    // Evaluation environemnt.
         , obj_t*        oExp)   // Term expression to evaluate.
 {
         int ret = setjmp(state->jmp_err);
-        if (ret == 0)
-                return shivver_eval_term1 (state, oEnv, oExp);
+        if (ret == 0) {
+                obj_t* oRes = 0;
+                shivver_eval_termN (state, 1, &oRes, oEnv, oExp);
+                return oRes;
+        }
         else {
                 // We got longjmped to, so there was a parse error.
                 // An error message need to have been set in the state.
@@ -29,20 +32,6 @@ shivver_eval_term_zero
                 // returning 0.
                 return 0;
         }
-}
-
-
-// Evaluate a term, expecting a single result value.
-//  On failure we longjmp to the destination defined in the state.
-obj_t*
-shivver_eval_term1
-        ( eval_t*       state   // Evaluation state.
-        , obj_t*        oEnv    // Evaluation environment.
-        , obj_t*        oExp)   // Term expression to evaluate.
-{
-        obj_t*  oRes     = 0;
-        shivver_eval_termN(state, 1, &oRes, oEnv, oExp);
-        return oRes;
 }
 
 
