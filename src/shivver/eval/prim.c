@@ -102,14 +102,15 @@ shivver_eval_prim
 
          case PRIM_IF:
          {      obj_t* oClo = 0;
-                if (takeBool(osArg[0])) oClo = osArg[1];
-                else                    oClo = osArg[2];
+                if (takeBool(osArg[0]))
+                        oClo = osArg[1];
+                else    oClo = osArg[2];
 
                 reqeval ( state, xObj_tag(oClo) == TAG_CLOH
-                        , "branch of '#if' is not a closure.");
+                        , "Branch of '#if' is not a closure.");
 
                 reqeval ( state, xCloH_len(oClo) == 0
-                        , "closure in branch of '#if' has wrong shape.");
+                        , "Closure in branch of '#if' has wrong shape.");
 
                 // TODO: calling this again will build a stack frame,
                 // need to do a tail-call.

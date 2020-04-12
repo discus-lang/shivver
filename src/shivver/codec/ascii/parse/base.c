@@ -53,6 +53,7 @@ shivver_parse_fail
         , char*         format
         , ...)
 {
+
         // Allocate a buffer for the error message, which will be
         // freed along with the state by the original caller.
         char* buf = malloc(1024);
@@ -132,7 +133,7 @@ shivver_parse_tok
 
         shivver_parse_fail
                 ( state, "Unexpected token '%s', expected '%s'"
-                , state->peek_tok
+                , shivver_token_name(state->peek_tok)
                 , shivver_token_name(tok));
 }
 

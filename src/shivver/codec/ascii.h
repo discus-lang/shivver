@@ -111,28 +111,50 @@ shivver_parse_fail
         , ...)
         __attribute__((noreturn));
 
-void    shivver_parse_peek      (parser_t* state);
-void    shivver_parse_shift     (parser_t* state);
+void    shivver_parse_peek
+        (parser_t* state);
 
-void    shivver_parse_tok       (parser_t* state, size_t tok);
-obj_t*  shivver_parse_var       (parser_t* state);
-obj_t*  shivver_parse_mac       (parser_t* state);
+void    shivver_parse_shift
+        (parser_t* state);
+
+void    shivver_parse_tok
+        (parser_t* state, size_t tok);
+
+obj_t*  shivver_parse_var
+        (parser_t* state);
+
+obj_t*  shivver_parse_mac
+        (parser_t* state);
 
 
 // from ascii/parse/module.c
-obj_t*  shivver_parse_module    (parser_t* state);
+obj_t*  shivver_parse_module_zero
+        (parser_t* state);
+
+obj_t*  shivver_parse_module
+        (parser_t* state);
 
 
 // from ascii/parse/decl.c
-obj_t*  shivver_parse_decls     (parser_t* state);
-void    shivver_parse_decls_list(parser_t* state, objlist_t* list);
-obj_t*  shivver_parse_decl      (parser_t* state);
+obj_t*  shivver_parse_decls
+        (parser_t* state);
+
+void    shivver_parse_decls_list
+        (parser_t* state, objlist_t* list);
+
+obj_t*  shivver_parse_decl
+        (parser_t* state);
 
 
 // from ascii/parse/term.c
-obj_t*  shivver_parse_term_zero (parser_t* state);
-obj_t*  shivver_parse_term1     (parser_t* state);
-obj_t*  shivver_parse_term0     (parser_t* state);
+obj_t*  shivver_parse_term_zero
+        (parser_t* state);
+
+obj_t*  shivver_parse_term1
+        (parser_t* state);
+
+obj_t*  shivver_parse_term0
+        (parser_t* state);
 
 objlist_t*
 shivver_parse_termCommaList

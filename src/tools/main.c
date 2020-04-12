@@ -30,7 +30,8 @@ int main(int argc, char** argv)
                  = shivver_parse_alloc(buf);
 
                 obj_module
-                 = shivver_parse_module(state_parse);
+                 = shivver_parse_module_zero
+                        (state_parse);
 
                 if (obj_module == 0)
                 {       printf("error: %s\n", state_parse->error_str);

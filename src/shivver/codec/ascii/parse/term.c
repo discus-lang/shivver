@@ -217,6 +217,7 @@ shivver_parse_isTermStart
           case TOKEN_VAR:
           case TOKEN_SYM:
           case TOKEN_PRM:
+          case TOKEN_MAC:
                 return true;
         }
         return false;
