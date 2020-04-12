@@ -22,16 +22,7 @@ obj_t*
 shivver_parse_nat_prim
         (char* str)
 {
-        if (strcmp(str, "nat'add") == 0)        return aPrzA(PRIM_NAT_ADD);
-        if (strcmp(str, "nat'sub") == 0)        return aPrzA(PRIM_NAT_SUB);
-        if (strcmp(str, "nat'mul") == 0)        return aPrzA(PRIM_NAT_MUL);
-        if (strcmp(str, "nat'div") == 0)        return aPrzA(PRIM_NAT_DIV);
-
-        if (strcmp(str, "nat'eq")  == 0)        return aPrzA(PRIM_NAT_EQ);
-        if (strcmp(str, "nat'lt")  == 0)        return aPrzA(PRIM_NAT_LT);
-        if (strcmp(str, "nat'le")  == 0)        return aPrzA(PRIM_NAT_LE);
-        if (strcmp(str, "nat'gt")  == 0)        return aPrzA(PRIM_NAT_GT);
-        if (strcmp(str, "nat'ge")  == 0)        return aPrzA(PRIM_NAT_GE);
-
-        return 0;
+        uint32_t tag = shivver_prim_tagOfName(str);
+        if (tag == 0)   return 0;
+        else            return aPrzA(tag);
 }

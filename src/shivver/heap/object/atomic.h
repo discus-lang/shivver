@@ -174,8 +174,31 @@ xMacA_name(obj_t* obj)
 {       return xNameA_str(obj); }
 
 
-
 // ----------------------------------------------------------------------------
+// A boolean value.
+//
+//      7  6  5  4  3  2  1  0
+//  0   value..............  F
+//
+static inline obj_t*
+aBllA (bool b)
+{       uint64_t* buf = (uint64_t*)halloc(1);
+        buf[0]  = ((uint64_t)b << 8) | TAG_BLLA;
+        return (obj_t*)buf;
+}
+
+static inline bool
+xBllA (obj_t* obj)
+{       uint64_t* buf = (uint64_t*)obj;
+        return buf[0] >> 8;
+}
+
+
+// A 56-bit natural number.
+//
+//      7  6  5  4  3  2  1  0
+//  0   value..............  F
+//
 static inline obj_t*
 aNatA (uint64_t n)
 {       uint64_t* buf = (uint64_t*)halloc(1);

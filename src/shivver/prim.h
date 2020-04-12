@@ -3,10 +3,16 @@
 #include "shivver/prim/console.h"
 
 
-// Get the name of the primitive wiht the given tag.
+// Get the name of the primitive with the given tag.
 char*
-shivver_prim_tag_name
+shivver_prim_nameOfTag
         (uint32_t tag);
+
+
+// Get the tag of the primitive with the given name.
+uint32_t
+shivver_prim_tagOfName
+        (char* name);
 
 
 // Get the primitive block number from a tag.

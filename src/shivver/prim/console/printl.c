@@ -31,7 +31,7 @@ shivver_prim_console_printl
           }
 
           case TAG_PRZA:
-          {     printf("#%s",   shivver_prim_tag_name(xPrzA_tag(obj)));
+          {     printf("#%s",   shivver_prim_nameOfTag(xPrzA_tag(obj)));
                 return;
           }
 

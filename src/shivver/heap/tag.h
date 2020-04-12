@@ -23,7 +23,8 @@
 
 //  prza   prm-tag.... 0  0  0  F       0 0 1 0 0 0 0 1  = 0x41
 
-//  nata   value..............  F       0 0 0 0 0 0 1 1  = 0x03
+//  blla   value..............  F       0 0 0 0 0 0 1 1  = 0x03
+//  nata   value..............  F       0 0 0 1 0 0 1 1  = 0x13
 
 //  mode: 00 atomic
 //        01 static
@@ -37,7 +38,8 @@
 //        1000 clo
 //        1001 env
 //
-//  lit:  0000 nat
+//  lit:  0000 bll
+//        0001 nat
 //
 
 #define TAG_MMMH        0x0d
@@ -58,5 +60,6 @@
 
 #define TAG_PRZA        0x41
 
-#define TAG_NATA        0x03
+#define TAG_BLLA        0x03
+#define TAG_NATA        0x13
 

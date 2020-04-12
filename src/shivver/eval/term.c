@@ -2,25 +2,9 @@
 #include <assert.h>
 #include <stdarg.h>
 #include "shivver/eval.h"
+#include "shivver/eval/error.h"
 #include "shivver/prim.h"
 #include "shivver/util.h"
-
-
-// Assert a property is true during evaluation.
-//  This is inlined so we get a fast-path that does not need a function-call
-//  when the property is true.
-static inline void
-reqeval ( eval_t*       state
-        , bool          prop
-        , char*         format
-        , ...)
-{
-        if ( __builtin_expect (prop, true)) return;
-        va_list args;
-        va_start(args, format);
-        shivver_eval_error(state, format, args);
-        va_end(args);
-}
 
 
 // Evaluate a term, expecting a single result value.
@@ -191,21 +175,20 @@ shivver_eval_termN
           {     uint32_t pTag   = xPrzA_tag(oHeadV);
 
                 // Evaluate all the arguments.
+                //   For the non-vector application form we need to know how many
+                //   arguments the prim takes so that we know how many slots to
+                //   allocate for argument pointers here on the stack.
                 size_t nParams  = shivver_prim_tag_args(pTag);
+                reqeval ( state, nParams != 0xff
+                        , "Cannot apply arity polymorphic primitive to non-vector argument list.");
+
+                // Allocate space for the argument pointers,
+                // and then evaluate the arguments themselves.
                 obj_t* osArgs[nParams];
                 shivver_eval_termN (state, nParams, osArgs, oEnv, oArg);
 
-                // Get the number of result values produced by this primitive.
-                size_t nResults = shivver_prim_tag_results(pTag);
-
-                // The number of produced results must match that required
-                // by the contetxt.
-                reqeval ( state, nArity == nResults
-                        , "Arity mismatch in prim result -- need '%d', have '%d'."
-                        , nArity, nResults);
-
                 // Evaluate the primitive itself.
-                shivver_eval_prim (nArity, osRes, pTag, osArgs);
+                shivver_eval_prim  (state, oEnv, nArity, osRes, pTag, nParams, osArgs);
                 return;
           }
 
@@ -268,16 +251,7 @@ shivver_eval_termN
           }
 
           case TAG_PRZA:
-          {     uint32_t pTag   = xPrzA_tag(oHeadV);
-
-                // TODO: we can allow some prims to take variable numbers of args,
-                // which we want for ctors like #list, and control constructs.
-                // encode this flexibility in tag as param number of 0xff.
-                size_t nParams  = shivver_prim_tag_args(pTag);
-                reqeval ( state, nParams == nArgs
-                        , "Arity mismatch in prim application -- need '%d', have '%d'"
-                        , nParams, nArgs);
-
+          {
                 // Evaluate all the arguments.
                 obj_t* osArgs[nArgs];
                 for(size_t i = 0; i < nArgs; i++)
@@ -286,11 +260,8 @@ shivver_eval_termN
                 }
 
                 // Apply the primitive.
-                size_t nResults = shivver_prim_tag_results(pTag);
-                reqeval ( state, nArity == nResults
-                        , "Arity mismatch in prin result -- need '%d', have '%d'"
-                        , nArity, nResults);
-                shivver_eval_prim (nArity, osRes, pTag, osArgs);
+                uint32_t pTag   = xPrzA_tag(oHeadV);
+                shivver_eval_prim (state, oEnv, nArity, osRes, pTag, nArgs, osArgs);
                 return;
           }
 

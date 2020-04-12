@@ -7,9 +7,12 @@
 // from eval/prim.c
 void
 shivver_eval_prim
-        ( size_t        nArity
+        ( eval_t*       state
+        , obj_t*        oEnv
+        , size_t        nArity
         , obj_t**       osRes
         , size_t        tag
+        , size_t        nArgs
         , obj_t**       osArg);
 
 

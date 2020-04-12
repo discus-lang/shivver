@@ -10,6 +10,12 @@
 //  aa: number of arguments             (eg 02 for 2 args for nat'eq)
 //  rr: number of results               (eg 01 for 1 results from nat'eq)
 //
+//  For both the number of arguments and number of results,
+//  using the value 'ff' indicates the primitive is polymorphic
+//  in the number of arguments and/or results.
+//
+#define PRIM_NONE       0x00000000
+
 #define PRIM_NAT_ADD    0x01010201
 #define PRIM_NAT_SUB    0x01020201
 #define PRIM_NAT_MUL    0x01030201
@@ -19,3 +25,5 @@
 #define PRIM_NAT_LE     0x01070201
 #define PRIM_NAT_GT     0x01080201
 #define PRIM_NAT_GE     0x01090201
+
+#define PRIM_IF         0x100103ff
