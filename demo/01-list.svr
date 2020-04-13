@@ -14,20 +14,26 @@
 
 !def @append {xx yy}
  = #match
-   [ xx , %list'nil,  {} yy
-        , %list'cons, {x xs} %list'cons [x, @append [xs, yy]]]
+   [ xx , %list'nil,    {} yy
+        , %list'cons,   {x xs} %list'cons [x, @append [xs, yy]]]
 
 
 !def @reverse {xx}
  = #match
-   [ xx , %list'nil,  {} xx
-        , %list'cons, {x xs} @append [@reverse xs, %list'cons [x, %list'nil []]]]
+   [ xx , %list'nil,    {} xx
+        , %list'cons,   {x xs} @append [@reverse xs, %list'cons [x, %list'nil []]]]
+
+
+!def @map {f xx}
+ = #match
+   [ xx , %list'nil,    {} %list'nil []
+        , %list'cons,   {x xs} %list'cons [f [x], @map [f, xs]] ]
 
 
 !def @foldl {f z xx}
  = #match
-   [ xx , %list'nil,  {} z
-        , %list'cons, {x xs} @foldl [f, f [z, x], xs]]
+   [ xx , %list'nil,    {} z
+        , %list'cons,   {x xs} @foldl [f, f [z, x], xs]]
 
 
 !def @sum {xx}
