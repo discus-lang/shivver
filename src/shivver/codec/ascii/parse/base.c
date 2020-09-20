@@ -55,12 +55,13 @@ shivver_parse_fail
 {
         // Allocate a buffer for the error message, which will be
         // freed along with the state by the original caller.
-        char* buf = malloc(1024);
+        size_t nMaxLength = 1024;
+        char* buf = malloc(nMaxLength);
 
         // Print the message into the buffer.
         va_list args;
         va_start(args, format);
-        vsnprintf(buf, 1024, format, args);
+        vsnprintf(buf, nMaxLength, format, args);
         va_end(args);
 
         // Set the error in the state.

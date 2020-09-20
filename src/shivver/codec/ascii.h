@@ -11,9 +11,11 @@
 #include "shivver/util.h"
 
 // ----------------------------------------------------------------------------
+// Meta token tags.
 #define TOKEN_NONE              0
 #define TOKEN_END               1
 
+// Concrete token tags.
 #define TOKEN_RBRA              10
 #define TOKEN_RKET              11
 #define TOKEN_CBRA              12
@@ -40,16 +42,25 @@
 
 
 // ----------------------------------------------------------------------------
+// Parser state.
 typedef struct {
-        char*   str;            // string to parse.
-        size_t  len;            // remaining chars in string to parse.
+        // Pointer to next character to parse, or if there are no more
+        // characters, to the next byte after the string.
+        char*   str;
 
-        // the current token buffer.
+        // Number of remaining characters in the string to parse.
+        size_t  len;
+
+        // Current token buffer.
+        //  Token that we have shifted into the state,
+        //  or 0 0 0 if no token has been shifted yet.
         size_t  curr_tok;
         char*   curr_str;
         size_t  curr_len;
 
-        // the peeked token buffer.
+        // Peeked token buffer.
+        //  Token that has been peeked from the string,
+        //  or 0 0 0 if no token has been peeked yet.
         size_t  peek_tok;
         char*   peek_str;
         size_t  peek_len;
@@ -58,7 +69,7 @@ typedef struct {
         jmp_buf jmp_err;
 
         // Error message string.
-        //  If there has not been an error then this is 0.
+        //  If there has not been an error then 0.
         //  If there was an error during parsing then this is set to the
         //  error message, which will be freed by shivver_parse_free.
         char*   error_str;

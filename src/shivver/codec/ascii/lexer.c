@@ -4,6 +4,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // Get the name of a token tag.
+//   The name is statically allocated and does not need to be freed.
 const char*
 shivver_token_name
         (size_t tag)
@@ -66,6 +67,7 @@ bool    shivver_lexer_scan
 
   // Try to lex a token from this point.
   again:
+        // We are already at the end of the input.
         if (strLen == 0)
         {       *outTag = TOKEN_END; *outStr = str;
                 *outLen = 0;
@@ -137,7 +139,7 @@ bool    shivver_lexer_scan
                 }
 
                 if (strcmp(buf, "!def") == 0)
-                {       *outTag = TOKEN_KEY_DEF; *outLen = nStr; return true; }
+                {       *outTag = TOKEN_KEY_DEF;  *outLen = nStr; return true; }
 
                 if (strcmp(buf, "!let") == 0)
                 {       *outTag = TOKEN_KEY_LET;  *outLen = nStr; return true; }
@@ -172,6 +174,7 @@ bool    shivver_lexer_scan
                 return false;
         }
 
+  // Return a single character token.
   single:
         *outLen = 1;
         *outStr = str;

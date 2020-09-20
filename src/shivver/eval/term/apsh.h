@@ -15,7 +15,7 @@ shivver_eval_termN_ApsH
         obj_t* oEnv     = *opEnv;
         obj_t* oExp     = *opExp;
 
-        // sSlit out the head term and argument length.
+        // split out the head term and argument length.
         obj_t* oAps     = oExp;
         obj_t* oHead    = xApsH_fun(oAps);
         uint32_t nArgs  = xApsH_len(oAps);
