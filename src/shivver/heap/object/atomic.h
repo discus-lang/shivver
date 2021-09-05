@@ -1,7 +1,6 @@
 #pragma once
 #include "shivver/heap/alloc.h"
 
-
 // ----------------------------------------------------------------------------
 // Allocate an atomic name object in the heap and copy
 // the name string into it.

@@ -53,7 +53,6 @@ shivver_parse_fail
         , char*         format
         , ...)
 {
-
         // Allocate a buffer for the error message, which will be
         // freed along with the state by the original caller.
         char* buf = malloc(1024);
@@ -84,8 +83,8 @@ shivver_parse_peek
 
         // Scan the next token from the input.
         shivver_lexer_scan
-                ( state->str, state->len
-                , &state->peek_tok, &state->peek_str, &state->peek_len);
+         ( state->str, state->len
+         , &state->peek_tok, &state->peek_str, &state->peek_len);
 }
 
 
@@ -132,9 +131,9 @@ shivver_parse_tok
         }
 
         shivver_parse_fail
-                ( state, "Unexpected token '%s', expected '%s'"
-                , shivver_token_name(state->peek_tok)
-                , shivver_token_name(tok));
+         ( state, "Unexpected token '%s', expected '%s'"
+         , shivver_token_name(state->peek_tok)
+         , shivver_token_name(tok));
 }
 
 
@@ -151,8 +150,8 @@ shivver_parse_var
         }
 
         shivver_parse_fail
-                ( state, "Unexpected token '%s', expected variable name"
-                , state->peek_tok);
+         ( state, "Unexpected token '%s', expected variable name"
+         , state->peek_tok);
 }
 
 
@@ -170,7 +169,7 @@ shivver_parse_mac
         }
 
         shivver_parse_fail
-                ( state, "Unexpected token '%s', expected macro name"
-                , state->peek_tok);
+         ( state, "Unexpected token '%s', expected macro name"
+         , state->peek_tok);
 }
 

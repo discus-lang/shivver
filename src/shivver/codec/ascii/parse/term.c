@@ -31,7 +31,7 @@ obj_t*
 shivver_parse_term1
         (parser_t* state)
 {
-        obj_t* oFun     = shivver_parse_term0 (state);
+        obj_t* oFun     = shivver_parse_term0(state);
 
         // See if the first term is followed by a second one.
         shivver_parse_peek(state);
@@ -42,7 +42,18 @@ shivver_parse_term1
         if (state->peek_tok == TOKEN_SBRA)
         {       shivver_parse_shift(state);
                 objlist_t* list = shivver_parse_termCommaList(state);
-                shivver_parse_tok(state, TOKEN_SKET);
+
+                size_t tok = TOKEN_SKET;
+                shivver_parse_peek(state);
+                if(state->peek_tok != tok)
+                {       shivver_objlist_free(list);
+                        shivver_parse_fail
+                         ( state, "Unexpected token '%s', expected '%s'"
+                         , shivver_token_name(state->peek_tok)
+                         , shivver_token_name(tok));
+                }
+                shivver_parse_shift(state);
+
                 obj_t* obj      = aApsH (list->used, oFun, list->list);
                 shivver_objlist_free(list);
                 return obj;
@@ -118,8 +129,7 @@ shivver_parse_term0
           }
 
           case TOKEN_NAT:
-          {
-                shivver_parse_shift(state);
+          {     shivver_parse_shift(state);
                 size_t nStr     = state->curr_len;
                 char*  str      = (char*)alloca(nStr + 1);
                 memcpy(str, state->curr_str, nStr);
@@ -135,7 +145,18 @@ shivver_parse_term0
           case TOKEN_CBRA:
           {     shivver_parse_shift(state);
                 objlist_t* list = shivver_parse_varSpaceList(state);
-                shivver_parse_tok(state, TOKEN_CKET);
+
+                size_t tok = TOKEN_CKET;
+                shivver_parse_peek(state);
+                if(state->peek_tok != tok)
+                {       shivver_objlist_free(list);
+                        shivver_parse_fail
+                         ( state, "Unexpected token '%s', expected '%s'"
+                         , shivver_token_name(state->peek_tok)
+                         , shivver_token_name(tok));
+                }
+                shivver_parse_shift(state);
+
                 obj_t* objBody  = shivver_parse_term1(state);
                 obj_t* obj      = aAbsH(list->used, list->list, objBody);
                 shivver_objlist_free(list);
@@ -146,7 +167,18 @@ shivver_parse_term0
           case TOKEN_SBRA:
           {     shivver_parse_shift(state);
                 objlist_t* list = shivver_parse_termCommaList(state);
-                shivver_parse_tok(state, TOKEN_SKET);
+
+                size_t tok = TOKEN_SKET;
+                shivver_parse_peek(state);
+                if(state->peek_tok != tok)
+                {       shivver_objlist_free(list);
+                        shivver_parse_fail
+                         ( state, "Unexpected token '%s', expected '%s'"
+                         , shivver_token_name(state->peek_tok)
+                         , shivver_token_name(tok));
+                }
+                shivver_parse_shift(state);
+
                 obj_t* obj      = aMmmH(list->used, list->list);
                 shivver_objlist_free(list);
                 return obj;

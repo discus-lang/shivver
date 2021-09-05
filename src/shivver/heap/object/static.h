@@ -1,7 +1,6 @@
 #pragma once
 #include "shivver/heap/alloc.h"
 
-
 // ----------------------------------------------------------------------------
 // A symbol with a statically allocated name string.
 //

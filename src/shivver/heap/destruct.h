@@ -2,7 +2,6 @@
 #include "shivver/heap/object/atomic.h"
 
 
-
 // ----------------------------------------------------------------------------
 static inline bool
 dMac    ( obj_t*        obj

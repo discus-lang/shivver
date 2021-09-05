@@ -1,7 +1,6 @@
 #pragma once
 #include "shivver/heap/alloc.h"
 
-
 // Generic functions that work for all object types.
 
 // Get the tag from an object header.

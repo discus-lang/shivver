@@ -1,7 +1,6 @@
 #pragma once
 #include "shivver/heap/alloc.h"
 
-
 // ----------------------------------------------------------------------------
 // A vector of terms.
 //  physical: (&mmmh N Term_0 ... Term_N)
