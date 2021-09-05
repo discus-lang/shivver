@@ -7,7 +7,7 @@
 The atomic name forms var, sym, prz, and mac have the same format as the general NameA object.
 ```
 NameA   ::= { str: Seq Word8, aux: Word24 }                     name
-VarA    ::= { str: Seq Word8, bump: Word2 4}                    name
+VarA    ::= { str: Seq Word8, bump: Word24 }                    name
 SymA    ::= { str: Seq Word8 }                                  %name
 PrzA    ::= { tag: Word32 }                                     #name
 MacA    ::= { str: Seq Word8 }                                  @name
@@ -35,3 +35,11 @@ CloH    ::= { env: Env, parms: Exp, body: Exp }                 &clo Env {Var₁
 EnvH    ::= { parent: Env | 0, parms: Exp, vals: Seq Val }      &env (Var₁, …, Varₙ) (Val₁, …, Valₙ)
 ```
 
+
+## Static Objects
+Objects that hold pointers to statically allocated memory.
+
+```
+SymT    ::= { str: Seq Word8 }
+VarT    ::= { str: Seq Word8, bump: Word24 }
+```
