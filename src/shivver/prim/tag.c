@@ -1,6 +1,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include "shivver/types.h"
 #include "shivver/prim/tag.h"
 
 char*

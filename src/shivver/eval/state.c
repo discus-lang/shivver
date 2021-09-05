@@ -33,7 +33,19 @@ void
 shivver_eval_free
         (eval_t*        state)
 {
-        if (state->error_str != 0) free(state->error_str);
+        // Free error string if it is set.
+        if (state->error_str != 0)
+         free(state->error_str);
+
+        // Free decls list.
+        eval_decl_t* decls = state->decls;
+        eval_decl_t* next  = 0;
+        while(decls != 0) {
+                next = decls->next;
+                free(decls);
+                decls = next;
+        }
+
         free(state);
 }
 

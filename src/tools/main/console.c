@@ -117,6 +117,9 @@ shivver_console_start
                 printf("\007");
                 fflush(stdout);
         }
+
+        free(line);
+        shivver_eval_free(state_eval);
 }
 
 

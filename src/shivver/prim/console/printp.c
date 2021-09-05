@@ -47,7 +47,7 @@ shivver_prim_console_printp
           }
 
           case TAG_NATA:
-          {     printf  ("(&nata %lld)"
+          {     printf  ("(&nata %lu)"
                         , xNatA(obj));
                 break;
           }
