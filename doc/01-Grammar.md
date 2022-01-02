@@ -19,16 +19,18 @@ Value   ::= vloc   Loc                  Loc
          |  vsym   Sym                  Sym
          |  vprm   Prm                  Prm
 
-         |  vcon n Sym Valueⁿ           !CON Sym '[' Norm,* ']'
+         |  vcon n Sym Valueⁿ           !CON Sym '[' Blocked,* ']'
          |  vclo n Env Varⁿ Term        !CLO Env '{' Var* '}' Term
 
-Norm    ::= nval   Value                Value
-         |  ndef   Def                  Def
-         |  nnom   Nom                  Nom
-         |  nbox   Norm                 !BOX Norm
-         |  nsub   Env Term             !SUB Env Term
+Blocked ::= bval   Value                Value
+         |  bdef   Def                  Def
+         |  bnom   Nom                  Nom
+         |  bbox   Closed               !BOX Closed
 
-Term    ::= mnrm   Norm                 Norm
+Closed  ::= cblk   Blocked              Blocked
+         |  csub   Env Term             !SUB Env Term
+
+Term    ::= mcls   Closed               Closed
 
          |  mvar   Var Nat              Var '^' Nat
 
