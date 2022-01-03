@@ -12,9 +12,10 @@
   { binds → Binds
   , defs  → Map Def Norm }
 
- Binds ::= binds Binds (List (Var × Norm))
-        |  bindn Binds (Nom × Norm)
-        |  bindz
+ Binds :: bsim Binds     (List (Var × Susp))
+        | brec Binds Env (List (Var × Term))
+        | bnom Binds Nom Susp
+        | bnil
 
  Mode ::= sim | rec
 ```
