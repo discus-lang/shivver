@@ -15,7 +15,7 @@ Module  ::= module Var Decl*                '!shivver' Sym Decl*
 
 Decl    ::= decl   Def Term                 '!def' Def '=' Term
 
-Demand  ::= dwkk                            '~'
+Demand  ::= dwwk                            '~'
          |  dstr                            ''    (no annotation)
 
 Value   ::= vloc   Loc                      Loc
@@ -32,7 +32,7 @@ Susp    ::= Value
 
 Term    ::= Susp
 
-         |  mvar   Var Nat                  Var '^' Nat
+         |  mvar   Var                      Var
 
          |  mbox   Term                     '!box' Term
          |  mrun   Term                     '!run' Term
