@@ -97,6 +97,6 @@ typedef union {
         sv_token_meta_t    meta;
         sv_token_atom_t    atom;
         sv_token_name_t    name;
-        sv_token_lit_nat_t name;
+        sv_token_lit_nat_t lit_nat;
 } sv_token_t;
 

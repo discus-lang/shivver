@@ -52,6 +52,31 @@ bool    sv_token_scan
          case ';': out_token->atom.tag = sv_token_atom_semi;    goto single;
          case '=': out_token->atom.tag = sv_token_atom_eq;      goto single;
 
+         // symbol name
+         case '%':
+         case '#':
+         case '@':
+         case '*':
+                char* first = state->input + state->next;
+                switch(*first) {
+                 case '%': out_token->name.tag = sv_token_name_sym; break;
+                 case '#': out_token->name.tag = sv_token_name_prm; break;
+                 case '@': out_token->name.tag = sv_token_name_mac; break;
+                 case '*': out_token->name.tag = sv_token_name_nom; break;
+                 default: assert(false);
+                }
+
+                size_t remain = state->length - state->next;
+                size_t length = sv_token_scan_sigil_name(first, remain);
+
+                out_token->name.range.first = state->pos;
+                state->pos.column += length;
+                out_token->name.range.final = state->pos;
+
+                out_token->name.first = first;
+                out_token->name.count = length;
+                state->next += length;
+                return true;
         }
 
         assert(false);
@@ -61,4 +86,28 @@ bool    sv_token_scan
         state->next++;
         state->pos.column++;
         return true;
+}
+
+
+// Scan a name token returning the raw length of the token
+// in the input.
+size_t  sv_token_scan_sigil_name
+        (char* str, size_t strLen)
+{
+        size_t len = 0;
+
+        // skip across sigil.
+        str++; strLen--; len++;
+
+        while(  strLen > 0
+         && (   (*str >= 'a' && *str <= 'z')
+             || (*str >= 'A' && *str <= 'Z')
+             || (*str >= '0' && *str <= '9')
+             || (*str == '\'')
+             || (*str == '_')))
+        {
+                str++; strLen--; len++;
+        }
+
+        return len;
 }
