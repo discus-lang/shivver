@@ -32,8 +32,8 @@ typedef enum {
 
 // Position of the first or final character in a token.
 typedef struct {
-        size_t  line;
-        size_t  column;
+        uint32_t line;
+        uint32_t column;
 } sv_token_pos_t;
 
 
@@ -73,21 +73,21 @@ typedef struct {
         sv_token_tag_t   tag;
         sv_token_range_t range;
 
-        // Pointer to the first byte in the input text that
-        // defines the name token.
-        char*           first;
+        // Pointer to the first byte in the text that defines the name in the token.
+        // For names prefixed by sigils we skip over the sigil.
+        char*   first;
 
-        // Number of bytes in the name token.
-        size_t          count;
+        // Number of bytes in the name.
+        size_t  count;
 } sv_token_name_t;
 
 
 // Literal natural number.
 typedef struct {
-        sv_token_tag_t     tag;
-        sv_token_range_t   range;
+        sv_token_tag_t   tag;
+        sv_token_range_t range;
 
-        uint64_t        value;
+        uint64_t value;
 } sv_token_lit_nat_t;
 
 

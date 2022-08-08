@@ -9,3 +9,6 @@ bool    sv_token_scan
 size_t  sv_token_scan_sigil_name
         (char* str, size_t strLen);
 
+bool    sv_token_matches_keyword
+        ( char* keyword, char* str, size_t strLen
+        , size_t* out_keywordLength);

@@ -10,10 +10,13 @@ bool    sv_token_scan
  // Try to scan a token from the current state.
  // We jump back here to bypass whitespace.
  again:
+        char* first   = state->input + state->next;
+        size_t remain = state->length - state->next;
+
         // Input ends as we are passed the specified length,
         //  or we have found a null string terminating character.
         if (state->next >= state->length
-         || state->input[state->next] == 0) {
+         || *first == 0) {
                 out_token->meta.tag             = sv_token_meta_end;
                 out_token->meta.range.first     = state->pos;
                 out_token->meta.range.final     = state->pos;
@@ -21,7 +24,7 @@ bool    sv_token_scan
         }
 
         // The first character determines what sort of token this is.
-        switch(state->input[state->next]) {
+        switch(*first) {
          // end of string
          case ' ':
                 state->next++;
@@ -57,7 +60,7 @@ bool    sv_token_scan
          case '#':
          case '@':
          case '*':
-                char* first = state->input + state->next;
+         {
                 switch(*first) {
                  case '%': out_token->name.tag = sv_token_name_sym; break;
                  case '#': out_token->name.tag = sv_token_name_prm; break;
@@ -66,17 +69,66 @@ bool    sv_token_scan
                  default: assert(false);
                 }
 
-                size_t remain = state->length - state->next;
                 size_t length = sv_token_scan_sigil_name(first, remain);
+
+                // We only accepted the sigil and not the next character.
+                if(length == 1)
+                        return false;
 
                 out_token->name.range.first = state->pos;
                 state->pos.column += length;
                 out_token->name.range.final = state->pos;
 
-                out_token->name.first = first;
+                // Skip over the sigil when recording the token name.
+                out_token->name.first = first + 1;
                 out_token->name.count = length;
                 state->next += length;
                 return true;
+         }
+
+         case '!':
+         {
+                size_t keyLength = 0;
+
+                if      (sv_token_matches_keyword("!def", first, remain, &keyLength) > 0) {
+                        out_token->name.tag = sv_token_atom_def;
+                }
+                else if (sv_token_matches_keyword("!let", first, remain, &keyLength) > 0) {
+                        out_token->name.tag = sv_token_atom_let;
+                }
+                else if (sv_token_matches_keyword("!rec", first, remain, &keyLength) > 0) {
+                        out_token->name.tag = sv_token_atom_rec;
+                }
+                else if (sv_token_matches_keyword("!in", first, remain, &keyLength) > 0) {
+                        out_token->name.tag = sv_token_atom_rec;
+                }
+                else return false;
+
+                out_token->atom.range.first = state->pos;
+                state->pos.column += keyLength;
+                out_token->atom.range.final = state->pos;
+
+                state->next += keyLength;
+                return true;
+         }
+
+         default:
+
+                // variable names
+                if(*first >= 'a' && *first <= 'z') {
+                        size_t length = sv_token_scan_var(first, remain);
+                        assert(length >= 1);
+
+                        out_token->name.tag = sv_token_name_var;
+
+                        out_token->name.range.first = state->pos;
+                        state->pos.column += length;
+                        out_token->name.range.final = state->pos;
+
+                        state->next += length;
+                        return true;
+                }
+
         }
 
         assert(false);
@@ -90,7 +142,7 @@ bool    sv_token_scan
 
 
 // Scan a name token returning the raw length of the token
-// in the input.
+//  in the input.
 size_t  sv_token_scan_sigil_name
         (char* str, size_t strLen)
 {
@@ -111,3 +163,29 @@ size_t  sv_token_scan_sigil_name
 
         return len;
 }
+
+// Check if the start of the input string matches the given keyword.
+//  The specified keyword includes the leading '!' sigil.
+bool    sv_token_matches_keyword
+        ( char* keyword, char* str, size_t strLen
+        , size_t* out_keywordLength)
+
+{
+        size_t count = 0;
+
+        while( strLen > 0
+            && *keyword != '\0'
+            && *str == *keyword)
+        {
+                str++; strLen--; count++;
+        }
+
+        if (*keyword == 0) {
+                *out_keywordLength = count;
+                return true;
+        }
+        else {
+                return false;
+        }
+}
+
