@@ -1,4 +1,4 @@
-#include "tools/main.h"
+#include "tools/shivver/main.h"
 
 
 // Lex the given string as a term and print its tokens to console.

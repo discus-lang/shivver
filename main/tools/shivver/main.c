@@ -1,5 +1,5 @@
 
-#include "tools/main.h"
+#include "tools/shivver/main.h"
 #include "shivver/codec/ascii.h"
 
 int main(int argc, char** argv)

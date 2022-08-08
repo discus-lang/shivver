@@ -1,5 +1,5 @@
 
-#include "tools/main.h"
+#include "tools/shivver/main.h"
 
 // Command 'eval'
 //  Parse the line as a term, evaluate it, and print the result.

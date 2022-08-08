@@ -1,5 +1,5 @@
 
-#include "tools/main.h"
+#include "tools/shivver/main.h"
 
 // Command 'printp'.
 //  Parse the line as a term, and print its physical representation.

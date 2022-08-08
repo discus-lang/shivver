@@ -11,17 +11,17 @@ clean:
 FLAGS_DEBUG		= -g -fsanitize=address
 # FLAGS_DEBUG		=
 
-sources_shivver_c	= $(shell find src/shivver -name "*.c")
-sources_shivver_h	= $(shell find src/shivver -name "*.h")
+sources_shivver_c	= $(shell find main/shivver -name "*.c")
+sources_shivver_h	= $(shell find main/shivver -name "*.h")
 
-sources_main_c		= $(shell find src/tools -name "*.c")
+sources_main_c		= $(shell find main/tools/shivver -name "*.c")
 
 objects_shivver		= $(patsubst %.c,build/x86_64/%.o,${sources_shivver_c})
 objects_main		= $(patsubst %.c,build/x86_64/%.o,${sources_main_c})
 
 build/x86_64/%.o : %.c ${sources_shivver_h}
 	@mkdir -p $(dir $@)
-	clang -std=c99  -Wall -Werror -O1 ${FLAGS_DEBUG} -Isrc -c $< -o $@
+	clang -std=c99  -Wall -Werror -O1 ${FLAGS_DEBUG} -Imain -c $< -o $@
 
 bin/shivver: ${objects_main} ${objects_shivver}
 	@mkdir -p $(dir $@)

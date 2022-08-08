@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <termios.h>
-#include "tools/main.h"
+#include "tools/shivver/main.h"
 
 // Terminal attributes to restore on exit.
 struct termios shivver_console_termios_save;
