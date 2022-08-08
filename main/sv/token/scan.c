@@ -1,18 +1,19 @@
 
+#include <assert.h>
+#include <stdio.h>
 #include "sv/token.h"
-#include "sv/token/state.h"
 
 // Scan the next token from the state.
 bool    sv_token_scan
         ( sv_token_state_t*        state
         , sv_token_t*              out_token)
 {
- // Try to scan a token from the current state.
- // We jump back here to bypass whitespace.
- again:
         char* first   = state->input + state->next;
         size_t remain = state->length - state->next;
 
+ // Try to scan a token from the current state.
+ // We jump back here to bypass whitespace.
+ again:
         // Input ends as we are passed the specified length,
         //  or we have found a null string terminating character.
         if (state->next >= state->length
@@ -61,6 +62,8 @@ bool    sv_token_scan
          case '@':
          case '*':
          {
+                out_token->meta.sort = sv_token_sort_name;
+
                 switch(*first) {
                  case '%': out_token->name.tag = sv_token_name_sym; break;
                  case '#': out_token->name.tag = sv_token_name_prm; break;
@@ -76,18 +79,22 @@ bool    sv_token_scan
                         return false;
 
                 out_token->name.range.first = state->pos;
-                state->pos.column += length;
                 out_token->name.range.final = state->pos;
+                out_token->name.range.final.column += length - 1;
 
                 // Skip over the sigil when recording the token name.
                 out_token->name.first = first + 1;
                 out_token->name.count = length;
+
+                state->pos.column += length;
                 state->next += length;
                 return true;
          }
 
          case '!':
          {
+                out_token->meta.sort = sv_token_sort_atom;
+
                 size_t keyLength = 0;
 
                 if      (sv_token_matches_keyword("!def", first, remain, &keyLength) > 0) {
@@ -99,15 +106,16 @@ bool    sv_token_scan
                 else if (sv_token_matches_keyword("!rec", first, remain, &keyLength) > 0) {
                         out_token->name.tag = sv_token_atom_rec;
                 }
-                else if (sv_token_matches_keyword("!in", first, remain, &keyLength) > 0) {
-                        out_token->name.tag = sv_token_atom_rec;
+                else if (sv_token_matches_keyword("!in", first,  remain, &keyLength) > 0) {
+                        out_token->name.tag = sv_token_atom_in;
                 }
                 else return false;
 
                 out_token->atom.range.first = state->pos;
-                state->pos.column += keyLength;
                 out_token->atom.range.final = state->pos;
+                out_token->atom.range.final.column += keyLength - 1;
 
+                state->pos.column += keyLength;
                 state->next += keyLength;
                 return true;
          }
@@ -119,12 +127,16 @@ bool    sv_token_scan
                         size_t length = sv_token_scan_var(first, remain);
                         assert(length >= 1);
 
-                        out_token->name.tag = sv_token_name_var;
+                        out_token->name.sort  = sv_token_sort_name;
+                        out_token->name.tag   = sv_token_name_var;
+                        out_token->name.first = first;
+                        out_token->name.count = length;
 
                         out_token->name.range.first = state->pos;
-                        state->pos.column += length;
                         out_token->name.range.final = state->pos;
+                        out_token->name.range.final.column += length - 1;
 
+                        state->pos.column += length;
                         state->next += length;
                         return true;
                 }
@@ -135,14 +147,16 @@ bool    sv_token_scan
 
  // Produce a single character token
  single:
+        out_token->atom.sort = sv_token_sort_atom;
+        out_token->atom.range.first = state->pos;
+        out_token->atom.range.final = state->pos;
         state->next++;
-        state->pos.column++;
         return true;
 }
 
 
-// Scan a name token returning the raw length of the token
-//  in the input.
+// Scan a name token,
+//  returning the raw length of the token in the input.
 size_t  sv_token_scan_sigil_name
         (char* str, size_t strLen)
 {
@@ -164,6 +178,28 @@ size_t  sv_token_scan_sigil_name
         return len;
 }
 
+
+// Scan a variable name,
+//  returning the raw length in the lex buffer.
+size_t  sv_token_scan_var
+        (char* str, size_t strLen)
+{
+        size_t len = 0;
+
+        while(  strLen > 0
+         && (   (*str >= 'a' && *str <= 'z')
+             || (*str >= 'A' && *str <= 'Z')
+             || (*str >= '0' && *str <= '9')
+             || (*str == '\'')
+             || (*str == '_')))
+        {
+                str++; strLen--; len++;
+        }
+
+        return len;
+}
+
+
 // Check if the start of the input string matches the given keyword.
 //  The specified keyword includes the leading '!' sigil.
 bool    sv_token_matches_keyword
@@ -177,7 +213,10 @@ bool    sv_token_matches_keyword
             && *keyword != '\0'
             && *str == *keyword)
         {
-                str++; strLen--; count++;
+                str++;
+                strLen--;
+                count++;
+                keyword++;
         }
 
         if (*keyword == 0) {
