@@ -11,8 +11,8 @@ char*   sv_token_show_tag
         (sv_token_tag_t tag)
 {
         switch(tag) {
-         case sv_token_meta_none:       return strdup("NONE");     break;
-         case sv_token_meta_end:        return strdup("END");      break;
+         case sv_token_meta_none:       return strdup("none");     break;
+         case sv_token_meta_end:        return strdup("end");      break;
 
          case sv_token_atom_def:        return strdup("def");      break;
          case sv_token_atom_let:        return strdup("let");      break;
@@ -34,6 +34,8 @@ char*   sv_token_show_tag
          case sv_token_name_prm:        return strdup("prm");      break;
          case sv_token_name_mac:        return strdup("mac");      break;
          case sv_token_name_nom:        return strdup("nom");      break;
+
+         case sv_token_lit_nat:         return strdup("nat");      break;
 
          default: assert(false);
         }
@@ -74,11 +76,13 @@ char*   sv_token_show
         char* sResult;
         switch(token.super.sort) {
          case sv_token_sort_meta:
-                asprintf(&sResult, "{ range = \"%s\", tag = %%%s }", sRange, sTag);
+                asprintf(&sResult,
+                 "{ range = \"%s\", tag = %%%s }", sRange, sTag);
                 break;
 
          case sv_token_sort_atom:
-                asprintf(&sResult, "{ range = \"%s\", tag = %%%s }", sRange, sTag);
+                asprintf(&sResult,
+                 "{ range = \"%s\", tag = %%%s }", sRange, sTag);
                 break;
 
          case sv_token_sort_name:
@@ -86,14 +90,16 @@ char*   sv_token_show
                 char sName[token.name.count + 1];
                 memcpy(sName, token.name.first, token.name.count);
                 sName[token.name.count] = 0;
-                asprintf(&sResult
-                        , "{ range = \"%s\", tag = %%%s, name = '%s' }"
-                        , sRange, sTag, sName);
+                asprintf(&sResult,
+                 "{ range = \"%s\", tag = %%%s, name = '%s' }",
+                 sRange, sTag, sName);
                 break;
          }
 
          case sv_token_sort_lit:
-                asprintf(&sResult, "{ range = \"%s\", tag = %%%s }", sRange, sTag);
+                asprintf(&sResult,
+                 "{ range = \"%s\", tag = %%%s, value = %zu }"
+                 , sRange, sTag, token.lit_nat.value);
                 break;
 
          default:
@@ -103,4 +109,3 @@ char*   sv_token_show
         free(sRange); free(sTag);
         return sResult;
 }
-

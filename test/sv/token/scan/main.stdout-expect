@@ -1,7 +1,10 @@
+{ range = "1:1-1:1", tag = %end }
+{ range = "1:7-1:7", tag = %end }
 { range = "1:1-1:4", tag = %def }
 { range = "1:1-1:4", tag = %let }
 { range = "1:1-1:4", tag = %rec }
 { range = "1:1-1:3", tag = %in }
+{ range = "1:1-1:4", tag = %def }
 { range = "1:1-1:1", tag = %rbra }
 { range = "1:1-1:1", tag = %rket }
 { range = "1:1-1:1", tag = %cbra }
@@ -21,3 +24,9 @@
 { range = "1:1-1:10", tag = %prm, name = 'primitive' }
 { range = "1:1-1:8", tag = %prm, name = 'nat'add' }
 { range = "1:1-1:14", tag = %prm, name = 'nat'add'again' }
+{ range = "1:1-1:4", tag = %nat, value = 1234 }
+{ range = "1:1-1:1", tag = %nat, value = 0 }
+{ range = "1:4-1:7", tag = %var, name = 'derp' }
+{ range = "1:2-1:5", tag = %var, name = 'derp' }
+{ range = "1:9-1:12", tag = %var, name = 'derp' }
+{ range = "2:2-2:5", tag = %var, name = 'derp' }

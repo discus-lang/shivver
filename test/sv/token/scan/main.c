@@ -4,15 +4,15 @@
 #include <string.h>
 #include "sv/token.h"
 
-char* scan(char* sToken)
+void    scan(char* sToken)
 {
         sv_token_state_t state;
         memset(&state, 0, sizeof(sv_token_state_t));
-        state.input             = sToken;
-        state.length            = strlen(sToken);
-        state.pos.line          = 1;
-        state.pos.column        = 1;
-        state.tab_columns       = 8;
+        state.input         = sToken;
+        state.length        = strlen(sToken);
+        state.pos.line      = 1;
+        state.pos.column    = 1;
+        state.tab_columns   = 8;
 
         sv_token_t token;
         memset(&token, 0, sizeof(sv_token_t));
@@ -24,18 +24,25 @@ char* scan(char* sToken)
 
         char* sShow = sv_token_show(token);
         printf("%s\n", sShow);
-        return sShow;
+        free(sShow);
 }
 
 int main(int argc, char* argv[])
 {
+        // end of input.
+        scan("");
+
+        // end of input after some whitespace.
+        scan("      ");
+
         // keywords
         scan("!def");
         scan("!let");
         scan("!rec");
         scan("!in");
+        scan("!def ");
 
-        // punc
+        // punctuation
         scan("(");
         scan(")");
         scan("{");
@@ -62,4 +69,25 @@ int main(int argc, char* argv[])
         scan("#nat'add");
         scan("#nat'add'again");
 
+        // literals
+        scan("1234");
+        scan("0");
+
+        // space before token.
+        scan("   derp");
+
+        // space after token.
+        scan(" derp ");
+
+        // tab character in input.
+        {       char str[] = " derp";
+                str[0] = '\t';
+                scan(str);
+        }
+
+        // new line character in input.
+        {       char str[] = "  derp";
+                str[0] = '\n';
+                scan(str);
+        }
 }

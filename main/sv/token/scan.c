@@ -1,5 +1,14 @@
 
+// Token scanner for the core language.
+//
+//  The syntax of the core language is designed so it is very easy to tokenize.
+//  The form of each token can be determined from the first character,
+//  and there is no need to backtrack when accepting each token.
+//
+//  Each token is tagged with the position of the starting and ending characters.
+//
 #include <assert.h>
+#include <string.h>
 #include <stdio.h>
 #include "sv/token.h"
 
@@ -8,16 +17,23 @@ bool    sv_token_scan
         ( sv_token_state_t*        state
         , sv_token_t*              out_token)
 {
-        char* first   = state->input + state->next;
-        size_t remain = state->length - state->next;
+        // Pointer to first character to consider.
+        char*  first;
+
+        // Remaining characters in the input string.
+        size_t remain;
 
  // Try to scan a token from the current state.
  // We jump back here to bypass whitespace.
  again:
+        first   = state->input + state->next;
+        remain  = state->length - state->next;
+
         // Input ends as we are passed the specified length,
         //  or we have found a null string terminating character.
         if (state->next >= state->length
          || *first == 0) {
+                out_token->meta.sort            = sv_token_sort_meta;
                 out_token->meta.tag             = sv_token_meta_end;
                 out_token->meta.range.first     = state->pos;
                 out_token->meta.range.final     = state->pos;
@@ -121,29 +137,47 @@ bool    sv_token_scan
          }
 
          default:
-
                 // variable names
                 if(*first >= 'a' && *first <= 'z') {
                         size_t length = sv_token_scan_var(first, remain);
                         assert(length >= 1);
+
+                        out_token->name.range.first = state->pos;
+                        out_token->name.range.final = state->pos;
+                        out_token->name.range.final.column += length - 1;
 
                         out_token->name.sort  = sv_token_sort_name;
                         out_token->name.tag   = sv_token_name_var;
                         out_token->name.first = first;
                         out_token->name.count = length;
 
-                        out_token->name.range.first = state->pos;
-                        out_token->name.range.final = state->pos;
-                        out_token->name.range.final.column += length - 1;
-
                         state->pos.column += length;
                         state->next += length;
                         return true;
                 }
 
+                // literal natural number
+                else if(*first >= '0' && *first <= '9') {
+                        size_t nNat   = 0;
+                        size_t length = sv_token_scan_lit_nat(first, remain, &nNat);
+                        assert(length >= 1);
+
+                        out_token->name.range.first = state->pos;
+                        out_token->name.range.final = state->pos;
+                        out_token->name.range.final.column += length - 1;
+
+                        out_token->lit_nat.sort  = sv_token_sort_lit;
+                        out_token->lit_nat.tag   = sv_token_lit_nat;
+                        out_token->lit_nat.value = nNat;
+
+                        state->pos.column += length;
+                        state->next += length;
+                        return true;
+                }
+                else return false;
         }
 
-        assert(false);
+        return false;
 
  // Produce a single character token
  single:
@@ -228,3 +262,26 @@ bool    sv_token_matches_keyword
         }
 }
 
+
+// Scan a natural number.
+size_t  sv_token_scan_lit_nat
+        ( char* first, size_t nRemain
+        , size_t* out_value)
+
+{
+        char*  str = first;
+        size_t nCount = 0;
+
+        while( nRemain > 0
+         &&   (*str >= '0' && *str <= '9'))
+        {
+                str++; nRemain--; nCount++;
+        }
+
+        char buf[nCount + 1];
+        memcpy(buf, first, nCount);
+        buf[nCount] = 0;
+        *out_value = atoi(buf);
+
+        return nCount;
+}

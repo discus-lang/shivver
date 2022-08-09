@@ -101,7 +101,7 @@ typedef struct {
         sv_token_range_t range;
         sv_token_sort_t  sort;
         sv_token_tag_t   tag;
-        uint64_t value;
+        size_t           value;
 } sv_token_lit_nat_t;
 
 
@@ -146,6 +146,10 @@ size_t  sv_token_scan_sigil_name
 
 size_t  sv_token_scan_var
         (char* str, size_t strLen);
+
+size_t  sv_token_scan_lit_nat
+        ( char* str, size_t strLen
+        , size_t* out_value);
 
 bool    sv_token_matches_keyword
         ( char* keyword, char* str, size_t strLen
