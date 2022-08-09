@@ -62,8 +62,8 @@ int main(int argc, char* argv[])
         scan("@macro");
         scan("@some'macro");
 
-        scan("*nominal");
-        scan("*some'nominal");
+        scan("?nominal");
+        scan("?some'nominal");
 
         scan("#primitive");
         scan("#nat'add");
