@@ -10,10 +10,10 @@ clean:
 
 FLAGS_LANG	= -std=c11
 FLAGS_WARN	= -Wall -Werror
-FLAGS_DEBUG	= -g -fsanitize=address
 FLAGS_OPT	= -O1
-FLAGS_COMPILE	= ${FLAGS_LANG} ${FLAGS_WARN} ${FLAGS_OPT} ${FLAGS_DEBUG}
+FLAGS_DEBUG	= -g -fsanitize=address
 # FLAGS_DEBUG	=
+FLAGS_COMPILE	= ${FLAGS_LANG} ${FLAGS_WARN} ${FLAGS_OPT} ${FLAGS_DEBUG}
 
 # -------------------------------------------------------------------------------------------------
 shivver_c	= $(shell find main/shivver -name "*.c") $(shell find main/sv -name "*.c")
@@ -44,14 +44,26 @@ test_stdout_diff	= ${patsubst %.stdout-expect,build/x86_64/%.stdout-diff,${test_
 build/x86_64/test/%: test/%.c ${shivver_o}
 	@echo "\n* linking $@"
 	@mkdir -p $(dir $@)
+	@rm -f $@.stdout
+	@rm -f $@.stdout-diff
 	clang ${FLAGS_COMPILE} -Imain ${shivver_o} $< -o $@
 	@echo
 
 
 # run test and save output
 build/x86_64/test/%.stdout: build/x86_64/test/%
-	@echo "* test $<"
-	@$< > $@
+	@echo "* test:       $<"
+	$(eval RESULT = $(shell $< > $@ 2> $<.stderr; echo $$?))
+
+	@if test ${RESULT} -ne 0; then \
+		echo "! failed $<\n"; \
+		echo "-- stderr ---------------------------"; \
+		cat $<.stderr; \
+		echo "-------------------------------------"; \
+		rm -f $@; \
+		rm -f $@-diff; \
+		exit 1; \
+	fi
 
 
 # compute diff between actual output and expected
@@ -59,7 +71,11 @@ build/x86_64/test/%.stdout-diff: build/x86_64/test/%.stdout
 	$(eval RESULT = $(shell diff test/$*.stdout-expect $< > $@; echo $$?))
 
 	@if test ${RESULT} -eq 1; then \
-		echo "! failed: test/$*.stdout-expect"; \
+		echo "! unexpected output"; \
+		echo "  expected: test/$*.stdout-expect"; \
+		echo "  actual:   $<"; \
+		echo "  diff :    $@"; \
+		echo ""; \
 		cat $@; \
 		rm $@; \
 	fi

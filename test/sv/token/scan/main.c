@@ -16,7 +16,11 @@ char* scan(char* sToken)
 
         sv_token_t token;
         memset(&token, 0, sizeof(sv_token_t));
-        assert(sv_token_scan(&state, &token));
+        bool result = sv_token_scan(&state, &token);
+        if (!result) {
+                fprintf(stderr,"scan failed for token '%s'\n", sToken);
+                exit(1);
+        }
 
         char* sShow = sv_token_show(token);
         printf("%s\n", sShow);
@@ -44,8 +48,18 @@ int main(int argc, char* argv[])
 
         // names
         scan("variable");
+
         scan("%symbol");
+        scan("%some'symbol");
+
         scan("@macro");
+        scan("@some'macro");
+
         scan("*nominal");
+        scan("*some'nominal");
+
+        scan("#primitive");
+        scan("#nat'add");
+        scan("#nat'add'again");
 
 }
