@@ -29,24 +29,25 @@ typedef struct {
         //  not including the block header.
         size_t block_size;
 
+        // The chain of blocks, or 0 if there are none allocated.
+        // The most recently allocated block is at the head of the list.
+        sv_store_block_t* block_chain;
+
         // When enabled new space is initialized to 0xaa to help track
         // memory errors in the implementation.
         bool debug_init_aa;
 
-        // The chain of blocks, or 0 if there are none allocated.
-        // The most recently allocated block is at the head of the list.
-        sv_store_block_t* chain;
+        // Number of blocks currently in the chain.
+        size_t count_blocks;
+
+        // Amount of allocated space in the region.
+        size_t count_space_allocated;
 } sv_store_region_t;
 
 
 // ------------------------------------------------------------------------------------------------
 
 // from store/region.c
-sv_store_block_t*
-sv_store_block_create(
-        size_t  size,
-        bool    debug_init_aa);
-
 sv_store_region_t*
 sv_store_region_create(
         size_t  block_size);
@@ -55,3 +56,10 @@ void*
 sv_store_region_alloc(
         sv_store_region_t* region,
         size_t bytes);
+
+sv_store_block_t*
+sv_store_block_create(
+        size_t  size,
+        bool    debug_init_aa);
+
+
