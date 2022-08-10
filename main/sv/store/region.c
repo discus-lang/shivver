@@ -1,6 +1,7 @@
 
 #include <assert.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <string.h>
 #include "sv/store.h"
 
@@ -34,9 +35,14 @@ sv_store_region_alloc(
         size_t bytes)
 {
         assert(region != 0);
-
-        // Prevent misaligned allocations.
         assert(bytes >= 1);
+
+        // Prevent misaligned allocations by increasing the
+        // allocation size to get whole 64-bit words.
+        size_t tail = bytes % 8;
+        if (tail != 0) {
+                bytes += (8 - tail);
+        }
         assert(bytes % 8 == 0);
 
         // We don't yet support allocating space more than a block.
@@ -116,7 +122,4 @@ sv_store_block_create(
 
         return block;
 }
-
-
-
 

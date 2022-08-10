@@ -1,5 +1,6 @@
 #pragma once
 #include "sv/token.h"
+#include "sv/store.h"
 
 // ------------------------------------------------------------------------------------------------
 union sv_source_term_t_;
@@ -16,29 +17,35 @@ typedef enum {
 
 
 typedef struct {
-        sv_token_range_t range;
-        size_t  length;
+        sv_token_range_t        range;
+        sv_source_term_tag_t    tag;
 } sv_source_term_super_t;
 
 
 typedef struct {
-        sv_token_range_t range;
+        sv_token_range_t        range;
+        sv_source_term_tag_t    tag;
+
         size_t  length;
         char    name[];
 } sv_source_term_name_t;
 
 
 typedef struct {
-        sv_token_range_t range;
+        sv_token_range_t        range;
+        sv_source_term_tag_t    tag;
+
         union sv_source_term_t_* fun;
         union sv_source_term_t_* arg;
 } sv_source_term_app_t;
 
 
 typedef struct {
-        sv_token_range_t range;
-        size_t count;
-        union sv_source_exp_t_* arg;
+        sv_token_range_t        range;
+        sv_source_term_tag_t    tag;
+
+        size_t                  count;
+        union sv_source_term_t_* arg;
 } sv_source_term_mmm_t;
 
 
@@ -77,5 +84,17 @@ sv_source_parse_fail(
 void
 sv_source_parse_shift(
         sv_source_parse_t* state);
+
+
+// from source/term.c
+sv_source_term_t*
+sv_source_parse_term(
+        sv_source_parse_t* state,
+        sv_store_region_t* region);
+
+sv_source_term_t*
+sv_source_parse_term_atom(
+        sv_source_parse_t* state,
+        sv_store_region_t* region);
 
 
