@@ -4,7 +4,9 @@
 #include <stdbool.h>
 
 
-// A block of storage space including the size and next allocation offset.
+// ------------------------------------------------------------------------------------------------
+// A block of storage space including the size and offset for the
+// next allocation.
 typedef struct sv_store_block_t_ {
         // Size of the usable space, in bytes.
         size_t  size;
@@ -22,7 +24,7 @@ typedef struct sv_store_block_t_ {
 
 // A region of the store constructed from a chain of blocks.
 //  We incrementally allocate large numbers of small objects into a single
-/// region then free the whole region when it is no longer needed.
+//  region then free all objects together when they are no longer needed.
 typedef struct {
         // Block size, in bytes.
         //  This is the size of the usable space,
@@ -46,7 +48,6 @@ typedef struct {
 
 
 // ------------------------------------------------------------------------------------------------
-
 // from store/region.c
 sv_store_region_t*
 sv_store_region_create(

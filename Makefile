@@ -42,12 +42,10 @@ test_stdout_diff	= ${patsubst %.stdout-expect,build/x86_64/%.stdout-diff,${test_
 
 # test executables
 build/x86_64/test/%: test/%.c ${shivver_o}
-	@echo "\n* linking $@"
 	@mkdir -p $(dir $@)
 	@rm -f $@.stdout
 	@rm -f $@.stdout-diff
 	clang ${FLAGS_COMPILE} -Imain ${shivver_o} $< -o $@
-	@echo
 
 
 # run test and save output

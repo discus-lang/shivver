@@ -2,9 +2,9 @@
 #include <assert.h>
 #include "sv/store.h"
 
+
 int main(int argc, char* argv[])
 {
-
         // simple allocation.
  {      sv_store_region_t* region
          = sv_store_region_create(256);
@@ -14,6 +14,16 @@ int main(int argc, char* argv[])
         assert(region->count_blocks == 1);
         assert(region->count_space_allocated == 16);
  }
+
+        // allocate all the space available in a single block.
+{       sv_store_region_t* region
+         = sv_store_region_create(256);
+
+        void* buf = sv_store_region_alloc(region, 256);
+        assert(buf != 0);
+        assert(region->count_blocks == 1);
+        assert(region->count_space_allocated == 256);
+}
 
         // force allocation of three separate blocks.
  {      sv_store_region_t* region
