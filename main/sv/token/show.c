@@ -7,8 +7,8 @@
 
 
 // Show a token tag as a freshly allocated string.
-char*   sv_token_show_tag
-        (sv_token_tag_t tag)
+char*   sv_token_show_tag(
+        sv_token_tag_t tag)
 {
         switch(tag) {
          case sv_token_meta_none:       return strdup("none");     break;
@@ -43,8 +43,8 @@ char*   sv_token_show_tag
 
 
 // Show a token position as a freshly allocated string.
-char*   sv_token_show_pos
-        (sv_token_pos_t pos)
+char*   sv_token_show_pos(
+        sv_token_pos_t pos)
 {
         char* result = 0;
         asprintf(&result, "%zu:%zu", (size_t)pos.line, (size_t)pos.column);
@@ -53,8 +53,8 @@ char*   sv_token_show_pos
 
 
 // Show a token range as a freshly allocated string.
-char*   sv_token_show_range
-        (sv_token_range_t range)
+char*   sv_token_show_range(
+        sv_token_range_t range)
 {
         char* first = sv_token_show_pos(range.first);
         char* final = sv_token_show_pos(range.final);
@@ -67,8 +67,8 @@ char*   sv_token_show_range
 
 
 // Show a token as a freshly allocated string.
-char*   sv_token_show
-        (sv_token_t token)
+char*   sv_token_show(
+        sv_token_t token)
 {
         char* sRange    = sv_token_show_range(token.super.range);
         char* sTag      = sv_token_show_tag(token.super.tag);

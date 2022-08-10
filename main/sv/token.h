@@ -137,34 +137,34 @@ typedef struct {
 
 // ------------------------------------------------------------------------------------------------
 // from token/scan.c
-bool    sv_token_scan
-        ( sv_token_state_t*        state
-        , sv_token_t*              out_token);
+bool    sv_token_scan(
+        sv_token_state_t* state,
+        sv_token_t*       out_token);
 
-size_t  sv_token_scan_sigil_name
-        (char* str, size_t strLen);
+size_t  sv_token_scan_sigil_name(
+        char* str, size_t strLen);
 
-size_t  sv_token_scan_var
-        (char* str, size_t strLen);
+size_t  sv_token_scan_var(
+        char* str, size_t strLen);
 
-size_t  sv_token_scan_lit_nat
-        ( char* str, size_t strLen
-        , size_t* out_value);
+size_t  sv_token_scan_lit_nat(
+        char* str, size_t strLen,
+        size_t* out_value);
 
-bool    sv_token_matches_keyword
-        ( char* keyword, char* str, size_t strLen
-        , size_t* out_keywordLength);
+bool    sv_token_matches_keyword(
+        char* keyword, char* str, size_t strLen,
+        size_t* out_keywordLength);
 
 
 // from token/show.c
-char*   sv_token_show_tag
-        (sv_token_tag_t tag);
+char*   sv_token_show_tag(
+        sv_token_tag_t tag);
 
-char*   sv_token_show_pos
-        (sv_token_pos_t pos);
+char*   sv_token_show_pos(
+        sv_token_pos_t pos);
 
-char*   sv_token_show_range
-        (sv_token_range_t range);
+char*   sv_token_show_range(
+        sv_token_range_t range);
 
-char*   sv_token_show
-        (sv_token_t token);
+char*   sv_token_show(
+        sv_token_t token);

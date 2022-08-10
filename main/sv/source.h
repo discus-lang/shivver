@@ -60,13 +60,13 @@ sv_source_parser_t*
 sv_source_parser_alloc(char* input);
 
 void
-sv_source_parser_fail
-        ( sv_source_parser_t* state
-        , char* foramt
-        , ...);
+sv_source_parser_fail(
+        sv_source_parser_t* state,
+        char* foramt,
+        ...);
 
 void
-sv_source_parser_shift
-        ( sv_source_parser_t* state);
+sv_source_parser_shift(
+        sv_source_parser_t* state);
 
 

@@ -13,9 +13,9 @@
 #include "sv/token.h"
 
 // Scan the next token from the state.
-bool    sv_token_scan
-        ( sv_token_state_t*        state
-        , sv_token_t*              out_token)
+bool    sv_token_scan(
+        sv_token_state_t*    state,
+        sv_token_t*          out_token)
 {
         // Pointer to first character to consider.
         char*  first;
@@ -191,8 +191,8 @@ bool    sv_token_scan
 
 // Scan a name token,
 //  returning the raw length of the token in the input.
-size_t  sv_token_scan_sigil_name
-        (char* str, size_t strLen)
+size_t  sv_token_scan_sigil_name(
+        char* str, size_t strLen)
 {
         size_t len = 0;
 
@@ -215,8 +215,8 @@ size_t  sv_token_scan_sigil_name
 
 // Scan a variable name,
 //  returning the raw length in the lex buffer.
-size_t  sv_token_scan_var
-        (char* str, size_t strLen)
+size_t  sv_token_scan_var(
+        char* str, size_t strLen)
 {
         size_t len = 0;
 
@@ -236,10 +236,9 @@ size_t  sv_token_scan_var
 
 // Check if the start of the input string matches the given keyword.
 //  The specified keyword includes the leading '!' sigil.
-bool    sv_token_matches_keyword
-        ( char* keyword, char* str, size_t strLen
-        , size_t* out_keywordLength)
-
+bool    sv_token_matches_keyword(
+        char* keyword, char* str, size_t strLen,
+        size_t* out_keywordLength)
 {
         size_t count = 0;
 
@@ -264,10 +263,9 @@ bool    sv_token_matches_keyword
 
 
 // Scan a natural number.
-size_t  sv_token_scan_lit_nat
-        ( char* first, size_t nRemain
-        , size_t* out_value)
-
+size_t  sv_token_scan_lit_nat(
+        char* first, size_t nRemain,
+        size_t* out_value)
 {
         char*  str = first;
         size_t nCount = 0;
