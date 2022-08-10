@@ -85,7 +85,7 @@ sv_store_region_alloc(
         // in the block.
         assert((block->size - block->next) >= bytes);
 
-        void* buf = block->space;
+        void* buf = block->space + block->next;
         block->next += bytes;
         region->count_space_allocated += bytes;
 

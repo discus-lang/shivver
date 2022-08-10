@@ -39,28 +39,29 @@ sv_source_parse_term_atom(
                 size_t count = state->here.name.count;
 
                 // Allocate term node including space for the name.
-                sv_source_term_name_t* term
+                sv_source_term_name_t* mName
                  = sv_store_region_alloc(region,
                         sizeof(sv_source_term_name_t) + count + 1);
 
                 // Token range.
-                term->range = state->here.name.range;
+                mName->range = state->here.name.range;
 
                 // Set term tag based on the token sort.
                 switch(state->here.name.tag) {
-                 case sv_token_name_var: term->tag = sv_source_name_var; break;
-                 case sv_token_name_sym: term->tag = sv_source_name_sym; break;
-                 case sv_token_name_prm: term->tag = sv_source_name_prm; break;
-                 case sv_token_name_mac: term->tag = sv_source_name_mac; break;
-                 case sv_token_name_nom: term->tag = sv_source_name_nom; break;
+                 case sv_token_name_var: mName->tag = sv_source_name_var; break;
+                 case sv_token_name_sym: mName->tag = sv_source_name_sym; break;
+                 case sv_token_name_prm: mName->tag = sv_source_name_prm; break;
+                 case sv_token_name_mac: mName->tag = sv_source_name_mac; break;
+                 case sv_token_name_nom: mName->tag = sv_source_name_nom; break;
                  default: assert(false);
                 }
 
                 // Copy name text into the node, including null terminator.
-                memcpy(term->name, first, count);
-                term->name[count] = 0;
+                memcpy(mName->name, first, count);
+                mName->name[count] = 0;
+                mName->length = count;
 
-                return (sv_source_term_t*)term;
+                return (sv_source_term_t*)mName;
          }
 
          default:

@@ -37,8 +37,8 @@ bin/shivver: ${main_o} ${shivver_o}
 test_c			= $(shell find test -name "main.c")
 test_exe		= ${patsubst %.c,build/x86_64/%,${test_c}}
 test_stdout		= ${patsubst %.c,build/x86_64/%.stdout,${test_c}}
-test_stdout_expect	= ${shell find test -name "main.stdout-expect"}
-test_stdout_diff	= ${patsubst %.stdout-expect,build/x86_64/%.stdout-diff,${test_stdout_expect}}
+test_stdout_expected	= ${shell find test -name "main.stdout-expected"}
+test_stdout_diff	= ${patsubst %.stdout-expect,build/x86_64/%.stdout-diff,${test_stdout_expected}}
 
 # test executables
 build/x86_64/test/%: test/%.c ${shivver_o}
@@ -66,22 +66,17 @@ build/x86_64/test/%.stdout: build/x86_64/test/%
 
 # compute diff between actual output and expected
 build/x86_64/test/%.stdout-diff: build/x86_64/test/%.stdout
-	$(eval RESULT = $(shell diff test/$*.stdout-expect $< > $@; echo $$?))
+	$(eval RESULT = $(shell diff test/$*.stdout-expected $< > $@; echo $$?))
 
 	@if test ${RESULT} -eq 1; then \
 		echo "! unexpected output"; \
-		echo "  expected: test/$*.stdout-expect"; \
+		echo "  expected: test/$*.stdout-expected"; \
 		echo "  actual:   $<"; \
 		echo "  diff :    $@"; \
 		echo ""; \
 		cat $@; \
 		rm $@; \
 	fi
-
-
-# update expected test output
-test/%.stdout-expect: build/x86_64/test/%.stdout
-	cp $< $@
 
 
 .PHONY: test
