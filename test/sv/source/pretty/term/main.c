@@ -42,4 +42,7 @@ int main(int argc, char* argv[])
         term("(%sym)");
         term("(@mac)");
         term("((@mac))");
+
+        // abstractions
+        term("{} derp");
 }

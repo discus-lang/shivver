@@ -26,6 +26,7 @@ typedef enum {
         sv_token_atom_cbra,  sv_token_atom_cket,
         sv_token_atom_sbra,  sv_token_atom_sket,
         sv_token_atom_comma,
+        sv_token_atom_tilde,
         sv_token_atom_semi,
         sv_token_atom_eq,
 

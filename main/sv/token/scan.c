@@ -69,6 +69,7 @@ bool    sv_token_scan(
          case '[': out_token->atom.tag = sv_token_atom_sbra;    goto single;
          case ']': out_token->atom.tag = sv_token_atom_sket;    goto single;
          case ',': out_token->atom.tag = sv_token_atom_comma;   goto single;
+         case '~': out_token->atom.tag = sv_token_atom_tilde;   goto single;
          case ';': out_token->atom.tag = sv_token_atom_semi;    goto single;
          case '=': out_token->atom.tag = sv_token_atom_eq;      goto single;
 
