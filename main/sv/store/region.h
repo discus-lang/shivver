@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-// ------------------------------------------------------------------------------------------------
+
 // A block of storage space including the size and offset for the
 // next allocation.
 typedef struct sv_store_block_t_ {
@@ -46,7 +46,6 @@ typedef struct {
 } sv_store_region_t;
 
 
-// ------------------------------------------------------------------------------------------------
 // from store/region.c
 sv_store_region_t*
 sv_store_region_create(
@@ -56,6 +55,10 @@ void*
 sv_store_region_alloc(
         sv_store_region_t* region,
         size_t bytes);
+
+void
+sv_store_region_free(
+        sv_store_region_t* region);
 
 sv_store_block_t*
 sv_store_block_create(

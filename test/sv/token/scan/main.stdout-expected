@@ -30,3 +30,5 @@
 { range = "1:2-1:5", tag = %var, name = 'derp' }
 { range = "1:9-1:12", tag = %var, name = 'derp' }
 { range = "2:2-2:5", tag = %var, name = 'derp' }
+{ range = "1:1-1:8", tag = %var, name = 'variable' }
+{ range = "1:1-1:7", tag = %sym, name = 'symbol' }

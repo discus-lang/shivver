@@ -2,7 +2,6 @@
 #include "sv/token.h"
 #include "sv/store.h"
 
-// ------------------------------------------------------------------------------------------------
 union sv_source_term_t_;
 
 typedef enum {
@@ -57,7 +56,6 @@ typedef union {
 } sv_source_term_t;
 
 
-// ------------------------------------------------------------------------------------------------
 typedef struct {
         // State of the token scanner.
         sv_token_state_t scanner;
@@ -70,8 +68,7 @@ typedef struct {
 } sv_source_parse_t;
 
 
-// ------------------------------------------------------------------------------------------------
-// from source/base.c
+// from source/parse/base.c
 sv_source_parse_t*
 sv_source_parse_alloc(char* input);
 
@@ -85,16 +82,26 @@ void
 sv_source_parse_shift(
         sv_source_parse_t* state);
 
+void
+sv_source_parse_token(
+        sv_source_parse_t* state,
+        sv_token_tag_t tag);
 
-// from source/term.c
+
+// from source/parse/term.c
 sv_source_term_t*
 sv_source_parse_term(
-        sv_source_parse_t* state,
-        sv_store_region_t* region);
+        sv_store_region_t* region,
+        sv_source_parse_t* state);
 
 sv_source_term_t*
 sv_source_parse_term_atom(
-        sv_source_parse_t* state,
-        sv_store_region_t* region);
+        sv_store_region_t* region,
+        sv_source_parse_t* state);
 
+// from source/pretty/term.c
+sv_store_rope_t*
+sv_source_pretty_term(
+        sv_store_region_t* region,
+        sv_source_term_t* term);
 

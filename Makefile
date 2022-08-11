@@ -38,7 +38,7 @@ test_c			= $(shell find test -name "main.c")
 test_exe		= ${patsubst %.c,build/x86_64/%,${test_c}}
 test_stdout		= ${patsubst %.c,build/x86_64/%.stdout,${test_c}}
 test_stdout_expected	= ${shell find test -name "main.stdout-expected"}
-test_stdout_diff	= ${patsubst %.stdout-expect,build/x86_64/%.stdout-diff,${test_stdout_expected}}
+test_stdout_diff	= ${patsubst %.stdout-expected,build/x86_64/%.stdout-diff,${test_stdout_expected}}
 
 # test executables
 build/x86_64/test/%: test/%.c ${shivver_o}

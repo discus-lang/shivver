@@ -90,4 +90,11 @@ int main(int argc, char* argv[])
                 str[0] = '\n';
                 scan(str);
         }
+
+        // variable token appears before punc.
+        scan("variable)");
+
+        // symbol name appears before punc.
+        scan("%symbol)");
+
 }

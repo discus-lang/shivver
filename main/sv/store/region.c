@@ -97,6 +97,46 @@ sv_store_region_alloc(
 }
 
 
+// Free a region including all its contained blocks.
+void
+sv_store_region_free(
+        sv_store_region_t* region)
+{
+        sv_store_block_t* block
+         = region->block_chain;
+
+        // Free the chain of blocks.
+        for(;;) {
+                if (block == 0) break;
+
+                // copy the next block link before we free
+                // the one in the current block.
+                sv_store_block_t* next_block
+                 = block->link;
+
+                // scrub the block header to help reveal latent use-after-free
+                // problems earlier.
+                block->size = 0;
+                block->next = 0;
+                block->link = 0;
+
+                free(block);
+                block = next_block;
+        }
+
+        // scrub the region header to help reveal latent use-after-free
+        // problems earlier.
+        region->block_chain = 0;
+        region->block_size  = 0;
+        region->count_blocks = 0;
+        region->count_space_allocated = 0;
+
+        // release the top level region structure.
+        free(region);
+}
+
+
+
 // Create a new store block of the given size in bytes.
 sv_store_block_t*
 sv_store_block_create(

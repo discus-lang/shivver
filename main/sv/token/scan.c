@@ -100,7 +100,7 @@ bool    sv_token_scan(
 
                 // Skip over the sigil when recording the token name.
                 out_token->name.first = first + 1;
-                out_token->name.count = length;
+                out_token->name.count = length - 1;
 
                 state->pos.column += length;
                 state->next += length;
@@ -190,7 +190,8 @@ bool    sv_token_scan(
 
 
 // Scan a name token,
-//  returning the raw length of the token in the input.
+//  returning the raw length of the token in the input,
+//  including the sigil at the start.
 size_t  sv_token_scan_sigil_name(
         char* str, size_t strLen)
 {

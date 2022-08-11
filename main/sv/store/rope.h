@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include "sv/store/region.h"
 
-
-// ------------------------------------------------------------------------------------------------
 union sv_store_rope_t_;
 
 // Supertype of rope nodes.
@@ -55,7 +53,6 @@ typedef union sv_store_rope_t_ {
 } sv_store_rope_t;
 
 
-// ------------------------------------------------------------------------------------------------
 sv_store_rope_t*
 sv_store_rope_join(
         sv_store_region_t* region,
@@ -66,6 +63,12 @@ sv_store_rope_t*
 sv_store_rope_fromString(
         sv_store_region_t* region,
         char* string);
+
+sv_store_rope_t*
+sv_store_rope_printf(
+        sv_store_region_t* region,
+        char* format,
+        ...);
 
 char*
 sv_store_rope_toString(

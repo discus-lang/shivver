@@ -56,3 +56,21 @@ sv_source_parse_shift(
         state->here = state->next;
         assert(sv_token_scan(&state->scanner, &(state->next)));
 }
+
+
+// Accept only a token with the given tag.
+void
+sv_source_parse_token(
+        sv_source_parse_t* state,
+        sv_token_tag_t tag)
+{
+        if (state->here.super.tag == tag) {
+                sv_source_parse_shift(state);
+                return;
+        }
+        else {
+                printf  ("parse error, got '%s'\n"
+                        , sv_token_show_tag(state->here.super.tag));
+                assert(false);
+        }
+}

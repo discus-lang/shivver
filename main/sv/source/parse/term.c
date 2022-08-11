@@ -10,12 +10,12 @@
 //  allocating the nodes into the given region.
 sv_source_term_t*
 sv_source_parse_term(
-        sv_source_parse_t* state,
-        sv_store_region_t* region)
+        sv_store_region_t* region,
+        sv_source_parse_t* state)
 {
         sv_source_term_t* term
          = sv_source_parse_term_atom(
-                state, region);
+                region, state);
 
         return term;
 }
@@ -25,10 +25,11 @@ sv_source_parse_term(
 //  allocating the nodes into the given region.
 sv_source_term_t*
 sv_source_parse_term_atom(
-        sv_source_parse_t* state,
-        sv_store_region_t* region)
+        sv_store_region_t* region,
+        sv_source_parse_t* state)
 {
         switch(state->here.super.tag) {
+         // Term ::= Var | Sym | Prm | Mac | Nom
          case sv_token_name_var:
          case sv_token_name_sym:
          case sv_token_name_prm:
@@ -61,8 +62,19 @@ sv_source_parse_term_atom(
                 mName->name[count] = 0;
                 mName->length = count;
 
+                // Accept the token.
+                sv_source_parse_shift(state);
+
                 return (sv_source_term_t*)mName;
          }
+
+         // Term ::= '(' Term ')'
+         case sv_token_atom_rbra:
+                sv_source_parse_shift(state);
+                sv_source_term_t* term
+                 = sv_source_parse_term(region, state);
+                sv_source_parse_token(state, sv_token_atom_rket);
+                return term;
 
          default:
                 assert(false);
@@ -70,3 +82,5 @@ sv_source_parse_term_atom(
 
         assert(false);
 }
+
+

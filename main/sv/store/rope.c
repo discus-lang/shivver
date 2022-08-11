@@ -1,6 +1,7 @@
 
 #include <assert.h>
 #include <string.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include "sv/store/region.h"
 #include "sv/store/rope.h"
@@ -45,6 +46,29 @@ sv_store_rope_fromString(
         memcpy(leaf->space, string, size);
 
         return (sv_store_rope_t*)leaf;
+}
+
+
+// Formatted output conversion producing a rope allocated
+// into the given region.
+sv_store_rope_t*
+sv_store_rope_printf(
+        sv_store_region_t* region,
+        char* format,
+        ...)
+{
+        va_list(args);
+        va_start(args, format);
+        char* string = 0;
+        vasprintf(&string, format, args);
+        va_end(args);
+
+        sv_store_rope_t* rope
+         = sv_store_rope_fromString(
+                region, string);
+        free(string);
+
+        return rope;
 }
 
 

@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 
         sv_source_term_t* term
          = sv_source_parse_term(
-                state, region);
+                region, state);
 
         assert(term != 0);
 }

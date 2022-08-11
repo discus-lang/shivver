@@ -13,6 +13,7 @@ int main(int argc, char* argv[])
         assert(buf != 0);
         assert(region->count_blocks == 1);
         assert(region->count_space_allocated == 16);
+        sv_store_region_free(region);
  }
 
         // allocate all the space available in a single block.
@@ -23,6 +24,7 @@ int main(int argc, char* argv[])
         assert(buf != 0);
         assert(region->count_blocks == 1);
         assert(region->count_space_allocated == 256);
+        sv_store_region_free(region);
 }
 
         // force allocation of three separate blocks.
@@ -34,6 +36,7 @@ int main(int argc, char* argv[])
         sv_store_region_alloc(region, 2*8);
         assert(region->count_blocks == 3);
         assert(region->count_space_allocated == 6 * 8);
+        sv_store_region_free(region);
  }
 
 }

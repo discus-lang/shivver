@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-// ------------------------------------------------------------------------------------------------
 // Sort of token.
 typedef enum {
         sv_token_sort_none,
@@ -115,7 +114,6 @@ typedef union {
 } sv_token_t;
 
 
-// ------------------------------------------------------------------------------------------------
 // State of the tokenizer.
 typedef struct {
         // Input string.
@@ -135,7 +133,6 @@ typedef struct {
 } sv_token_state_t;
 
 
-// ------------------------------------------------------------------------------------------------
 // from token/scan.c
 bool    sv_token_scan(
         sv_token_state_t* state,
