@@ -30,19 +30,32 @@ void term(char* string)
 
 int main(int argc, char* argv[])
 {
-        // name sorts
+        printf("-- names\n");
         term("variable");
         term("%symbol");
         term("#primitive");
         term("@macro");
         term("?nominal");
+        printf("\n");
 
-        // parens
+        printf("-- parens\n");
         term("(var)");
         term("(%sym)");
         term("(@mac)");
         term("((@mac))");
+        printf("\n");
 
-        // abstractions
-        term("{} derp");
+        printf("-- abstractions\n");
+        term("{} body");
+        term("{a} body");
+        term("{a b} body");
+        term("{~a} body");
+        term("{~a ~b} body");
+        term("{~a~b} body");
+        term(" {  ~a ~b  } body");
+        term(" {  ~ one   two ~ three ~ four five  } body");
+        term("{} {} body");
+        term(" { one}   { ~ two three}  body  ");
+        term(" { one} ({ ~ two three}  body)");
+        printf("\n");
 }

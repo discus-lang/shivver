@@ -22,35 +22,33 @@ Value   ::= vloc   Loc                      Loc
          |  vsym   Sym                      Sym
          |  vprm   Prm                      Prm
 
-         |  vcon n Sym Valueⁿ               !CON Sym '[' Susp,* ']'
+         |  vcon n Sym Valueⁿ               !CON Sym '[' Answer,* ']'
          |  vclo n Env Varⁿ Term            !CLO Env '{' (Demand Var)* '}' Term
 
-Susp    ::= Value
-         |  sdef   Def                      Def
-         |  snom   Nom                      Nom
-         |  ssub   Env Term                 !SUB Env Term
+Answer  ::= Value
+         |  adef   Def                      Def
+         |  anom   Nom                      Nom
+         |  asub   Env Term                 !SUB Env Term
 
-Term    ::= Susp
+Term    ::= Answer
 
          |  mvar   Var                      Var
-
-         |  mbox   Term                     '!box' Term
-         |  mrun   Term                     '!run' Term
-
-         |  mabs n Demandⁿ Varⁿ Term        '{' (Demand Var)* '}' Term
-         |  mlet n Demandⁿ Varⁿ Term Term   '!let' '{' (Demand Var)* '}' '=' Term '!in' Term
-         |  mrec n Varⁿ Termⁿ Term          '!rec' Var '=' Term ('!and' ...)* '!in' Term
 
          |  mmmm n Termⁿ                    '[' Term,* ']'
          |  mapp   Term Term                Term Term
 
-         |  mcon   Sym Termⁿ                Sym '[' Term,* ']'
+         |  mabs n Demandⁿ Varⁿ Term        '{' (Demand Var)* '}' Term
+
+         |  mlet n Demandⁿ Varⁿ Term Term   '!let' '{' (Demand Var)* '}' '=' Term '!in' Term
+         |  mrec n Varⁿ Termⁿ Term          '!rec' Var '=' Term ('!and' ...)* '!in' Term
+
+         |  mbox   Term                     '!box' Term
+         |  mrun   Term                     '!run' Term
 ```
 Suspensions have arity zero because we bind them in the environment.
 ```
 E, x₁ ↦ U₁, x₂ ↦ U₂
 ```
-
 
 
 ## Sugar (WIP)
@@ -67,4 +65,14 @@ This would avoid excessive nesting when defining match expressions.
 !def @append {xx yy}
  = #match [xx, %list'nil,  {} yy]
  | #match [xx, %list'cons, {x xs} %list'cons[x, @append [xs, yy]]]
+```
+
+```
+!seq    term1;
+        !let {x, y} = term2;
+        term3
+
+!let {} = term1 !in
+!let {x, y} = term2 !in
+term3
 ```

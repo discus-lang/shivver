@@ -59,7 +59,10 @@ typedef struct {
         sv_token_range_t        range;
         sv_source_term_tag_t    tag;
 
+        // Length of the name buffer, not including the null terminator.
         size_t  length;
+
+        // Null terminated name string.
         char    name[];
 } sv_source_term_name_t;
 
@@ -154,6 +157,13 @@ sv_source_term_t*
 sv_source_parse_term_atom(
         sv_store_region_t* region,
         sv_source_parse_t* state);
+
+// from source/pretty/binders.c
+sv_store_rope_t*
+sv_source_pretty_binders(
+        sv_store_region_t* region,
+        sv_source_binders_t* binders);
+
 
 // from source/pretty/term.c
 sv_store_rope_t*

@@ -1,9 +1,26 @@
+-- names
 variable
 %symbol
 #primitive
 @macro
 ?nominal
+
+-- parens
 var
 %sym
 @mac
 @mac
+
+-- abstractions
+{} body
+{a} body
+{a b} body
+{~a} body
+{~a ~b} body
+{~a ~b} body
+{~a ~b} body
+{~one two ~three ~four five} body
+{} {} body
+{one} {~two three} body
+{one} {~two three} body
+

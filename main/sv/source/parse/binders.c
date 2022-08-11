@@ -16,7 +16,7 @@ sv_source_parse_binders(
         sv_store_region_t* region,
         sv_source_parse_t* state)
 {
-        // unannoted demand is strong
+        // unannoted binder has strong demand.
         sv_source_demand_t demand
          = sv_source_demand_strong;
 
@@ -39,14 +39,21 @@ sv_source_parse_binders(
         // Binders ::= '~' . Var Binders
         //          |  . Var Binders
         if(state->here.super.tag == sv_token_name_var) {
+                char* first  = state->here.name.first;
+                size_t count = state->here.name.count;
+
                 sv_source_binders_t* binders
                  = sv_store_region_alloc(region,
-                        sizeof(sv_source_binders_t) + state->here.name.count);
+                        sizeof(sv_source_binders_t) + count + 1);
 
+                // copy variable name into the binders node.
                 binders->demand = demand;
-                binders->length = state->here.name.count;
-                memcpy(binders->name, state->here.name.first, state->here.name.count);
+                binders->length = count;
+                memcpy(binders->name, first, count);
+                binders->name[count] = 0;
+                sv_source_parse_shift(state);
 
+                // parse the rest of the binders list.
                 binders->next = 0;
                 binders->next = sv_source_parse_binders(region, state);
                 return binders;

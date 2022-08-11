@@ -29,9 +29,13 @@ sv_source_pretty_term(
                 sv_store_rope_t* rBra
                  = sv_store_rope_fromString(region, "{");
 
-                // todo add binders
-                sv_store_rope_t* rKey
+                sv_store_rope_t* rBind
                  = sv_store_rope_join(region, rBra,
+                        sv_source_pretty_binders(region,
+                                term->abs.binders));
+
+                sv_store_rope_t* rKey
+                 = sv_store_rope_join(region, rBind,
                         sv_store_rope_fromString(region, "} "));
 
                 sv_store_rope_t* rBody

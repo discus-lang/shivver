@@ -89,6 +89,8 @@ typedef struct {
 
         // Pointer to the first byte in the text that defines the name in the token.
         // For names prefixed by sigils we skip over the sigil.
+        // This pointer points into the source text, rather than to a buffer including
+        // just the name, so there is no null terminating character.
         char*   first;
 
         // Number of bytes in the name.
