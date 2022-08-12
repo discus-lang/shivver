@@ -14,7 +14,7 @@ sv_source_parse_term(
         sv_source_parse_t* state)
 {
         sv_source_term_t* term
-         = sv_source_parse_term_atom(
+         = sv_source_parse_term0(
                 region, state);
 
         return term;
@@ -24,11 +24,12 @@ sv_source_parse_term(
 // Accept an atomic term from the parser state,
 //  allocating the nodes into the given region.
 sv_source_term_t*
-sv_source_parse_term_atom(
+sv_source_parse_term0(
         sv_store_region_t* region,
         sv_source_parse_t* state)
 {
         switch(state->here.super.tag) {
+
         // Term ::= Var | Sym | Prm | Mac | Nom
         case sv_token_name_var:
         case sv_token_name_sym:
@@ -67,6 +68,14 @@ sv_source_parse_term_atom(
 
                 return (sv_source_term_t*)mName;
          }
+
+//        case sv_token_atom_sbra:
+//        {
+//                sv_token_pos_t posFirst
+//                 = state->here.super.range.first;
+//                sv_source_parse_shift(state);
+//
+//        }
 
         // Term ::= '{' Name* '}' Term
         case sv_token_atom_cbra:
