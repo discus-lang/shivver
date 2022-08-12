@@ -21,6 +21,8 @@ typedef enum {
         sv_token_atom_let,
         sv_token_atom_rec,
         sv_token_atom_in,
+        sv_token_atom_box,
+        sv_token_atom_run,
 
         sv_token_atom_rbra,  sv_token_atom_rket,
         sv_token_atom_cbra,  sv_token_atom_cket,

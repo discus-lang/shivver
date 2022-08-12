@@ -18,6 +18,8 @@ char*   sv_token_show_tag(
          case sv_token_atom_let:        return strdup("let");      break;
          case sv_token_atom_rec:        return strdup("rec");      break;
          case sv_token_atom_in:         return strdup("in");       break;
+         case sv_token_atom_box:        return strdup("box");      break;
+         case sv_token_atom_run:        return strdup("run");      break;
 
          case sv_token_atom_rbra:       return strdup("rbra");     break;
          case sv_token_atom_rket:       return strdup("rket");     break;

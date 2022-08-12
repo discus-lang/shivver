@@ -24,25 +24,44 @@ sv_source_pretty_term(
         case sv_source_term_nom:
                 return sv_store_rope_printf(region, "?%s", term->name.name);
 
+        case sv_source_term_mmm:
+        {
+                sv_store_rope_t* rope
+                 = sv_store_rope_fromString(region, "[");
+
+                for (size_t i = 0; i < term->mmm.count; i++) {
+
+                        rope = sv_store_rope_join(region, rope,
+                                sv_source_pretty_term(region, term->mmm.arg[i]));
+
+                        if (i + 1 < term->mmm.count) {
+                                rope = sv_store_rope_join(region, rope,
+                                        sv_store_rope_fromString(region, ", "));
+                        }
+                }
+
+                rope = sv_store_rope_join(region, rope,
+                        sv_store_rope_fromString(region, "]"));
+
+                return rope;
+        }
+
         case sv_source_term_abs:
         {
-                sv_store_rope_t* rBra
+                sv_store_rope_t* rope
                  = sv_store_rope_fromString(region, "{");
 
-                sv_store_rope_t* rBind
-                 = sv_store_rope_join(region, rBra,
+                rope = sv_store_rope_join(region, rope,
                         sv_source_pretty_binders(region,
                                 term->abs.binders));
 
-                sv_store_rope_t* rKey
-                 = sv_store_rope_join(region, rBind,
+                rope = sv_store_rope_join(region, rope,
                         sv_store_rope_fromString(region, "} "));
 
-                sv_store_rope_t* rBody
-                 = sv_store_rope_join(region, rKey,
+                rope = sv_store_rope_join(region, rope,
                         sv_source_pretty_term(region, term->abs.body));
 
-                return rBody;
+                return rope;
         }
 
         default:

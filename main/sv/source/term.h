@@ -41,10 +41,12 @@ typedef enum {
 
         sv_source_term_lit_nat,
 
-        sv_source_term_abs
+        sv_source_term_abs,
+        sv_source_term_mmm
 } sv_source_term_tag_t;
 
 
+// Union of all possible term nodes.
 union sv_source_term_t_;
 
 
@@ -94,7 +96,7 @@ typedef struct {
         sv_source_term_tag_t    tag;
 
         size_t                   count;
-        union sv_source_term_t_* arg;
+        union sv_source_term_t_* arg[];
 } sv_source_term_mmm_t;
 
 
@@ -106,3 +108,13 @@ typedef union sv_source_term_t_ {
         sv_source_term_app_t    app;
         sv_source_term_mmm_t    mmm;
 } sv_source_term_t;
+
+
+// A list of terms.
+typedef struct sv_source_term_list_t_ {
+        // Pointer to the head term.
+        sv_source_term_t* head;
+
+        // Pointer to the next list cell, or 0 for end of list.
+        struct sv_source_term_list_t_* tail;
+} sv_source_term_list_t;

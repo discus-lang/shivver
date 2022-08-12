@@ -24,3 +24,12 @@ var
 {one} {~two three} body
 {one} {~two three} body
 
+-- argument lists
+[]
+[one]
+[one, two]
+[[one], [two, three]]
+[[one], [two, three], four]
+{a b} [[one], [two, three], four]
+[[one], [two, three], four, [five, six]]
+

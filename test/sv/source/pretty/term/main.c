@@ -58,4 +58,14 @@ int main(int argc, char* argv[])
         term(" { one}   { ~ two three}  body  ");
         term(" { one} ({ ~ two three}  body)");
         printf("\n");
+
+        printf("-- argument lists\n");
+        term("[]");
+        term("[one]");
+        term("[one, two]");
+        term("[[one], [two, three]]");
+        term("[[one], ([two, three]), four]");
+        term("{a b} [[one], ([two, three]), four]");
+        term("[[one], ( [ two, three ]),  four, [five, six]]");
+        printf("\n");
 }

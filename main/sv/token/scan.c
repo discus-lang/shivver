@@ -126,6 +126,12 @@ bool    sv_token_scan(
                 else if (sv_token_matches_keyword("!in", first,  remain, &keyLength) > 0) {
                         out_token->name.tag = sv_token_atom_in;
                 }
+                else if (sv_token_matches_keyword("!box", first,  remain, &keyLength) > 0) {
+                        out_token->name.tag = sv_token_atom_box;
+                }
+                else if (sv_token_matches_keyword("!run", first,  remain, &keyLength) > 0) {
+                        out_token->name.tag = sv_token_atom_run;
+                }
                 else return false;
 
                 out_token->atom.range.first = state->pos;

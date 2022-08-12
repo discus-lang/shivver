@@ -42,6 +42,10 @@ sv_source_parse_binders(
         sv_store_region_t* region,
         sv_source_parse_t* state);
 
+bool
+sv_source_parse_term_start(
+        sv_source_parse_t* state);
+
 
 // from source/parse/term.c
 sv_source_term_t*
@@ -53,3 +57,23 @@ sv_source_term_t*
 sv_source_parse_term0(
         sv_store_region_t* region,
         sv_source_parse_t* state);
+
+sv_source_term_list_t*
+sv_source_parse_terms_comma(
+        sv_store_region_t* region,
+        sv_source_parse_t* state);
+
+sv_source_term_list_t*
+sv_source_parse_terms_comma1(
+        sv_store_region_t* region,
+        sv_source_parse_t* state);
+
+// from source/parse/terms.c
+size_t
+sv_source_term_list_length(
+        sv_source_term_list_t* terms);
+
+void
+sv_source_term_list_pack(
+        sv_source_term_list_t* terms,
+        sv_source_term_t** term);

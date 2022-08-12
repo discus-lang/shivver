@@ -34,8 +34,9 @@ Term    ::= Answer
 
          |  mvar   Var                      Var
 
-         |  mmmm n Termⁿ                    '[' Term,* ']'
          |  mapp   Term Term                Term Term
+
+         |  mmmm n Termⁿ                    '[' Term,* ']'
 
          |  mabs n Demandⁿ Varⁿ Term        '{' (Demand Var)* '}' Term
 

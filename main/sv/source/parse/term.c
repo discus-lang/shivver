@@ -6,6 +6,44 @@
 #include "sv/store.h"
 
 
+// Check if the next token on the input starts a term.
+bool
+sv_source_parse_term_start(
+        sv_source_parse_t* state)
+{
+        switch(state->here.super.tag) {
+         // Term ::= Var | Sym | Prm | Mac | Nom
+         case sv_token_name_var:
+         case sv_token_name_sym:
+         case sv_token_name_prm:
+         case sv_token_name_mac:
+         case sv_token_name_nom:
+
+         // Term ::= . '[' Term, ']'
+         case sv_token_atom_sbra:
+
+         // Term ::= . '{' (Demand Var)* '}' Term
+         case sv_token_atom_cbra:
+
+         // Term ::= . '!let' '{' (Demand Var)* '}' '=' Term '!in' Term
+         case sv_token_atom_let:
+
+         // Term ::= . '!rec' Var '=' Term ('!and' ...)* '!in' Term
+         case sv_token_atom_rec:
+
+         // Term ::= . '!box' Term
+         case sv_token_atom_box:
+
+         // Term ::= . '!run' Term
+         case sv_token_atom_run:
+                return true;
+
+         default:
+                return false;
+        }
+}
+
+
 // Accept a term from the parser state,
 //  allocating the nodes into the given region.
 sv_source_term_t*
@@ -69,13 +107,35 @@ sv_source_parse_term0(
                 return (sv_source_term_t*)mName;
          }
 
-//        case sv_token_atom_sbra:
-//        {
-//                sv_token_pos_t posFirst
-//                 = state->here.super.range.first;
-//                sv_source_parse_shift(state);
-//
-//        }
+        // Term ::= '[' Term,* ']'
+        case sv_token_atom_sbra:
+        {
+                sv_token_pos_t posFirst
+                 = state->here.super.range.first;
+                sv_source_parse_shift(state);
+
+                sv_source_term_list_t* terms
+                 = sv_source_parse_terms_comma(region, state);
+
+                sv_token_pos_t posFinal
+                 = state->here.super.range.final;
+                sv_source_parse_token(state, sv_token_atom_sket);
+
+                size_t count
+                 = sv_source_term_list_length(terms);
+
+                sv_source_term_mmm_t* mMmm
+                 = sv_store_region_alloc(region,
+                        sizeof(sv_source_term_mmm_t) + sizeof(sv_source_term_t*) * count);
+
+                mMmm->range.first = posFirst;
+                mMmm->range.final = posFinal;
+                mMmm->tag   = sv_source_term_mmm;
+                mMmm->count = count;
+                sv_source_term_list_pack(terms, (sv_source_term_t**)&(mMmm->arg));
+
+                return (sv_source_term_t*)mMmm;
+        }
 
         // Term ::= '{' Name* '}' Term
         case sv_token_atom_cbra:
