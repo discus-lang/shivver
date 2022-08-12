@@ -17,7 +17,7 @@ void term(char* string)
          = sv_source_parse_term(region, state);
 
         sv_store_rope_t* rope
-         = sv_source_pretty_term(region, term);
+         = sv_source_pretty_term(region, sv_source_pretty_context_top, term);
 
         char* result
          = sv_store_rope_toString(rope);
@@ -45,6 +45,12 @@ int main(int argc, char* argv[])
         term("((@mac))");
         printf("\n");
 
+        printf("-- application\n");
+        term("one two");
+        term("(one two) three");
+        term("one (two three)");
+        printf("\n");
+
         printf("-- abstractions\n");
         term("{} body");
         term("{a} body");
@@ -57,6 +63,9 @@ int main(int argc, char* argv[])
         term("{} {} body");
         term(" { one}   { ~ two three}  body  ");
         term(" { one} ({ ~ two three}  body)");
+        term("({one} two three) four");
+        term("{one} two (three four)");
+        term("{one} (two three four)");
         printf("\n");
 
         printf("-- argument lists\n");

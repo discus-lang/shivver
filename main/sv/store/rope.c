@@ -124,3 +124,19 @@ sv_store_rope_toString(
         return string;
 }
 
+
+sv_store_rope_t*
+sv_store_rope_string_parens(
+        sv_store_region_t* region,
+        sv_store_rope_t* inner)
+{
+        sv_store_rope_t* rope
+         = sv_store_rope_fromString(region, "(");
+
+        rope = sv_store_rope_join(region, rope, inner);
+
+        rope = sv_store_rope_join(region, rope,
+         sv_store_rope_fromString(region, ")"));
+
+        return rope;
+}

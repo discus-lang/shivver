@@ -36,6 +36,9 @@ sv_source_parse_term_start(
 
          // Term ::= . '!run' Term
          case sv_token_atom_run:
+
+         // Term ::= '(' Term ')'
+         case sv_token_atom_rbra:
                 return true;
 
          default:
@@ -51,21 +54,32 @@ sv_source_parse_term(
         sv_store_region_t* region,
         sv_source_parse_t* state)
 {
-        sv_source_term_t* term
-         = sv_source_parse_term0(
-                region, state);
+        assert(region != 0);
+        assert(state  != 0);
 
-        return term;
+        // Parse a term list.
+        sv_source_term_list_t* terms
+         = sv_source_parse_terms1(region, state);
+        assert(terms != 0);
+        assert(terms->head != 0);
+
+        // If there was only one term in the list then return it directly,
+        // otherwise construct a chain of application nodes.
+        return sv_source_parse_term_build_app(
+                region, terms->head, terms->tail);
 }
 
 
 // Accept an atomic term from the parser state,
 //  allocating the nodes into the given region.
 sv_source_term_t*
-sv_source_parse_term0(
+sv_source_parse_term_base(
         sv_store_region_t* region,
         sv_source_parse_t* state)
 {
+        assert(region != 0);
+        assert(state  != 0);
+
         switch(state->here.super.tag) {
 
         // Term ::= Var | Sym | Prm | Mac | Nom
@@ -184,3 +198,44 @@ sv_source_parse_term0(
 }
 
 
+// Construct a left biasesd chain of application notes from a list
+// of component terms.
+//
+// For example we convert terms a b c d to applications (((a b) c) d).
+//
+sv_source_term_t*
+sv_source_parse_term_build_app(
+        sv_store_region_t*      region,
+        sv_source_term_t*       mFun,
+        sv_source_term_list_t*  msArgs)
+{
+        assert(region != 0);
+        assert(mFun != 0);
+
+        // no more arguments, return functional term.
+        if(msArgs == 0) {
+                return mFun;
+        }
+
+        // construct new application node for the functional term,
+        // and its first argument.
+        sv_source_term_app_t* mApp
+         = sv_store_region_alloc(region,
+                sizeof(sv_source_term_app_t));
+
+        sv_source_term_t* mArg
+         = msArgs->head;
+
+        mApp->range.first = mFun->super.range.first;
+        mApp->range.final = mArg->super.range.final;
+        mApp->tag = sv_source_term_app;
+        mApp->fun = mFun;
+        mApp->arg = mArg;
+
+        // recursively construct applications for the rest of the arguments.
+        return sv_source_parse_term_build_app(
+                region,
+                (sv_source_term_t*)mApp,
+                msArgs->tail);
+
+}

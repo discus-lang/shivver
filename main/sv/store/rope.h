@@ -73,3 +73,8 @@ sv_store_rope_printf(
 char*
 sv_store_rope_toString(
         sv_store_rope_t* rope);
+
+sv_store_rope_t*
+sv_store_rope_string_parens(
+        sv_store_region_t* region,
+        sv_store_rope_t* inner);

@@ -35,6 +35,47 @@ sv_source_term_list_pack(
         }
 }
 
+// Parse a possibly empty sequence of terms.
+sv_source_term_list_t*
+sv_source_parse_terms(
+        sv_store_region_t* region,
+        sv_source_parse_t* state)
+{
+        if (sv_source_parse_term_start(state)) {
+                return sv_source_parse_terms1(region, state);
+        }
+
+        return 0;
+}
+
+
+// Parse a non-empty sequence of terms.
+sv_source_term_list_t*
+sv_source_parse_terms1(
+        sv_store_region_t* region,
+        sv_source_parse_t* state)
+{
+        sv_source_term_t* term
+         = sv_source_parse_term_base(region, state);
+
+        sv_source_term_list_t* terms
+         = sv_store_region_alloc(region,
+                sizeof(sv_source_term_list_t));
+        terms->head = term;
+
+        if (sv_source_parse_term_start(state)) {
+                sv_source_term_list_t* rest
+                 = sv_source_parse_terms1(region, state);
+
+                terms->tail = rest;
+                return terms;
+        }
+        else {
+                terms->tail = 0;
+                return terms;
+        }
+}
+
 
 // Parse a possibly empty list of comma separated terms.
 //

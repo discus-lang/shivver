@@ -41,8 +41,16 @@ typedef enum {
 
         sv_source_term_lit_nat,
 
+        sv_source_term_mmm,
+
+        sv_source_term_app,
         sv_source_term_abs,
-        sv_source_term_mmm
+
+        sv_source_term_let,
+        sv_source_term_rec,
+
+        sv_source_term_box,
+        sv_source_term_run
 } sv_source_term_tag_t;
 
 

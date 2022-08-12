@@ -54,7 +54,25 @@ sv_source_parse_term(
         sv_source_parse_t* state);
 
 sv_source_term_t*
-sv_source_parse_term0(
+sv_source_parse_term_base(
+        sv_store_region_t* region,
+        sv_source_parse_t* state);
+
+sv_source_term_t*
+sv_source_parse_term_build_app(
+        sv_store_region_t*      region,
+        sv_source_term_t*       mFun,
+        sv_source_term_list_t*  msArgs);
+
+
+// from source/parse/terms.c
+sv_source_term_list_t*
+sv_source_parse_terms(
+        sv_store_region_t* region,
+        sv_source_parse_t* state);
+
+sv_source_term_list_t*
+sv_source_parse_terms1(
         sv_store_region_t* region,
         sv_source_parse_t* state);
 
@@ -68,6 +86,7 @@ sv_source_parse_terms_comma1(
         sv_store_region_t* region,
         sv_source_parse_t* state);
 
+
 // from source/parse/terms.c
 size_t
 sv_source_term_list_length(
@@ -77,3 +96,4 @@ void
 sv_source_term_list_pack(
         sv_source_term_list_t* terms,
         sv_source_term_t** term);
+
