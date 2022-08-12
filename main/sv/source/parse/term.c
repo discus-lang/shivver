@@ -128,25 +128,21 @@ sv_source_parse_term_base(
                  = state->here.super.range.first;
                 sv_source_parse_shift(state);
 
-                sv_source_term_list_t* terms
+                sv_source_term_list_t* msArg
                  = sv_source_parse_terms_comma(region, state);
 
                 sv_token_pos_t posFinal
                  = state->here.super.range.final;
                 sv_source_parse_token(state, sv_token_atom_sket);
 
-                size_t count
-                 = sv_source_term_list_length(terms);
-
                 sv_source_term_mmm_t* mMmm
                  = sv_store_region_alloc(region,
-                        sizeof(sv_source_term_mmm_t) + sizeof(sv_source_term_t*) * count);
+                        sizeof(sv_source_term_mmm_t));
 
                 mMmm->range.first = posFirst;
                 mMmm->range.final = posFinal;
-                mMmm->tag   = sv_source_term_mmm;
-                mMmm->count = count;
-                sv_source_term_list_pack(terms, (sv_source_term_t**)&(mMmm->arg));
+                mMmm->tag         = sv_source_term_mmm;
+                mMmm->args        = msArg;
 
                 return (sv_source_term_t*)mMmm;
         }

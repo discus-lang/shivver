@@ -49,12 +49,13 @@ sv_source_pretty_term(
                 sv_store_rope_t* rope =
                  sv_store_rope_fromString(region, "[");
 
-                for (size_t i = 0; i < term->mmm.count; i++) {
+                for(sv_source_term_list_t* link = term->mmm.args;
+                    link != 0; link = link->tail) {
                         rope = sv_store_rope_join(region, rope,
                          sv_source_pretty_term(region,
-                                sv_source_pretty_context_top, term->mmm.arg[i]));
+                                sv_source_pretty_context_top, link->head));
 
-                        if (i + 1 < term->mmm.count) {
+                        if (link->tail != 0) {
                                 rope = sv_store_rope_join(region, rope,
                                         sv_store_rope_fromString(region, ", "));
                         }
