@@ -151,7 +151,7 @@ sv_source_parse_term_base(
                 return (sv_source_term_t*)mMmm;
         }
 
-        // Term ::= '{' Name* '}' Term
+        // Term ::= '{' Binder* '}' Term
         case sv_token_atom_cbra:
         {
                 sv_token_pos_t posFirst
@@ -181,9 +181,54 @@ sv_source_parse_term_base(
                 return (sv_source_term_t*)mAbs;
         }
 
+        // Term ::= '!box' Term
+        case sv_token_atom_box:
+        {
+                sv_token_pos_t posFirst
+                 = state->here.super.range.first;
+
+                sv_source_parse_shift(state);
+                sv_source_term_t* mBody
+                 = sv_source_parse_term(region, state);
+
+                sv_source_term_box_t* mBox
+                 = sv_store_region_alloc(region,
+                        sizeof(sv_source_term_box_t));
+
+                mBox->range.first = posFirst;
+                mBox->range.final = mBody->super.range.final;
+                mBox->tag         = sv_source_term_box;
+                mBox->body        = mBody;
+
+                return (sv_source_term_t*)mBox;
+        }
+
+        // Term ::= '!run' Term
+        case sv_token_atom_run:
+        {
+                sv_token_pos_t posFirst
+                 = state->here.super.range.first;
+
+                sv_source_parse_shift(state);
+                sv_source_term_t* mBody
+                 = sv_source_parse_term(region, state);
+
+                sv_source_term_box_t* mRun
+                 = sv_store_region_alloc(region,
+                        sizeof(sv_source_term_box_t));
+
+                mRun->range.first = posFirst;
+                mRun->range.final = mBody->super.range.final;
+                mRun->tag         = sv_source_term_run;
+                mRun->body        = mBody;
+
+                return (sv_source_term_t*)mRun;
+        }
+
         // Term ::= '(' Term ')'
         case sv_token_atom_rbra:
-        {       sv_source_parse_shift(state);
+        {
+                sv_source_parse_shift(state);
                 sv_source_term_t* term
                  = sv_source_parse_term(region, state);
                 sv_source_parse_token(state, sv_token_atom_rket);
@@ -212,12 +257,12 @@ sv_source_parse_term_build_app(
         assert(region != 0);
         assert(mFun != 0);
 
-        // no more arguments, return functional term.
+        // No more arguments, return functional term.
         if(msArgs == 0) {
                 return mFun;
         }
 
-        // construct new application node for the functional term,
+        // Construct new application node for the functional term,
         // and its first argument.
         sv_source_term_app_t* mApp
          = sv_store_region_alloc(region,
@@ -232,10 +277,9 @@ sv_source_parse_term_build_app(
         mApp->fun = mFun;
         mApp->arg = mArg;
 
-        // recursively construct applications for the rest of the arguments.
+        // Recursively construct applications for the rest of the arguments.
         return sv_source_parse_term_build_app(
                 region,
                 (sv_source_term_t*)mApp,
                 msArgs->tail);
-
 }

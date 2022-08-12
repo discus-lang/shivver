@@ -47,6 +47,8 @@ int main(int argc, char* argv[])
 
         printf("-- application\n");
         term("one two");
+        term("one two three");
+        term("one two three four");
         term("(one two) three");
         term("one (two three)");
         printf("\n");
@@ -76,5 +78,19 @@ int main(int argc, char* argv[])
         term("[[one], ([two, three]), four]");
         term("{a b} [[one], ([two, three]), four]");
         term("[[one], ( [ two, three ]),  four, [five, six]]");
+        printf("\n");
+
+        printf("-- box\n");
+        term("!box one");
+        term("!box []");
+        term("!box {one} two three");
+        term("one !box two three");
+        printf("\n");
+
+        printf("-- run\n");
+        term("!run one");
+        term("!run []");
+        term("!run {one} two three");
+        term("one !run two three");
         printf("\n");
 }

@@ -88,6 +88,36 @@ sv_source_pretty_term(
                 else    return rope;
         }
 
+        case sv_source_term_box:
+        {
+                sv_store_rope_t* rope =
+                 sv_store_rope_fromString(region, "!box ");
+
+                rope = sv_store_rope_join(region, rope,
+                 sv_source_pretty_term(region,
+                        sv_source_pretty_context_top, term->box.body));
+
+                if(context != sv_source_pretty_context_top) {
+                        return sv_store_rope_string_parens(region, rope);
+                }
+                else    return rope;
+        }
+
+        case sv_source_term_run:
+        {
+                sv_store_rope_t* rope =
+                 sv_store_rope_fromString(region, "!run ");
+
+                rope = sv_store_rope_join(region, rope,
+                 sv_source_pretty_term(region,
+                        sv_source_pretty_context_top, term->box.body));
+
+                if(context != sv_source_pretty_context_top) {
+                        return sv_store_rope_string_parens(region, rope);
+                }
+                else    return rope;
+        }
+
         default:
                 assert(false);
         }
