@@ -88,6 +88,12 @@ int main(int argc, char* argv[])
         term("!let x = one !in !let y = two !in [x, y]");
         printf("\n");
 
+        printf("-- rec bindings\n");
+        term("!rec f = f one !in f two");
+        term("!rec f = f one !and g = f two !and h = f (g three) !in f two");
+        printf("\n");
+
+
         printf("-- box\n");
         term("!box one");
         term("!box []");

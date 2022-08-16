@@ -3,6 +3,7 @@
 #include "sv/source/term.h"
 #include "sv/token.h"
 
+/* --------------------------------------------------------------------------------------------- */
 // Parser state.
 typedef struct {
         // State of the token scanner.
@@ -16,6 +17,7 @@ typedef struct {
 } sv_source_parse_t;
 
 
+/* --------------------------------------------------------------------------------------------- */
 // from source/parse/base.c
 sv_source_parse_t*
 sv_source_parse_alloc(char* input);
@@ -36,7 +38,7 @@ sv_source_parse_token(
         sv_token_tag_t tag);
 
 
-// from source/parse/binders.c
+// from source/parse/binder.c
 sv_source_binders_t*
 sv_source_parse_binders(
         sv_store_region_t* region,
@@ -44,6 +46,13 @@ sv_source_parse_binders(
 
 bool
 sv_source_parse_term_start(
+        sv_source_parse_t* state);
+
+
+// from source/parse/binding.c
+sv_source_bindings_t*
+sv_source_parse_bindings(
+        sv_store_region_t* region,
         sv_source_parse_t* state);
 
 

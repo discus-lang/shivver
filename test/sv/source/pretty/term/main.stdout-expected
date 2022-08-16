@@ -50,6 +50,10 @@ one (two three)
 !let {x} = !let {y} = one !in two !in y [one]
 !let {x} = one !in !let {y} = two !in [x, y]
 
+-- rec bindings
+!rec f = f one !in f two
+!rec f = f one !and g = f two !and h = f (g three) !in f two
+
 -- box
 !box one
 !box []

@@ -72,7 +72,7 @@ build/x86_64/test/%.stdout-diff: build/x86_64/test/%.stdout
 		echo "! unexpected output"; \
 		echo "  expected: test/$*.stdout-expected"; \
 		echo "  actual:   $<"; \
-		echo "  diff :    $@"; \
+		echo "  diff:     $@"; \
 		echo ""; \
 		cat $@; \
 		rm $@; \

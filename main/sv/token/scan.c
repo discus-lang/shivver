@@ -1,4 +1,3 @@
-
 // Token scanner for the core language.
 //
 //  The syntax of the core language is designed so it is very easy to tokenize.
@@ -122,6 +121,9 @@ bool    sv_token_scan(
                 }
                 else if (sv_token_matches_keyword("!rec", first, remain, &keyLength) > 0) {
                         out_token->name.tag = sv_token_atom_rec;
+                }
+                else if (sv_token_matches_keyword("!and", first, remain, &keyLength) > 0) {
+                        out_token->name.tag = sv_token_atom_and;
                 }
                 else if (sv_token_matches_keyword("!in", first,  remain, &keyLength) > 0) {
                         out_token->name.tag = sv_token_atom_in;

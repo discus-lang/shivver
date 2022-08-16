@@ -24,15 +24,15 @@ sv_source_parse_binders(
         //          |  . Var Binders
         //          |  . e
         switch(state->here.super.tag) {
-        case sv_token_atom_tilde:
+         case sv_token_atom_tilde:
                 demand = sv_source_demand_weak;
                 sv_source_parse_shift(state);
                 break;
 
-        case sv_token_name_var:
+         case sv_token_name_var:
                 break;
 
-        default:
+         default:
                 return 0;
         }
 

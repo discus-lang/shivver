@@ -5,7 +5,6 @@
 #include "sv/source.h"
 #include "sv/store.h"
 
-
 // Check if the next token on the input starts a term.
 bool
 sv_source_parse_term_start(
@@ -220,6 +219,36 @@ sv_source_parse_term_base(
                 mLet->body        = mBody;
 
                 return (sv_source_term_t*)mLet;
+        }
+
+        // Term ::= '!rec' Var '=' Term (!and ...) '!in' Term
+        case sv_token_atom_rec:
+        {
+                sv_token_pos_t posFirst
+                 = state->here.super.range.first;
+                sv_source_parse_shift(state);
+
+                sv_source_bindings_t* bindings
+                 = sv_source_parse_bindings(region, state);
+
+                sv_source_parse_token(state, sv_token_atom_in);
+
+                sv_source_term_t* mBody
+                 = sv_source_parse_term(region, state);
+                sv_token_pos_t posFinal
+                 = mBody->super.range.final;
+
+                sv_source_term_rec_t* mRec
+                 = sv_store_region_alloc(region,
+                        sizeof(sv_source_term_rec_t));
+
+                mRec->range.first = posFirst;
+                mRec->range.final = posFinal;
+                mRec->tag         = sv_source_term_rec;
+                mRec->bindings    = bindings;
+                mRec->body        = mBody;
+
+                return (sv_source_term_t*)mRec;
         }
 
         // Term ::= '!box' Term

@@ -3,6 +3,7 @@
 #include "sv/store.h"
 #include "sv/source/term.h"
 
+/* --------------------------------------------------------------------------------------------- */
 // Context in which a term is pretty printed,
 // which is used to control parenthesis.
 typedef enum {
@@ -12,6 +13,7 @@ typedef enum {
 } sv_source_pretty_context_t;
 
 
+/* --------------------------------------------------------------------------------------------- */
 // from source/pretty/binders.c
 sv_store_rope_t*
 sv_source_pretty_binders(

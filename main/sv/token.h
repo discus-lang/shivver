@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+/* ---------------------------------------------------------------------------------------------- */
 // Sort of token.
 typedef enum {
         sv_token_sort_none,
@@ -20,6 +21,7 @@ typedef enum {
         sv_token_atom_def,
         sv_token_atom_let,
         sv_token_atom_rec,
+        sv_token_atom_and,
         sv_token_atom_in,
         sv_token_atom_box,
         sv_token_atom_run,
@@ -138,6 +140,7 @@ typedef struct {
 } sv_token_state_t;
 
 
+/* ---------------------------------------------------------------------------------------------- */
 // from token/scan.c
 bool    sv_token_scan(
         sv_token_state_t* state,

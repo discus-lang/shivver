@@ -1,8 +1,10 @@
 
 #include <assert.h>
+#include <stdio.h>
 #include "sv/store/rope.h"
 #include "sv/source.h"
 
+// Pretty print a term.
 sv_store_rope_t*
 sv_source_pretty_term(
         sv_store_region_t* region,
@@ -114,6 +116,42 @@ sv_source_pretty_term(
                 rope = sv_store_rope_join(region, rope,
                  sv_source_pretty_term(region,
                         sv_source_pretty_context_top, term->let.body));
+
+                if(context != sv_source_pretty_context_top) {
+                        return sv_store_rope_string_parens(region, rope);
+                }
+                else    return rope;
+        }
+
+        case sv_source_term_rec:
+        {
+                sv_store_rope_t* rope =
+                 sv_store_rope_fromString(region, "!rec ");
+
+                for(sv_source_bindings_t* link = term->rec.bindings;
+                    link != 0; link = link->next) {
+                        rope = sv_store_rope_join(region, rope,
+                         sv_store_rope_fromString(region, link->name));
+
+                        rope = sv_store_rope_join(region, rope,
+                         sv_store_rope_fromString(region, " = "));
+
+                        rope = sv_store_rope_join(region, rope,
+                         sv_source_pretty_term(region,
+                                sv_source_pretty_context_top, link->term));
+
+                        if (link->next != 0) {
+                                rope = sv_store_rope_join(region, rope,
+                                 sv_store_rope_fromString(region, " !and "));
+                        }
+                }
+
+                rope = sv_store_rope_join(region, rope,
+                 sv_store_rope_fromString(region, " !in "));
+
+                rope = sv_store_rope_join(region, rope,
+                 sv_source_pretty_term(region,
+                        sv_source_pretty_context_top, term->rec.body));
 
                 if(context != sv_source_pretty_context_top) {
                         return sv_store_rope_string_parens(region, rope);

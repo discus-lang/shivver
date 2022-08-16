@@ -5,7 +5,6 @@
 #include "sv/source.h"
 #include "sv/store.h"
 
-
 // Get the length of a terms list.
 size_t
 sv_source_term_list_length(

@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include "sv/source.h"
 
-
 // Allocate a new parser state for the given input string.
 sv_source_parse_t*
 sv_source_parse_alloc(

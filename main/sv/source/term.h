@@ -3,7 +3,7 @@
 #include "sv/token.h"
 #include "sv/store.h"
 
-
+/* --------------------------------------------------------------------------------------------- */
 // Demand for a binder.
 typedef enum {
         // stong demand reduces argument to a value before binding it.
@@ -17,11 +17,11 @@ typedef enum {
 // A sequence of binders,
 // each with their own demand on the expression being bound.
 typedef struct sv_source_binders_t_ {
+        // Link to the next binder, or 0 for end of list.
+        struct sv_source_binders_t_* next;
+
         // Demand for the current binder.
         sv_source_demand_t demand;
-
-        // Link to the next binder, or 0 for end of the list.
-        struct sv_source_binders_t_* next;
 
         // Length of the current binder.
         size_t  length;
@@ -31,6 +31,39 @@ typedef struct sv_source_binders_t_ {
 } sv_source_binders_t;
 
 
+/* --------------------------------------------------------------------------------------------- */
+// Union of all possible term nodes.
+union sv_source_term_t_;
+
+
+// Binding list for recursive let-binding.
+typedef struct sv_source_bindings_t_ {
+        // Link fo the next binding, or 0 for end of list.
+        struct sv_source_bindings_t_* next;
+
+        // Body of the binding.
+        union sv_source_term_t_* term;
+
+        // Length of the binding name.
+        size_t  length;
+
+        // Characters in the binding name.
+        char    name[];
+} sv_source_bindings_t;
+
+
+/* --------------------------------------------------------------------------------------------- */
+// A list of terms.
+typedef struct sv_source_term_list_t_ {
+        // Pointer to the head term.
+        union sv_source_term_t_* head;
+
+        // Pointer to the next list cell, or 0 for end of list.
+        struct sv_source_term_list_t_* tail;
+} sv_source_term_list_t;
+
+
+/* --------------------------------------------------------------------------------------------- */
 // Tag to identify a term node.
 typedef enum {
         sv_source_term_var,
@@ -54,19 +87,7 @@ typedef enum {
 } sv_source_term_tag_t;
 
 
-// Union of all possible term nodes.
-union sv_source_term_t_;
-
-// A list of terms.
-typedef struct sv_source_term_list_t_ {
-        // Pointer to the head term.
-        union sv_source_term_t_* head;
-
-        // Pointer to the next list cell, or 0 for end of list.
-        struct sv_source_term_list_t_* tail;
-} sv_source_term_list_t;
-
-
+/* --------------------------------------------------------------------------------------------- */
 // Supertype of all terms.
 typedef struct {
         sv_token_range_t        range;
@@ -131,8 +152,7 @@ typedef struct {
         sv_token_range_t         range;
         sv_source_term_tag_t     tag;
 
-        sv_source_binders_t*     binders;
-        sv_source_term_list_t*   bindings;
+        sv_source_bindings_t*    bindings;
         union sv_source_term_t_* body;
 } sv_source_term_rec_t;
 
@@ -167,5 +187,4 @@ typedef union sv_source_term_t_ {
         sv_source_term_box_t    box;
         sv_source_term_run_t    run;
 } sv_source_term_t;
-
 
