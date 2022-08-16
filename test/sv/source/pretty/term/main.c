@@ -80,6 +80,14 @@ int main(int argc, char* argv[])
         term("[[one], ( [ two, three ]),  four, [five, six]]");
         printf("\n");
 
+        printf("-- let bindings\n");
+        term("!let {x} = one two !in three x");
+        term("!let x = one two !in three x");
+        term("!let {x y z} = one !in two [x, y, z]");
+        term("!let x = !let y = one !in two !in y [one]");
+        term("!let x = one !in !let y = two !in [x, y]");
+        printf("\n");
+
         printf("-- box\n");
         term("!box one");
         term("!box []");

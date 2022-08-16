@@ -89,6 +89,38 @@ sv_source_pretty_term(
                 else    return rope;
         }
 
+        case sv_source_term_let:
+        {
+                sv_store_rope_t* rope =
+                 sv_store_rope_fromString(region, "!let ");
+
+                rope = sv_store_rope_join(region, rope,
+                 sv_store_rope_fromString(region, "{"));
+
+                rope = sv_store_rope_join(region, rope,
+                 sv_source_pretty_binders(region,
+                        term->let.binders));
+
+                rope = sv_store_rope_join(region, rope,
+                 sv_store_rope_fromString(region, "} = "));
+
+                rope = sv_store_rope_join(region, rope,
+                 sv_source_pretty_term(region,
+                        sv_source_pretty_context_top, term->let.bound));
+
+                rope = sv_store_rope_join(region, rope,
+                 sv_store_rope_fromString(region, " !in "));
+
+                rope = sv_store_rope_join(region, rope,
+                 sv_source_pretty_term(region,
+                        sv_source_pretty_context_top, term->let.body));
+
+                if(context != sv_source_pretty_context_top) {
+                        return sv_store_rope_string_parens(region, rope);
+                }
+                else    return rope;
+        }
+
         case sv_source_term_box:
         {
                 sv_store_rope_t* rope =

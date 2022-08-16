@@ -11,6 +11,13 @@ var
 @mac
 @mac
 
+-- application
+one two
+one two three
+one two three four
+one two three
+one (two three)
+
 -- abstractions
 {} body
 {a} body
@@ -23,6 +30,9 @@ var
 {} {} body
 {one} {~two three} body
 {one} {~two three} body
+({one} two three) four
+{one} two (three four)
+{one} two three four
 
 -- argument lists
 []
@@ -32,4 +42,23 @@ var
 [[one], [two, three], four]
 {a b} [[one], [two, three], four]
 [[one], [two, three], four, [five, six]]
+
+-- let bindings
+!let {x} = one two !in three x
+!let {x} = one two !in three x
+!let {x y z} = one !in two [x, y, z]
+!let {x} = !let {y} = one !in two !in y [one]
+!let {x} = one !in !let {y} = two !in [x, y]
+
+-- box
+!box one
+!box []
+!box {one} two three
+one (!box two three)
+
+-- run
+!run one
+!run []
+!run {one} two three
+one (!run two three)
 

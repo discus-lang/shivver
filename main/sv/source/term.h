@@ -107,12 +107,34 @@ typedef struct {
 
 // Term consisting of an abstraction.
 typedef struct {
-        sv_token_range_t        range;
-        sv_source_term_tag_t    tag;
+        sv_token_range_t         range;
+        sv_source_term_tag_t     tag;
 
         sv_source_binders_t*     binders;
         union sv_source_term_t_* body;;
 } sv_source_term_abs_t;
+
+
+// Term consisting of a high arity let binding.
+typedef struct {
+        sv_token_range_t         range;
+        sv_source_term_tag_t     tag;
+
+        sv_source_binders_t*     binders;
+        union sv_source_term_t_* bound;
+        union sv_source_term_t_* body;
+} sv_source_term_let_t;
+
+
+// Term consisting of recursive let bindings.
+typedef struct {
+        sv_token_range_t         range;
+        sv_source_term_tag_t     tag;
+
+        sv_source_binders_t*     binders;
+        sv_source_term_list_t*   bindings;
+        union sv_source_term_t_* body;
+} sv_source_term_rec_t;
 
 
 // Term consisting of a use of the '!box' keyword.
@@ -140,6 +162,8 @@ typedef union sv_source_term_t_ {
         sv_source_term_app_t    app;
         sv_source_term_mmm_t    mmm;
         sv_source_term_abs_t    abs;
+        sv_source_term_let_t    let;
+        sv_source_term_rec_t    rec;
         sv_source_term_box_t    box;
         sv_source_term_run_t    run;
 } sv_source_term_t;

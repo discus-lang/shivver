@@ -68,6 +68,14 @@ This would avoid excessive nesting when defining match expressions.
  | #match [xx, %list'cons, {x xs} %list'cons[x, @append [xs, yy]]]
 ```
 
+### Let bindings
+
+Let bindings of a single variable can be written without parens.
+```
+  !let x = Term !in Term
+  !let {x} = Term !in Term
+```
+
 ```
 !seq    term1;
         !let {x, y} = term2;

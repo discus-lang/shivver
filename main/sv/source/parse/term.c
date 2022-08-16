@@ -22,10 +22,10 @@ sv_source_parse_term_start(
          // Term ::= . '[' Term, ']'
          case sv_token_atom_sbra:
 
-         // Term ::= . '{' (Demand Var)* '}' Term
+         // Term ::= . '{' Binder* '}' Term
          case sv_token_atom_cbra:
 
-         // Term ::= . '!let' '{' (Demand Var)* '}' '=' Term '!in' Term
+         // Term ::= . '!let' '{' Binder* '}' '=' Term '!in' Term
          case sv_token_atom_let:
 
          // Term ::= . '!rec' Var '=' Term ('!and' ...)* '!in' Term
@@ -37,7 +37,7 @@ sv_source_parse_term_start(
          // Term ::= . '!run' Term
          case sv_token_atom_run:
 
-         // Term ::= '(' Term ')'
+         // Term ::= . '(' Term ')'
          case sv_token_atom_rbra:
                 return true;
 
@@ -175,6 +175,51 @@ sv_source_parse_term_base(
                 mAbs->body        = mBody;
 
                 return (sv_source_term_t*)mAbs;
+        }
+
+        // Term ::= '!let' '{' Binder* '}' '=' Term '!in' Term
+        //       |  '!let' Binder '=' Term '!in' Term
+        case sv_token_atom_let:
+        {
+                sv_token_pos_t posFirst
+                 = state->here.super.range.first;
+                sv_source_parse_shift(state);
+
+                sv_source_binders_t* binders = 0;
+                if (state->here.super.tag == sv_token_atom_cbra) {
+                        sv_source_parse_shift(state);
+                        binders = sv_source_parse_binders(region, state);
+                        sv_source_parse_token(state, sv_token_atom_cket);
+                }
+                else {
+                        binders = sv_source_parse_binders(region, state);
+                        assert(binders->next == 0);
+                }
+
+                sv_source_parse_token(state, sv_token_atom_eq);
+
+                sv_source_term_t* mBound
+                 = sv_source_parse_term(region, state);
+
+                sv_source_parse_token(state, sv_token_atom_in);
+
+                sv_source_term_t* mBody
+                 = sv_source_parse_term(region, state);
+                sv_token_pos_t posFinal
+                 = mBody->super.range.final;
+
+                sv_source_term_let_t* mLet
+                 = sv_store_region_alloc(region,
+                        sizeof(sv_source_term_let_t));
+
+                mLet->range.first = posFirst;
+                mLet->range.final = posFinal;
+                mLet->tag         = sv_source_term_let;
+                mLet->binders     = binders;
+                mLet->bound       = mBound;
+                mLet->body        = mBody;
+
+                return (sv_source_term_t*)mLet;
         }
 
         // Term ::= '!box' Term
