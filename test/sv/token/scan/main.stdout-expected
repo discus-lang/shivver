@@ -12,8 +12,8 @@
 { range = "1:1-1:1", tag = %sbra }
 { range = "1:1-1:1", tag = %sket }
 { range = "1:1-1:1", tag = %comma }
-{ range = "1:1-1:1", tag = %semi }
-{ range = "1:1-1:1", tag = %eq }
+{ range = "1:1-1:1", tag = %semicolon }
+{ range = "1:1-1:1", tag = %equals }
 { range = "1:1-1:8", tag = %var, name = 'variable' }
 { range = "1:1-1:7", tag = %sym, name = 'symbol' }
 { range = "1:1-1:12", tag = %sym, name = 'some'symbol' }

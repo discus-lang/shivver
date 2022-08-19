@@ -53,14 +53,37 @@ typedef struct sv_source_bindings_t_ {
 
 
 /* --------------------------------------------------------------------------------------------- */
-// A list of terms.
-typedef struct sv_source_term_list_t_ {
-        // Pointer to the head term.
-        union sv_source_term_t_* head;
+// Tree of terms that supports fast append
+union sv_source_term_tree_t_;
 
-        // Pointer to the next list cell, or 0 for end of list.
-        struct sv_source_term_list_t_* tail;
-} sv_source_term_list_t;
+typedef struct {
+        // Indicates leaf (0), cons (1), or join (2)
+        size_t tag;
+} sv_source_term_tree_super_t;
+
+typedef struct {
+        size_t tag;
+        union sv_source_term_t_* term;
+} sv_source_term_tree_leaf_t;
+
+typedef struct {
+        size_t tag;
+        union sv_source_term_t_* head;
+        union sv_source_term_tree_t_* tail;
+} sv_source_term_tree_cons_t;
+
+typedef struct {
+        size_t tag;
+        union sv_source_term_tree_t_* left;
+        union sv_source_term_tree_t_* right;
+} sv_source_term_tree_join_t;
+
+typedef union sv_source_term_tree_t_ {
+        sv_source_term_tree_super_t super;
+        sv_source_term_tree_leaf_t  leaf;
+        sv_source_term_tree_cons_t  cons;
+        sv_source_term_tree_join_t  join;
+} sv_source_term_tree_t;
 
 
 /* --------------------------------------------------------------------------------------------- */
@@ -112,7 +135,7 @@ typedef struct {
 typedef struct {
         sv_token_range_t        range;
         sv_source_term_tag_t    tag;
-        sv_source_term_list_t*  args;
+        sv_source_term_tree_t*  args;
 } sv_source_term_mmm_t;
 
 

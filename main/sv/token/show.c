@@ -11,34 +11,35 @@ char*   sv_token_show_tag(
         sv_token_tag_t tag)
 {
         switch(tag) {
-         case sv_token_meta_none:       return strdup("none");     break;
-         case sv_token_meta_end:        return strdup("end");      break;
+         case sv_token_meta_none:       return strdup("none");          break;
+         case sv_token_meta_end:        return strdup("end");           break;
 
-         case sv_token_atom_def:        return strdup("def");      break;
-         case sv_token_atom_let:        return strdup("let");      break;
-         case sv_token_atom_rec:        return strdup("rec");      break;
-         case sv_token_atom_and:        return strdup("and");      break;
-         case sv_token_atom_in:         return strdup("in");       break;
-         case sv_token_atom_box:        return strdup("box");      break;
-         case sv_token_atom_run:        return strdup("run");      break;
+         case sv_token_atom_def:        return strdup("def");           break;
+         case sv_token_atom_let:        return strdup("let");           break;
+         case sv_token_atom_rec:        return strdup("rec");           break;
+         case sv_token_atom_and:        return strdup("and");           break;
+         case sv_token_atom_in:         return strdup("in");            break;
+         case sv_token_atom_box:        return strdup("box");           break;
+         case sv_token_atom_run:        return strdup("run");           break;
 
-         case sv_token_atom_rbra:       return strdup("rbra");     break;
-         case sv_token_atom_rket:       return strdup("rket");     break;
-         case sv_token_atom_cbra:       return strdup("cbra");     break;
-         case sv_token_atom_cket:       return strdup("cket");     break;
-         case sv_token_atom_sbra:       return strdup("sbra");     break;
-         case sv_token_atom_sket:       return strdup("sket");     break;
-         case sv_token_atom_comma:      return strdup("comma");    break;
-         case sv_token_atom_semi:       return strdup("semi");     break;
-         case sv_token_atom_eq:         return strdup("eq");       break;
+         case sv_token_atom_rbra:       return strdup("rbra");          break;
+         case sv_token_atom_rket:       return strdup("rket");          break;
+         case sv_token_atom_cbra:       return strdup("cbra");          break;
+         case sv_token_atom_cket:       return strdup("cket");          break;
+         case sv_token_atom_sbra:       return strdup("sbra");          break;
+         case sv_token_atom_sket:       return strdup("sket");          break;
+         case sv_token_atom_comma:      return strdup("comma");         break;
+         case sv_token_atom_semicolon:  return strdup("semicolon");     break;
+         case sv_token_atom_equals:     return strdup("equals");        break;
+         case sv_token_atom_ampersand:  return strdup("ampersand");     break;
 
-         case sv_token_name_var:        return strdup("var");      break;
-         case sv_token_name_sym:        return strdup("sym");      break;
-         case sv_token_name_prm:        return strdup("prm");      break;
-         case sv_token_name_mac:        return strdup("mac");      break;
-         case sv_token_name_nom:        return strdup("nom");      break;
+         case sv_token_name_var:        return strdup("var");           break;
+         case sv_token_name_sym:        return strdup("sym");           break;
+         case sv_token_name_prm:        return strdup("prm");           break;
+         case sv_token_name_mac:        return strdup("mac");           break;
+         case sv_token_name_nom:        return strdup("nom");           break;
 
-         case sv_token_lit_nat:         return strdup("nat");      break;
+         case sv_token_lit_nat:         return strdup("nat");           break;
 
          default: assert(false);
         }

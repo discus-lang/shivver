@@ -42,12 +42,18 @@ one (two three)
 [[one], [two, three], four]
 {a b} [[one], [two, three], four]
 [[one], [two, three], four, [five, six]]
+-- sugar
+[a, b, c]
+f [x1, x2, g [x3, x4, h [x5]]]
+f [x1, x2, g [x3, x4, h [x5]]]
+f [x1, x2, g [x3, x4, h [x5]]]
 
 -- let bindings
 !let {x} = one two !in three x
 !let {x} = one two !in three x
 !let {x y z} = one !in two [x, y, z]
 !let {x} = !let {y} = one !in two !in y [one]
+-- sugar
 !let {x} = one !in !let {y} = two !in [x, y]
 
 -- rec bindings

@@ -78,6 +78,11 @@ int main(int argc, char* argv[])
         term("[[one], ([two, three]), four]");
         term("{a b} [[one], ([two, three]), four]");
         term("[[one], ( [ two, three ]),  four, [five, six]]");
+        printf("-- sugar\n");
+        term("[a, b] & c = [a, b, c]");
+        term("f [x1, x2] & g [x3, x4] & h [x5]");
+        term("f ([x1, x2] & g [x3, x4] & h [x5])");
+        term("f [x1, x2] & g ([x3, x4] & h [x5])");
         printf("\n");
 
         printf("-- let bindings\n");
@@ -85,6 +90,7 @@ int main(int argc, char* argv[])
         term("!let x = one two !in three x");
         term("!let {x y z} = one !in two [x, y, z]");
         term("!let x = !let y = one !in two !in y [one]");
+        printf("-- sugar\n");
         term("!let x = one !in !let y = two !in [x, y]");
         printf("\n");
 

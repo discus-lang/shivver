@@ -28,7 +28,7 @@ sv_source_parse_bindings(
         bindings->name[count] = 0;
         sv_source_parse_shift(state);
 
-        sv_source_parse_token(state, sv_token_atom_eq);
+        sv_source_parse_token(state, sv_token_atom_equals);
 
         sv_source_term_t* body
          = sv_source_parse_term(region, state);

@@ -71,26 +71,27 @@ sv_source_term_t*
 sv_source_parse_term_build_app(
         sv_store_region_t*      region,
         sv_source_term_t*       mFun,
-        sv_source_term_list_t*  msArgs);
-
+        sv_source_term_t**      msArgs,
+        size_t                  nArgs,
+        size_t                  iArgs);
 
 // from source/parse/terms.c
-sv_source_term_list_t*
+sv_source_term_tree_t*
 sv_source_parse_terms(
         sv_store_region_t* region,
         sv_source_parse_t* state);
 
-sv_source_term_list_t*
+sv_source_term_tree_t*
 sv_source_parse_terms1(
         sv_store_region_t* region,
         sv_source_parse_t* state);
 
-sv_source_term_list_t*
+sv_source_term_tree_t*
 sv_source_parse_terms_comma(
         sv_store_region_t* region,
         sv_source_parse_t* state);
 
-sv_source_term_list_t*
+sv_source_term_tree_t*
 sv_source_parse_terms_comma1(
         sv_store_region_t* region,
         sv_source_parse_t* state);
@@ -98,11 +99,12 @@ sv_source_parse_terms_comma1(
 
 // from source/parse/terms.c
 size_t
-sv_source_term_list_length(
-        sv_source_term_list_t* terms);
+sv_source_term_tree_size(
+        sv_source_term_tree_t* terms);
 
-void
-sv_source_term_list_pack(
-        sv_source_term_list_t* terms,
-        sv_source_term_t** term);
+size_t
+sv_source_term_tree_pack(
+        sv_source_term_tree_t* terms,
+        sv_source_term_t** term,
+        size_t offset0);
 

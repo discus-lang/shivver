@@ -61,16 +61,17 @@ bool    sv_token_scan(
                 goto again;
 
          // punctuation
-         case '(': out_token->atom.tag = sv_token_atom_rbra;    goto single;
-         case ')': out_token->atom.tag = sv_token_atom_rket;    goto single;
-         case '{': out_token->atom.tag = sv_token_atom_cbra;    goto single;
-         case '}': out_token->atom.tag = sv_token_atom_cket;    goto single;
-         case '[': out_token->atom.tag = sv_token_atom_sbra;    goto single;
-         case ']': out_token->atom.tag = sv_token_atom_sket;    goto single;
-         case ',': out_token->atom.tag = sv_token_atom_comma;   goto single;
-         case '~': out_token->atom.tag = sv_token_atom_tilde;   goto single;
-         case ';': out_token->atom.tag = sv_token_atom_semi;    goto single;
-         case '=': out_token->atom.tag = sv_token_atom_eq;      goto single;
+         case '(': out_token->atom.tag = sv_token_atom_rbra;            goto single;
+         case ')': out_token->atom.tag = sv_token_atom_rket;            goto single;
+         case '{': out_token->atom.tag = sv_token_atom_cbra;            goto single;
+         case '}': out_token->atom.tag = sv_token_atom_cket;            goto single;
+         case '[': out_token->atom.tag = sv_token_atom_sbra;            goto single;
+         case ']': out_token->atom.tag = sv_token_atom_sket;            goto single;
+         case ',': out_token->atom.tag = sv_token_atom_comma;           goto single;
+         case '~': out_token->atom.tag = sv_token_atom_tilde;           goto single;
+         case ';': out_token->atom.tag = sv_token_atom_semicolon;       goto single;
+         case '=': out_token->atom.tag = sv_token_atom_equals;          goto single;
+         case '&': out_token->atom.tag = sv_token_atom_ampersand;       goto single;
 
          // symbol name
          case '%':

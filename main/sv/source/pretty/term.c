@@ -11,6 +11,9 @@ sv_source_pretty_term(
         sv_source_pretty_context_t context,
         sv_source_term_t* term)
 {
+        assert(region != 0);
+        assert(term != 0);
+
         switch(term->super.tag) {
         case sv_source_term_var:
                 return sv_store_rope_fromString(region, term->name.name);
@@ -48,16 +51,21 @@ sv_source_pretty_term(
 
         case sv_source_term_mmm:
         {
+                size_t count
+                 = sv_source_term_tree_size(term->mmm.args);
+
+                sv_source_term_t* arg[count];
+                sv_source_term_tree_pack(term->mmm.args, arg, 0);
+
                 sv_store_rope_t* rope =
                  sv_store_rope_fromString(region, "[");
 
-                for(sv_source_term_list_t* link = term->mmm.args;
-                    link != 0; link = link->tail) {
+                for(size_t i = 0; i < count; i++) {
                         rope = sv_store_rope_join(region, rope,
                          sv_source_pretty_term(region,
-                                sv_source_pretty_context_top, link->head));
+                                sv_source_pretty_context_top, arg[i]));
 
-                        if (link->tail != 0) {
+                        if (i + 1 < count) {
                                 rope = sv_store_rope_join(region, rope,
                                         sv_store_rope_fromString(region, ", "));
                         }

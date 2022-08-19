@@ -57,15 +57,23 @@ sv_source_parse_term(
         assert(state  != 0);
 
         // Parse a term list.
-        sv_source_term_list_t* terms
+        sv_source_term_tree_t* terms
          = sv_source_parse_terms1(region, state);
         assert(terms != 0);
-        assert(terms->head != 0);
+
+        // Count the number of terms in the whole argument list.
+        size_t nTerms
+         = sv_source_term_tree_size(terms);
+        assert(nTerms >= 1);
+
+        // Flatten the term tree into a flat array.
+        sv_source_term_t* array[nTerms];
+        sv_source_term_tree_pack(terms, array, 0);
 
         // If there was only one term in the list then return it directly,
         // otherwise construct a chain of application nodes.
         return sv_source_parse_term_build_app(
-                region, terms->head, terms->tail);
+                region, array[0], array, nTerms, 1);
 }
 
 
@@ -81,7 +89,7 @@ sv_source_parse_term_base(
 
         switch(state->here.super.tag) {
 
-        // Term ::= Var | Sym | Prm | Mac | Nom
+        // Term ::= . Var | . Sym | . Prm | . Mac | . Nom
         case sv_token_name_var:
         case sv_token_name_sym:
         case sv_token_name_prm:
@@ -120,19 +128,42 @@ sv_source_parse_term_base(
                 return (sv_source_term_t*)mName;
          }
 
-        // Term ::= '[' Term,* ']'
+        // Term ::= . '[' Term,* ']' (& '[' Term,* ']')*
         case sv_token_atom_sbra:
         {
                 sv_token_pos_t posFirst
                  = state->here.super.range.first;
                 sv_source_parse_shift(state);
 
-                sv_source_term_list_t* msArg
+                sv_source_term_tree_t* msArg
                  = sv_source_parse_terms_comma(region, state);
 
                 sv_token_pos_t posFinal
                  = state->here.super.range.final;
                 sv_source_parse_token(state, sv_token_atom_sket);
+
+                // Term ::= '[' Term,* ']' . (& Term)*
+                while (state->here.name.tag == sv_token_atom_ampersand) {
+                        sv_source_parse_shift(state);
+
+                        sv_source_term_t* term
+                         = sv_source_parse_term(region, state);
+                        assert(term != 0);
+
+                        sv_source_term_tree_leaf_t* msLeaf
+                         = sv_store_region_alloc(region,
+                                sizeof(sv_source_term_tree_leaf_t));
+                        msLeaf->tag  = 0;
+                        msLeaf->term = term;
+
+                        sv_source_term_tree_join_t* msJoin
+                         = sv_store_region_alloc(region,
+                                sizeof(sv_source_term_tree_join_t));
+                        msJoin->tag   = 2;
+                        msJoin->left  = msArg;
+                        msJoin->right = (sv_source_term_tree_t*)msLeaf;
+                        msArg = (sv_source_term_tree_t*)msJoin;
+                }
 
                 sv_source_term_mmm_t* mMmm
                  = sv_store_region_alloc(region,
@@ -146,7 +177,7 @@ sv_source_parse_term_base(
                 return (sv_source_term_t*)mMmm;
         }
 
-        // Term ::= '{' Binder* '}' Term
+        // Term ::= . '{' Binder* '}' Term
         case sv_token_atom_cbra:
         {
                 sv_token_pos_t posFirst
@@ -176,8 +207,8 @@ sv_source_parse_term_base(
                 return (sv_source_term_t*)mAbs;
         }
 
-        // Term ::= '!let' '{' Binder* '}' '=' Term '!in' Term
-        //       |  '!let' Binder '=' Term '!in' Term
+        // Term ::= . '!let' '{' Binder* '}' '=' Term '!in' Term
+        //       |  . '!let' Binder '=' Term '!in' Term
         case sv_token_atom_let:
         {
                 sv_token_pos_t posFirst
@@ -195,7 +226,7 @@ sv_source_parse_term_base(
                         assert(binders->next == 0);
                 }
 
-                sv_source_parse_token(state, sv_token_atom_eq);
+                sv_source_parse_token(state, sv_token_atom_equals);
 
                 sv_source_term_t* mBound
                  = sv_source_parse_term(region, state);
@@ -221,7 +252,7 @@ sv_source_parse_term_base(
                 return (sv_source_term_t*)mLet;
         }
 
-        // Term ::= '!rec' Var '=' Term (!and ...) '!in' Term
+        // Term ::= . '!rec' Var '=' Term (!and ...) '!in' Term
         case sv_token_atom_rec:
         {
                 sv_token_pos_t posFirst
@@ -251,7 +282,7 @@ sv_source_parse_term_base(
                 return (sv_source_term_t*)mRec;
         }
 
-        // Term ::= '!box' Term
+        // Term ::= . '!box' Term
         case sv_token_atom_box:
         {
                 sv_token_pos_t posFirst
@@ -273,7 +304,7 @@ sv_source_parse_term_base(
                 return (sv_source_term_t*)mBox;
         }
 
-        // Term ::= '!run' Term
+        // Term ::= . '!run' Term
         case sv_token_atom_run:
         {
                 sv_token_pos_t posFirst
@@ -295,7 +326,7 @@ sv_source_parse_term_base(
                 return (sv_source_term_t*)mRun;
         }
 
-        // Term ::= '(' Term ')'
+        // Term ::= . '(' Term ')'
         case sv_token_atom_rbra:
         {
                 sv_source_parse_shift(state);
@@ -322,13 +353,16 @@ sv_source_term_t*
 sv_source_parse_term_build_app(
         sv_store_region_t*      region,
         sv_source_term_t*       mFun,
-        sv_source_term_list_t*  msArgs)
+        sv_source_term_t**      msArgs,
+        size_t                  nArgs,
+        size_t                  iArgs)
 {
         assert(region != 0);
-        assert(mFun != 0);
+        assert(mFun   != 0);
+        assert(msArgs != 0);
 
         // No more arguments, return functional term.
-        if(msArgs == 0) {
+        if(iArgs >= nArgs) {
                 return mFun;
         }
 
@@ -339,7 +373,7 @@ sv_source_parse_term_build_app(
                 sizeof(sv_source_term_app_t));
 
         sv_source_term_t* mArg
-         = msArgs->head;
+         = msArgs[iArgs];
 
         mApp->range.first = mFun->super.range.first;
         mApp->range.final = mArg->super.range.final;
@@ -351,5 +385,5 @@ sv_source_parse_term_build_app(
         return sv_source_parse_term_build_app(
                 region,
                 (sv_source_term_t*)mApp,
-                msArgs->tail);
+                msArgs, nArgs, iArgs + 1);
 }

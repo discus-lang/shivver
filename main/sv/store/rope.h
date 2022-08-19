@@ -4,6 +4,7 @@
 
 
 /* --------------------------------------------------------------------------------------------- */
+
 union sv_store_rope_t_;
 
 // Supertype of rope nodes.
@@ -56,6 +57,7 @@ typedef union sv_store_rope_t_ {
 
 
 /* --------------------------------------------------------------------------------------------- */
+
 sv_store_rope_t*
 sv_store_rope_join(
         sv_store_region_t* region,
