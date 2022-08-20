@@ -140,3 +140,4 @@ sv_store_rope_string_parens(
 
         return rope;
 }
+

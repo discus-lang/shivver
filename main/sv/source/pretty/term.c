@@ -18,17 +18,17 @@ sv_source_pretty_term(
         case sv_source_term_var:
                 return sv_store_rope_fromString(region, term->name.name);
 
+        case sv_source_term_def:
+                return sv_store_rope_printf(region, "@%s", term->name.name);
+
+        case sv_source_term_nom:
+                return sv_store_rope_printf(region, "?%s", term->name.name);
+
         case sv_source_term_sym:
                 return sv_store_rope_printf(region, "%%%s", term->name.name);
 
         case sv_source_term_prm:
                 return sv_store_rope_printf(region, "#%s", term->name.name);
-
-        case sv_source_term_mac:
-                return sv_store_rope_printf(region, "@%s", term->name.name);
-
-        case sv_source_term_nom:
-                return sv_store_rope_printf(region, "?%s", term->name.name);
 
         case sv_source_term_app:
         {

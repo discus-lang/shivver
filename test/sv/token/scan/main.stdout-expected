@@ -17,8 +17,8 @@
 { range = "1:1-1:8", tag = %var, name = 'variable' }
 { range = "1:1-1:7", tag = %sym, name = 'symbol' }
 { range = "1:1-1:12", tag = %sym, name = 'some'symbol' }
-{ range = "1:1-1:6", tag = %mac, name = 'macro' }
-{ range = "1:1-1:11", tag = %mac, name = 'some'macro' }
+{ range = "1:1-1:4", tag = %def, name = 'def' }
+{ range = "1:1-1:9", tag = %def, name = 'some'def' }
 { range = "1:1-1:8", tag = %nom, name = 'nominal' }
 { range = "1:1-1:13", tag = %nom, name = 'some'nominal' }
 { range = "1:1-1:10", tag = %prm, name = 'primitive' }

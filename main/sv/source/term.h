@@ -90,10 +90,11 @@ typedef union sv_source_term_tree_t_ {
 // Tag to identify a term node.
 typedef enum {
         sv_source_term_var,
+        sv_source_term_def,
+        sv_source_term_loc,
+        sv_source_term_nom,
         sv_source_term_sym,
         sv_source_term_prm,
-        sv_source_term_mac,
-        sv_source_term_nom,
 
         sv_source_term_lit_nat,
 

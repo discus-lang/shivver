@@ -34,10 +34,10 @@ char*   sv_token_show_tag(
          case sv_token_atom_ampersand:  return strdup("ampersand");     break;
 
          case sv_token_name_var:        return strdup("var");           break;
+         case sv_token_name_def:        return strdup("def");           break;
+         case sv_token_name_nom:        return strdup("nom");           break;
          case sv_token_name_sym:        return strdup("sym");           break;
          case sv_token_name_prm:        return strdup("prm");           break;
-         case sv_token_name_mac:        return strdup("mac");           break;
-         case sv_token_name_nom:        return strdup("nom");           break;
 
          case sv_token_lit_nat:         return strdup("nat");           break;
 

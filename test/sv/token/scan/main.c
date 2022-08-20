@@ -59,8 +59,8 @@ int main(int argc, char* argv[])
         scan("%symbol");
         scan("%some'symbol");
 
-        scan("@macro");
-        scan("@some'macro");
+        scan("@def");
+        scan("@some'def");
 
         scan("?nominal");
         scan("?some'nominal");

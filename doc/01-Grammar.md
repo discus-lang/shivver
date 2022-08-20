@@ -1,5 +1,5 @@
 
-# Grammar
+# Source Grammar
 
 ```
 Var     → (like 'name')
@@ -20,17 +20,17 @@ Value
  ::= vloc   Loc                      Loc
   |  vsym   Sym                      Sym
   |  vprm   Prm                      Prm
-  |  vcon n Sym Valueⁿ               !CON Sym '[' Answer,* ']'
-  |  vclo n Env Varⁿ Term            !CLO Env '{' (Demand Var)* '}' Term
+  |  vcon n Sym Answer               !CON Sym '[' Answer,* ']'
+  |  vclo n Env Demandⁿ Varⁿ Term    !CLO Env '{' (Demand Var)* '}' Term
 
 Answer
- ::= Value
+ ::= aval   Value
   |  adef   Def                      Def
   |  anom   Nom                      Nom
   |  asub   Env Term                 !SUB Env Term
 
 Term
- ::= Answer
+ ::= mans   Answer
   |  mvar   Var                      Var
   |  mapp   Term Term                Term Term
   |  mmmm n Termⁿ                    '[' Term,* ']'

@@ -11,12 +11,12 @@ sv_source_parse_term_start(
         sv_source_parse_t* state)
 {
         switch(state->here.super.tag) {
-         // Term ::= Var | Sym | Prm | Mac | Nom
+         // Term ::= Var | Def | Nom | Sym | Prm
          case sv_token_name_var:
+         case sv_token_name_def:
+         case sv_token_name_nom:
          case sv_token_name_sym:
          case sv_token_name_prm:
-         case sv_token_name_mac:
-         case sv_token_name_nom:
 
          // Term ::= . '[' Term, ']'
          case sv_token_atom_sbra:
@@ -89,12 +89,12 @@ sv_source_parse_term_base(
 
         switch(state->here.super.tag) {
 
-        // Term ::= . Var | . Sym | . Prm | . Mac | . Nom
+        // Term ::= . Var | . Def | . Nom | . Sym | . Prm
         case sv_token_name_var:
+        case sv_token_name_def:
+        case sv_token_name_nom:
         case sv_token_name_sym:
         case sv_token_name_prm:
-        case sv_token_name_mac:
-        case sv_token_name_nom:
         {
                 char*  first = state->here.name.first;
                 size_t count = state->here.name.count;
@@ -110,10 +110,10 @@ sv_source_parse_term_base(
                 // Set term tag based on the token sort.
                 switch(state->here.name.tag) {
                  case sv_token_name_var: mName->tag = sv_source_term_var; break;
+                 case sv_token_name_def: mName->tag = sv_source_term_def; break;
+                 case sv_token_name_nom: mName->tag = sv_source_term_nom; break;
                  case sv_token_name_sym: mName->tag = sv_source_term_sym; break;
                  case sv_token_name_prm: mName->tag = sv_source_term_prm; break;
-                 case sv_token_name_mac: mName->tag = sv_source_term_mac; break;
-                 case sv_token_name_nom: mName->tag = sv_source_term_nom; break;
                  default: assert(false);
                 }
 

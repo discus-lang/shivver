@@ -74,18 +74,18 @@ bool    sv_token_scan(
          case '&': out_token->atom.tag = sv_token_atom_ampersand;       goto single;
 
          // symbol name
-         case '%':
-         case '#':
          case '@':
          case '?':
+         case '%':
+         case '#':
          {
                 out_token->meta.sort = sv_token_sort_name;
 
                 switch(*first) {
+                 case '@': out_token->name.tag = sv_token_name_def; break;
+                 case '?': out_token->name.tag = sv_token_name_nom; break;
                  case '%': out_token->name.tag = sv_token_name_sym; break;
                  case '#': out_token->name.tag = sv_token_name_prm; break;
-                 case '@': out_token->name.tag = sv_token_name_mac; break;
-                 case '?': out_token->name.tag = sv_token_name_nom; break;
                  default: assert(false);
                 }
 

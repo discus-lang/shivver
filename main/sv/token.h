@@ -36,10 +36,10 @@ typedef enum {
         sv_token_atom_ampersand,
 
         sv_token_name_var,
+        sv_token_name_def,
+        sv_token_name_nom,
         sv_token_name_sym,
         sv_token_name_prm,
-        sv_token_name_mac,
-        sv_token_name_nom,
 
         sv_token_lit_nat,
 } sv_token_tag_t;
