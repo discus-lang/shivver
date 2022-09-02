@@ -2,23 +2,18 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "sv/store/slab.h"
 
 /* --------------------------------------------------------------------------------------------- */
 // A block of storage space including the size and offset for the
 // next allocation.
-typedef struct sv_store_block_t_ {
-        // Size of the usable space, in bytes.
-        size_t  size;
-
-        // Index of the next byte to allocate.
-        size_t  next;
-
+typedef struct sv_store_region_block_t_ {
         // Link ot the next block, or 0 if this is the last block.
         struct sv_store_block_t_* link;
 
-        // Storage space in the block.
-        uint8_t space[];
-} sv_store_block_t;
+        // Contigous slab of space in this
+        sv_store_slab_t slab;
+} sv_store_region_block_t;
 
 
 // A region of the store constructed from a chain of blocks.
@@ -32,7 +27,7 @@ typedef struct {
 
         // The chain of blocks, or 0 if there are none allocated.
         // The most recently allocated block is at the head of the list.
-        sv_store_block_t* block_chain;
+        sv_store_region_block_t* block_chain;
 
         // When enabled new space is initialized to 0xaa to help track
         // memory errors in the implementation.
@@ -61,7 +56,7 @@ void
 sv_store_region_free(
         sv_store_region_t* region);
 
-sv_store_block_t*
+sv_store_region_block_t*
 sv_store_block_create(
         size_t  size,
         bool    debug_init_aa);

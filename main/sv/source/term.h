@@ -111,6 +111,17 @@ typedef enum {
 } sv_source_term_tag_t;
 
 
+// Name space identifier.
+typedef enum {
+        sv_source_space_var,
+        sv_source_space_def,
+        sv_source_space_loc,
+        sv_source_space_nom,
+        sv_source_space_sym,
+        sv_source_space_prm
+} sv_source_space_t;
+
+
 /* --------------------------------------------------------------------------------------------- */
 // Supertype of all terms.
 typedef struct {

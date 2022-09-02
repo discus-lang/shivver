@@ -2,25 +2,21 @@
 #include <stdint.h>
 
 /* --------------------------------------------------------------------------------------------- */
+// Object tags.
+//   We use non-contiguous codes to help debugging,
+//   as it is less likely arbitrary memory will contain a valid code.
 typedef enum {
-        sv_store_object_tag_cold_name_def,
-        sv_store_object_tag_cold_name_ref,
-        sv_store_object_tag_cold_mmm,
-        sv_store_object_tag_cold_app,
-        sv_store_object_tag_cold_abs,
-        sv_store_object_tag_cold_let,
-        sv_store_object_tag_cold_rec,
-        sv_store_object_tag_cold_box,
-        sv_store_object_tag_cold_run,
-
-        sv_store_object_tag_hot_cold_ref,
-        sv_store_object_tag_hot_mmm,
-        sv_store_object_tag_hot_app,
-        sv_store_object_tag_hot_abs,
-        sv_store_object_tag_hot_let,
-        sv_store_object_tag_hot_rec,
-        sv_store_object_tag_hot_box,
-        sv_store_object_tag_hot_run
+        sv_store_object_tag_bot         = 0x10,
+        sv_store_object_tag_name_def    = 0x11,
+        sv_store_object_tag_name_ref    = 0x22,
+        sv_store_object_tag_mmm         = 0x33,
+        sv_store_object_tag_app         = 0x44,
+        sv_store_object_tag_abs         = 0x55,
+        sv_store_object_tag_let         = 0x66,
+        sv_store_object_tag_rec         = 0x77,
+        sv_store_object_tag_box         = 0x88,
+        sv_store_object_tag_run         = 0x99,
+        sv_store_object_tag_top         = 0xa0
 } sv_store_object_tag_t;
 
 
@@ -28,56 +24,78 @@ typedef enum {
 // Objects that can appear in stores.
 union sv_store_object_t_;
 
+typedef struct {
+        // Bit indicating hot or cold obhect.
+        unsigned int hot_cold   : 1;
+
+        // Unused flag bits in header.
+        unsigned int unused     : 7;
+
+        // Tag identifying the sort of object.
+        unsigned int tag        : 8;
+} sv_store_object_header_t;
+
+
+// Super type of all store objects.
+typedef struct {
+        sv_store_object_header_t header;
+} sv_store_object_super_t;
+
 
 // Name definition.
 // Name definitions are stored in a chain of cold objects.
 typedef struct {
-        unsigned int tag        : SV_STORE_BITS_TAG;
-
-        // Space of the name.
-        unsigned int space      : SV_STORE_BITS_NAME_SPACE;
+        sv_store_object_header_t header;
 
         // Length of null terminated string.
         unsigned int length     : SV_STORE_BITS_NAME_LENGTH;
 
-        // Offset of previous name definition record in the chain.
-        unsigned int offset     : SV_STORE_BITS_OFFSET;
+        // Offset of previous name definition record in the chain,
+        // or 0 if this is the first one.
+        sv_store_ref_t link;
 
         // Null terminated string defining the name,
         uint8_t name[];
-} sv_store_object_cold_name_def_t;
+} sv_store_object_name_def_t;
 
 
 // Name reference to a name definition object.
 typedef struct {
-        unsigned int tag        : SV_STORE_BITS_TAG;
+        sv_store_object_header_t header;
 
-        // Offset of name definition object in the cold space of the current zone.
-        unsigned int offset     : SV_STORE_BITS_OFFSET;
-} sv_store_object_cold_name_ref_t;
+        // Reference to the name definition object.
+        sv_store_ref_t ref;
+} sv_store_object_name_ref_t;
 
 
 // Cold argument list.
 typedef struct {
-        unsigned int tag        : SV_STORE_BITS_TAG;
+        sv_store_object_header_t header;
 
         // Number of arguments.
         unsigned int count      : SV_STORE_BITS_MMM_COUNT;
 
         // Offset to argument within the same region.
         uint64_t arg[];
-} sv_store_object_cold_mmm_t;
+} sv_store_object_mmm_t;
 
 
 // Hot reference to a cold object.
 typedef struct {
-        unsigned int tag        : SV_STORE_BITS_TAG;
+        sv_store_object_header_t header;
 
         // Index of the cold region in the current zone.
         unsigned int region     : SV_STORE_BITS_COLD_REGION;
 
         // Offset to the object in the specified cold region.
-        unsigned int offset     : SV_STORE_BITS_OFFSET;
-} sv_store_object_hot_cold_ref_t;
+        sv_store_ref_t ref;
+} sv_store_object_cold_ref_t;
 
 
+typedef union {
+        sv_store_object_super_t         super;
+        sv_store_object_name_def_t      name_def;
+        sv_store_object_name_ref_t      name_ref;
+        sv_store_object_mmm_t           mmm;
+        sv_store_object_cold_ref_t      cold_ref;
+} sv_store_object_t;
